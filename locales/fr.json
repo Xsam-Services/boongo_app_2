@@ -1,0 +1,548 @@
+{
+    "copyright": "Copyright (c) {{ year }}",
+    "all_rights_reserved": "Tous droits réservés",
+    "welcome_title": "Bienvenue {{ firstname }}",
+    "welcome_description": {
+        "work": "Publiez vos ouvrages de tout type (livre, revue & journal ou carte géographique) pour les rendre accessibles au public, et échangez avec les abonnés à vos ouvrages.",
+        "establishment": "Enregistrez votre établissement (scolaire, académique ou autre), échangez avec des enseignants ou des élèves/étudiants, et partagez vos programmes et événements.",
+        "government": "Enregistrez votre institution gouvernementale (ministère, entreprise publique ou autre) pour pouvoir partager vos événements et échanger avec le public."
+    },
+    "slogan": "Le guide du savoir !",
+    "about_boongo": "A propos de l’appli Boongo",
+    "about_reborn": "A propos de l’entreprise Reborn",
+    "privacy_title": "Politique de confidentialité",
+    "terms_title": "Conditions d’utilisation",
+    "terms_accept1": "En créant votre compte, vous acceptez nos ",
+    "terms_accept1_": "En vous abonnant, vous acceptez nos ",
+    "terms_accept2": " et notre politique de ",
+    "change_lang": "Changer de langue",
+    "back_home": "Retour à l’accueil",
+    "loading": "Chargement ...",
+    "load_more": "Charger plus",
+    "see_more": "Voir plus",
+    "see_less": "Voir moins",
+    "dark_theme": "Mode sombre",
+    "you": "Vous",
+    "yourself": "Vous-même",
+    "like": "J’aime",
+    "likes": "J’aimes",
+    "file": {
+        "title": "Fichier",
+        "document": "Document",
+        "documents": "Documents",
+        "audio": "Audio",
+        "audios": "Audios",
+        "image": "Image",
+        "images": "Images",
+        "photo": "Photo",
+        "photos": "Photos",
+        "video": "Vidéo",
+        "videos": "Vidéos",
+        "external_videos": "Vidéos externes"
+    },
+    "page": "Page",
+    "yes": "Oui",
+    "no": "Non",
+    "total_price": "Prix total",
+    "notepad": {
+        "title": "Enregistrez des résumés",
+        "title_edit": "Editer le résumé",
+        "page_number": "Numéro page",
+        "enter_note": "Entrer votre note"
+    },
+    "chat": {
+        "new": "Démarrer une discussion",
+        "write": "Écrire un message ...",
+        "circle": {
+            "create": "Créer un cercle",
+            "description": "Les cercles de discussion vous permettent de parler avec plusieurs membres en même temps."
+        }
+    },
+    "video_ended": "La vidéo est terminée !",
+    "success": {
+        "whatsapp": "Whatsapp est bien ouvert."
+    },
+    "error": "Erreur :",
+    "error_message": {
+        "login_before_operation": "Vous devez avant tout vous identifier pour effectuer cette opération.",
+        "pending_after_payment": "Lorsque vous effectuerez votre paiement, votre abonnement sera validé dans les minutes qui suivent.",
+        "no_server_response": "Aucune réponse reçue du serveur.",
+        "missing_parameters": "Il y a des paramètres qui manquent.",
+        "word_not_found": "Mot non trouvé",
+        "image_not_loaded": "Image non chargée correctement",
+        "cannot_be_empty": "Ceci ne peut pas être vide.",
+        "cannot_switch_like": "Impossible de mettre à jour votre like. Essayez à nouveau.",
+        "report_reason_empty": "Veuillez sélectionner un motif !",
+        "no_addressee_selected": "Aucun destinataire sélectionné !"
+    },
+    "success_message": {
+        "message_reported": "Message signalé !"
+    },
+    "empty_list": {
+        "title": "La liste est vide",
+        "description_cart": "Vous n’avez encore rien ajouté au panier",
+        "description_comments_event": "Ici seront affiché tous les commentaires à propos de l’événement.",
+        "description_unpaid_consultation": "Ici seront affichées les oeuvres dont vous n’avez pas encore payées la consultation.",
+        "description_unpaid_subscription": "Vous n’avez aucun abonnement non payé.",
+        "description_subscribers": "Ici seront affichés les personnes qui ont payé pour consulter vos œuvres.",
+        "description_subscriptions": "Ici seront affichés les œuvres pour lesquelles vous avez payé la consultation et les abonnements que vous avez commandés.",
+        "description_chat_user": "Ici seront affichées les membres avec qui vous pouvez échanger.",
+        "description_chat_circle": "Ici seront affichées vos cercles de discussion avec d’autres membres.",
+        "description_chat_organization": "Ici seront affichées vos échanges dans les établissements et/ou institutions.",
+        "description_chat_event": "Ici seront affichées vos échanges dans les événements dans lesquels vous êtes invités.",
+        "description_subscription": "Ici, seront affichés les abonnements que vous pourrez ajouter à votre panier.",
+        "description_news": "Ici, sera affichée l’actualité sur les organisations (établissement ou institution) de la plateforme.",
+        "description_popular": "Ici, seront affichés les œuvres les plus consultées par les membres.",
+        "description_books": "Ici, seront affichés les ouvrages qui pourront être consultés par les membres.",
+        "description_mags": "Ici, seront affichés les revues, journaux ou magazines qui pourront être consultés par les membres.",
+        "description_medias": "Ici, seront affichés les médias qui pourront être consultés par les membres.",
+        "description_favoris": "Vos médias favoris seront affichés ici pour être lus quand vous voulez.",
+        "description_maps": "Ici, seront affichées les cartes géographiques qui pourront être consultées par les membres.",
+        "description_user_works": "Ce membre n’a pas encore publié d’œuvre pour le moment.",
+        "description_user_circles": "Ce membre ne fait partie d’aucun cercle de discussion.",
+        "description_user_consultations": "Ce membre n’a pas encore payé pour consulter une œuvre.",
+        "description_establishments": "Ici seront affichés les établissements auxquels appartiendront les membres.",
+        "description_establishment_programs": "Cet établissement n’a pas encore publié de programme.",
+        "description_establishment_events": "Cet établissement n’a pas encore publié d’événement.",
+        "description_establishment_books": "Cet établissement n’a pas encore publié d’ouvrage.",
+        "description_establishment_teach": "Il n’y a pas encore de cours en ligne pour cet établissement.",
+        "description_governments": "Ici seront affichés les institutions auxquelles appartiendront les membres.",
+        "description_government_events": "Cette institution n’a pas encore publié d’événement."
+    },
+    "unpaid": {
+        "consultation": "Consultations commandées",
+        "subscription": "Abonnements commandés",
+        "add": "Commander encore"
+    },
+    "back_list": "Retour à la liste",
+    "work": {
+        "title": "Détails sur l’œuvre",
+        "publish_new": "Publier une œuvre",
+        "publishing_info": "Votre œuvre sera examinée avant de devenir visible sur la plateforme.",
+        "publication_date": "Date de publication :",
+        "work_title": "Titre de l’œuvre",
+        "work_content": "Description",
+        "work_url": "URL YouTube",
+        "media_length": "Longueur (Heure:Minute:Seconde)",
+        "author": "Auteur",
+        "editor": "Editeur / Réalisateur / Producteur",
+        "is_public": {
+            "title": "Consultation payante",
+            "description": "Pour les médias, la consultation coûtera 2$ ; et pour les autres type d’œuvres c’est 1$. Boongo a droit à 20% de chaque paiement de consultation.",
+            "consult_price": "Prix de la consultation"
+        },
+        "currency": {
+            "title": "Devise : ",
+            "label": "Sélectionner votre devise"
+        },
+        "for_org": "Appartient à une organisation",
+        "type": "Type : ",
+        "categories": "Catégories : ",
+        "category": "Catégorie : ",
+        "consultation_price": "Consultation",
+        "add_files": "Associer des fichiers",
+        "selected_files": "Fichiers sélectionnés :",
+        "max_files": "Limite de {{ count }} fichiers atteinte. Certains fichiers ont été ignorés."
+    },
+    "event": {
+        "about": "A propos",
+        "chat": "Discussion",
+        "create": "Créer un événement",
+        "update": "Editer l’événement",
+        "i_participate": "Je participe",
+        "i_m_not_participating": "Je ne participe pas",
+        "comment": "Commenter ...",
+        "participate_before_comment": "Veuillez participer à l’événement avant de commenter",
+        "data": {
+            "event_title": "Titre de l’événement",
+            "event_description": "Détails sur l’événement",
+            "start_at": "Date/Heure de début",
+            "end_at": "Date/Heure de fin",
+            "is_online": "Événement en ligne (Webinaire)",
+            "event_place": "Lieu de l’événement",
+            "event_place_address": "Adresse du lieu",
+            "cover_url": "Ajouter une couverture"
+        }
+    },
+    "most_popular": "Les plus populaires",
+    "have_account": "Vous avez déjà un compte ?",
+    "no_account": "Vous n’avez pas de compte ?",
+    "select_date": "Sélectionner la date",
+    "search": "Rechercher",
+    "search_result": "Résultats avec « {{ query }} »",
+    "search_dictionary": "Rechercher dans le dictionnaire",
+    "search_description": "Rechercher sur Boongo",
+    "search_filter": "Rechercher et filtrer",
+    "search_filter_description": "Avec le bouton vert, vous pouvez filtrer vos résultats.",
+    "search_filter_type": "Sélectionner un type:",
+    "search_filter_categories": "Sélectionner des catégories:",
+    "search_filter_apply": "Appliquer les filtres",
+    "reading": "Lecture",
+    "summary": "Résumés",
+    "add": "Ajouter",
+    "show": "Afficher",
+    "hide": "Cacher",
+    "all_m": "Tous",
+    "all_f": "Toutes",
+    "see_all": "Voir tout",
+    "see_details": "Voir détails",
+    "expand": "Etendre",
+    "cut": "Couper",
+    "report": "Signaler",
+    "change_organization": "Modifier organization",
+    "program": {
+        "title": "Programme de {{ class }} pour {{ course_year }}",
+        "data": {
+            "title": "Ajouter une classe ou une promotion pour cette année d’étude ({{ course_year }})",
+            "class": "Classe / Promotion",
+            "file": "Uploader document"
+        }
+    },
+    "select_report_reason": "Choisir un motif de signalement",
+    "explanation_optional": "Explication (Facultatif)",
+    "delete": {
+        "just": "Supprimer",
+        "for_me": "Supprimer pour moi",
+        "for_everybody": "Supprimer pour tout le monde"
+    },
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "send": "Envoyer",
+    "publish": "Publier",
+    "cancel": "Annuler",
+    "update": "Mettre à jour",
+    "change": "Modifier",
+    "start": "Commencer",
+    "register": "Inscription",
+    "i_register": "Créer un compte",
+    "continue_register": "Terminez votre inscription",
+    "login": "Connexion",
+    "i_login": "S’identifier",
+    "logout": "Déconnexion",
+    "personal_infos": "Infos personnelles",
+    "change_password": "Modifier mot de passe",
+    "activation": {
+        "link": "S’abonner avec un code",
+        "title": "Activer l’abonnement avec un code",
+        "description": "L’un de nos partenaires peut vous avoir donné un code unique pour activer l’abonnement",
+        "partner": {
+            "label": "Partenaire",
+            "description": "Qui vous a donné votre code ?"
+        },
+        "code": {
+            "label": "Code",
+            "placeholder": "Tapez le code",
+            "error": "Veuillez taper le code !"
+        }
+    },
+    "subscription": {
+        "title": "Ajouter des abonnements à votre panier",
+        "info": "Vous n’avez aucun un abonnement. Veuillez vous abonner pour consulter",
+        "type": "Type d’abonnement",
+        "price": "Prix",
+        "link": "S’abonner",
+        "back": "Retourner aux abonnements"
+    },
+    "consultation": {
+        "info": "La consultation de cette œuvre n’est pas gratuite comme vous l’avez remarqué.",
+        "link": "Payer pour consulter"
+    },
+    "add_to_cart": "Ajouter au panier",
+    "add_to_favorite": "Ajouter aux favoris",
+    "withdraw_from_cart": "Retirer du panier",
+    "already_ordered": "Déjà commandé",
+    "already_selected": "Déjà sélectionné",
+    "withdraw": "Retirer",
+    "pay": "Payer",
+    "amount_to_pay": "Montant à payer :",
+    "payment_method": {
+        "mobile_money": {
+            "label": "Mobile money",
+            "title": "Paiement par mobile money",
+            "descrciption": "Choisissez votre opérateur et mettez le n° de téléphone associé.",
+            "go_bank_card": "Utiliser carte bancaire",
+            "operator": "Séléctionner votre opérateur",
+            "submitted": "Veuillez confirmer votre transaction et cliquer sur le bouton ci-dessous"
+        },
+        "bank_card": {
+            "label": "Carte bancaire",
+            "title": "Paiement par carte bancaire",
+            "descrciption": "Mettez les informations de votre carte bancaire.",
+            "go_mobile_money": "Payer par mobile money",
+            "use_card": "Utiliser ma carte",
+            "operator": "Séléctionner votre opérateur",
+            "name_on_card": "Nom sur la carte",
+            "card_number": {
+                "label": "Numéro de la carte",
+                "placeholder": "1234 1234 1234 1234"
+            },
+            "expiration": {
+                "label": "Expiration",
+                "placeholder": "MM/YY"
+            },
+            "cvc": "CVC"
+        }
+    },
+    "media": {
+        "title": "Lecture média",
+        "description": "En cours..."
+    },
+    "navigation": {
+        "home": {
+            "title": "Accueil",
+            "news": "Actualité",
+            "books": "Ouvrages"
+        },
+        "chat": {
+            "members": "Membres",
+            "organizations": "Organisations",
+            "circles": "Cercles",
+            "events": "Événements"
+        },
+        "account": {
+            "title": "Compte",
+            "profile": "Profil",
+            "my_works": "Mes œuvres",
+            "my_cart": "Mon panier",
+            "subscribers": "Abonnés",
+            "subscriptions": "Abonnements"
+        },
+        "profile": {
+            "works": "Œuvres",
+            "circles": "Cercles",
+            "consultations": "Consultations"
+        },
+        "establishment": {
+            "title": "Établissements",
+            "new": "Ajouter établissement",
+            "publishing_info": "Votre établissement ne sera visible par tous qu’après l’approbation de l’administrateur de la plateforme.",
+            "course_schedule": "Programme",
+            "event": "Événements",
+            "authors": {
+                "title": "Auteurs",
+                "books": "Ouvrages"
+            },
+            "data": {
+                "upload_photo": "Uploader le logo",
+                "name": "Nom de l’établissement",
+                "acronym": "Acronyme (Sigle)",
+                "legal_status": "Statut juridique (ex: SARL, ASBL, SA, ...)",
+                "description": "Décrivez votre établissement",
+                "id_number": "Numéro d’identification",
+                "address": "Adresse",
+                "phone": "N° de téléphone",
+                "email": "E-mail",
+                "p_o_box": "Boite Postale",
+                "year_of_creation": "Année de création",
+                "website_url": "URL du site web",
+                "choose_type": "Choisir le type"
+            }
+        },
+        "government": {
+            "title": "Institutions",
+            "new": "Ajouter institution",
+            "publishing_info": "Votre institution ne sera visible par tous qu’après l’approbation de l’administrateur de la plateforme.",
+            "event": "Événements",
+            "data": {
+                "upload_photo": "Uploader le logo",
+                "name": "Nom de l’institution",
+                "acronym": "Acronyme (Sigle)",
+                "legal_status": "Statut juridique (ex: SARL, ASBL, SA, ...)",
+                "description": "Décrivez l’institution",
+                "id_number": "Numéro d’identification",
+                "address": "Adresse",
+                "phone": "N° de téléphone",
+                "email": "E-mail",
+                "p_o_box": "Boite Postale",
+                "year_of_creation": "Année de création",
+                "website_url": "URL du site web",
+                "choose_type": "Choisir le type"
+            }
+        },
+        "settings": {
+            "title": "Paramètres",
+            "update_account": {
+                "title": "Éditer compte",
+                "description": "Informations concernant votre compte. Vous pouvez téléchargez une archive de vos données personnelles."
+            },
+            "privacy_and_safety": {
+                "title": "Confidentialité et sécurité",
+                "description": "Gérez vos accès et votre visibilité (celles de vos informations) vis-à-vis des autres membres.",
+                "blocked_accounts": {
+                    "title": "Membres bloqués",
+                    "description": "Afficher tous les membres que vous avez bloqués."
+                },
+                "2fa_login": {
+                    "title": "Connexion en 2 étapes",
+                    "by_mail": "Par mail",
+                    "by_phone": "Par SMS"
+                }
+            },
+            "close_account": {
+                "title": "Fermeture de compte",
+                "description": "Votre compte sera récupérable pendant 30 jours. Assurez-vous d’enregistrer vos données personnelles avant de fermer votre compte.",
+                "save_perso_data": "Enregistrer mes données personnelles",
+                "link": "Fermer mon compte"
+            }
+        },
+        "media": {
+            "title": "Médias",
+            "favorite": "Favoris"
+        },
+        "reading": "Lecture",
+        "summary": "Résumés",
+        "notification": "Notifications",
+        "about": "A propos",
+        "terms": "Conditions",
+        "privacy": "Confidentialité",
+        "contact": "Nous contacter",
+        "book": "Ouvrages",
+        "magazine": "Mags, revues et journaux",
+        "mapping": "Cartographie",
+        "dictionary": "Dictionnaire",
+        "cart": "Mon panier"
+    },
+    "auth": {
+        "organization": {
+            "title": "Choisir une organisation",
+            "new": "Ajouter organisation",
+            "label": "Établissement / Institution"
+        },
+        "firstname": "Prénom",
+        "lastname": "Nom",
+        "surname": "Post-nom",
+        "gender": {
+            "label": "Sexe",
+            "male": "Masculin",
+            "female": "Féminin"
+        },
+        "birthdate": "Date de naissance",
+        "city": "Ville",
+        "country": {
+            "title": "Choisir un pays",
+            "label": "Pays"
+        },
+        "address": "Adresse",
+        "address_1": "Adresse 1",
+        "address_2": "Adresse 2 (Facultative)",
+        "p_o_box": "Boite Postale",
+        "email": "E-mail",
+        "phone_code": {
+            "title": "Code téléphonique de votre pays",
+            "label": "Code tél.",
+            "search": "Rechercher votre pays ..."
+        },
+        "phone": "N° de téléphone",
+        "username": {
+            "label": "Pseudo",
+            "placeholder": "Créer un pseudo",
+            "message": "Très important pour les discussions"
+        },
+        "login_username": "E-mail, n° de téléphone ou pseudo",
+        "password": {
+            "label": "Mot de passe",
+            "former": "Ancien mot de passe",
+            "new": "Nouveau mot de passe",
+            "error": "Le mot de passe est incorrect",
+            "forgotten": "Mot de passe oublié",
+            "reset": "Réinitialiser mot de passe",
+            "reset_message": "Vous pouvez envoyer votre numéro de téléphone pour que nous modifiions votre mot de passe que nous vous enverrons par SMS et/ou WhatsApp."
+        },
+        "confirm_password": {
+            "label": "Confirmer mot de passe",
+            "new": "Confirmer nouveau mot de passe",
+            "error": "La confirmation ne correspond pas"
+        },
+        "avatar": {
+            "label": "Modifier votre avatar",
+            "upload": "Uploader une photo",
+            "camera": "Utiliser la caméra"
+        },
+        "status": {
+            "disabled": {
+                "title": "Compte désactivé",
+                "description": "Vous avez désactivé votre compte. Veuillez le réactiver pour effectuer des opérations spécifique.",
+                "link1": "Désactiver mon compte",
+                "link2": "Réactiver mon compte"
+            },
+            "blocked": {
+                "title": "Compte bloqué",
+                "description": "Votre compte est bloqué pour l’instant parce que vous ne respectez pas nos conditions d’utilisation. Veuillez nous contacter en cliquant sur le bouton ci-dessous.",
+                "link1": "Réclamer mon déblocage"
+            }
+        },
+        "otp_code": {
+            "title": "Vérification de votre {{ reference }}",
+            "placeholder": "Écrire le code ...",
+            "message_email": "Veuillez saisir le code que vous avez reçu dans la boîte email que vous avez enregistrée.",
+            "message_phone": "Veuillez saisir encore le code que vous avez reçu par SMS sur le n° de téléphone que vous avez enregistrée.",
+            "send": "Vérifier",
+            "warning": "Le code deviendra invalide après 15 minutes"
+        },
+        "my_works": {
+            "description": "Devenez un de nos partenaires pour pouvoir publier vos ouvrages qui seront visibles par tous. Et cela vous donnera l’avantage d’acquérir de l’argent selon les consultations du public.",
+            "terms_link": "Veuillez cliquer ci-dessous pour voir nos conditions.",
+            "start_button": "Devenir partenaire"
+        }
+    },
+    "notifications": {
+        "payment": {
+            "succeed": "Votre paiement a réussi.",
+            "failed": "Votre paiement a échoué."
+        },
+        "message": {
+            "to_organization": "{{ username }} a envoyé un message à l’organisation {{ organisation_name }}.",
+            "to_event": "{{ username }} a envoyé un message à l’événement « {{ event_title }} »."
+        },
+        "user": {
+            "new": "Bienvenue sur Boongo ! Veuillez lire nos conditions d’utilisation pour mieux utiliser la plateforme.",
+            "back": "Bon retour sur Boongo ! Veuillez consulter notre politique de confidentialité, car nous avons peut-être mis à jour."
+        },
+        "partnership": {
+            "partner": "{{ username }} veut devenir partenaire.",
+            "sponsor": "{{ username }} veut sponsoriser la plateforme."
+        },
+        "event": {
+            "new": "{{ organisation_name }} a créé un nouvel événement.",
+            "title_changed": "{{ organisation_name }} a changé le nom de l’événement « {{ former_event_title }} » en « {{ event_title }} ».",
+            "request_for_membership": "{{ username }} veut adhérer à votre événement « {{ event_title }} ».",
+            "expulsion": "Vous avez été rétiré de l’événement « {{ event_title }} ».",
+            "separation": "{{ username }} a quitté votre événement « {{ event_title }} ».",
+            "invitation": {
+                "speaker": "{{ organisation_name }} vous a invité en tant que speaker à l’événement « {{ event_title }}.",
+                "member": "{{ organisation_name }} vous a invité à l’événement « {{ event_title }}."
+            }
+        },
+        "circle": {
+            "request_for_membership": "{{ username }} veut adhérer à votre cercle de discussion « {{ circle_name }} ».",
+            "expulsion": "Vous avez été rétiré du cercle de discussion « {{ circle_name }} ».",
+            "separation": "{{ username }} a quitté votre cercle de discussion « {{ circle_name }} ».",
+            "invitation": {
+                "admin": "{{ username }} vous a invité en tant qu’administrateur au cercle de discussion « {{ circle_name }} ».",
+                "member": "{{ username }} vous a invité au cercle de discussion « {{ circle_name }} »."
+            }
+        },
+        "work": {
+            "subscription": {
+                "one": "{{ username }} a souscrit à la consultation de votre œuvre.",
+                "two": "{{ username }} et un autre membre ont souscrit à la consultation de votre œuvre.",
+                "many": "{{ count }} membres ont souscrit à la consultation de votre œuvre."
+            },
+            "consultation": {
+                "one": "{{ username }} a consulté votre œuvre.",
+                "two": "{{ username }} et un autre membre ont consulté votre œuvre.",
+                "many": "{{ count }} membres ont consulté votre œuvre."
+            },
+            "like": {
+                "one": "{{ username }} a aimé votre œuvre.",
+                "two": "{{ username }} et un autre membre ont aimé votre œuvre.",
+                "many": "{{ count }} membres ont aimé votre œuvre."
+            },
+            "publishing": {
+                "one": "{{ username }} a publié une œuvre.",
+                "two": "{{ username }} et un autre membre ont publié des œuvres.",
+                "many": "{{ count }} membres ont publié des œuvres."
+            }
+        }
+    }
+}

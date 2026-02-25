@@ -1,0 +1,548 @@
+{
+    "copyright": "Copyright (c) {{ year }}",
+    "all_rights_reserved": "Makoki nyonso mazali ya biso",
+    "welcome_title": "Boyeyi malamu {{ firstname }}",
+    "welcome_description": {
+        "work": "Bimisa misala na yo ya ndenge nionso (buku, Zulunalo to Karte ya mokili) mpo ete bato nyonso bákoka komona yango, mpe solola na ba oyo basali abonemá ya misala na yo.",
+        "establishment": "Komisa etablisséman na yo (école, université, to mosusu), solola na balakisi to bayekoli, mpe kabola ba programmes mpe ba événements na yo.",
+        "government": "Komisa institution ya gouvernement na yo (ministère, entreprise publique, to mosusu) po okoka kokabola ba événements na yo, pe okoka kosolola na public."
+    },
+    "slogan": "Motambwisi na boyebi!",
+    "about_boongo": "Oyo etali appli Pepoo",
+    "about_reborn": "Oyo etali mosala Reborn",
+    "privacy_title": "Politiki ya kobatela makambo ya moto ye moko",
+    "terms_title": "Mibeko ya kosalela",
+    "terms_accept1": "Na kosala compte na yo, ondimi na biso",
+    "terms_accept1_": "Na kosala abonnément, ondimi na biso",
+    "terms_accept2": "mpe politiki na biso ya",
+    "change_lang": "Bongola monoko",
+    "back_home": "Zonga na lokasa ya ebandeli",
+    "loading": "Ez’otonda...",
+    "load_more": "Tondisa mingi",
+    "see_more": "Tala misusu",
+    "see_less": "Tala moke",
+    "dark_theme": "Mode ya molili",
+    "you": "Yo",
+    "yourself": "Yo moko",
+    "like": "J’aime",
+    "likes": "J’aimes",
+    "file": {
+        "title": "Fichier",
+        "document": "Document",
+        "documents": "Documents",
+        "audio": "Audio",
+        "audios": "Audios",
+        "image": "Image",
+        "images": "Images",
+        "photo": "Photo",
+        "photos": "Photos",
+        "video": "Vidéo",
+        "videos": "Vidéos",
+        "external_videos": "Vidéos ya libanda"
+    },
+    "page": "Lokasa",
+    "yes": "Iyo",
+    "no": "Te",
+    "total_price": "Prix total :",
+    "notepad": {
+        "title": "Bomba ba résumés",
+        "title_edit": "Bongisa résumé",
+        "page_number": "Motángo ya lokasa",
+        "enter_note": "Kotisa note na yo"
+    },
+    "chat": {
+        "new": "Banda masolo",
+        "write": "Komá message ...",
+        "circle": {
+            "create": "Kela lisanga",
+            "description": "Ba lisanga ya masolo esungaka yo o solola na ba membres ebele na mbala moko."
+        }
+    },
+    "video_ended": "Video esili!",
+    "success": {
+        "whatsapp": "Whatsapp ezali polele."
+    },
+    "error": "Libunga :",
+    "error_message": {
+        "login_before_operation": "Esengeli liboso omi identifier mpo na kosala opération oyo.",
+        "pending_after_payment": "Tango okofuta, abonnément na yo ekozala validé na ba ngonga elandi.",
+        "no_server_response": "Eyano moko te ezwami uta na serveur.",
+        "missing_parameters": "Ba paramètres misusu ez’ozanga.",
+        "word_not_found": "Oyo oluki emonani te",
+        "image_not_loaded": "Elilingi e chargé malamu te",
+        "cannot_be_empty": "Oyo ekoki kozala mpamba te.",
+        "cannot_switch_like": "Incapable ya ko bongola like na yo. Meká lisusu.",
+        "report_reason_empty": "Poná tina moko !",
+        "no_addressee_selected": "Oponi mutu ya kotindela te !"
+    },
+    "success_message": {
+        "message_reported": "Message efundami malamu !"
+    },
+    "empty_list": {
+        "title": "Liste ezali pamba",
+        "description_cart": "Obakisi nanu eloko te na kitunga na yo.",
+        "description_comments_event": "Awa okomona ba commentaires pona oyo etali événement.",
+        "description_unpaid_consultation": "Awa ekolakisama misala oyo ofuti naino te mpo na kotala.",
+        "description_unpaid_subscription": "Ozali nanu na abonnement o commander te.",
+        "description_subscribers": "Awa okomona bato oyo bafutaki mpo na kotala misala na yo.",
+        "description_subscriptions": "Awa okomona misala oyo ofuti pona kotala mpe ba abonnéma oyo o commander.",
+        "description_chat_user": "Awa okomona ba membres oyo okoki ko solola na bango.",
+        "description_chat_circle": "Awa ekomona ba cercles ya chat na yo na ba membres misusu.",
+        "description_chat_organization": "Awa ekomona ba échanges na yo na ba etablisséman mpe/to ba institutions.",
+        "description_chat_event": "Awa ekolakisama ba échanges na yo na ba événements oyo babengi yo.",
+        "description_subscription": "Awa ekolakisama ba abonnéments oyo okoki kobakisa na kitunga na yo.",
+        "description_news": "Awa, ba sango etali ba organisations (etablisséman to institution ya gouvernement) oyo ezali na plateforme ekolakisama.",
+        "description_popular": "Awa, misala oyo ba membres ba consulté mingi ekolakisama.",
+        "description_books": "Awa, misala mikolakisama miye mikoki kozala consulte na ba membres.",
+        "description_mags": "Awa, eko lakisama ba journals, ba journaux to ba magazines oyo ba membres bakoki ko consulte.",
+        "description_medias": "Awa, eko lakisama ba médias oyo ba membres bakoki ko consulte.",
+        "description_favoris": "Ba médias oyo olingaka mingi ekolakisama awa po otanga tango nionso olingi.",
+        "description_maps": "Awa, eko lakisama ba cartes géographiques oyo ba membres bakoki ko consulte.",
+        "description_user_works": "Membre oyo a publier nanu mosala moko te.",
+        "description_user_circles": "Membre oyo azali na kati ya cercle moko te ya masolo.",
+        "description_user_consultations": "Membre oyo afuti nanu te pona kotala mosala moko.",
+        "description_establishments": "Awa, ba etablisséman oyo ba membres bazali na yango ekolakisama.",
+        "description_establishment_programs": "Etablisséman oyo ebimisi nanu programme te.",
+        "description_establishment_events": "Etablisséman oyo ebimisi nanu milulu te.",
+        "description_establishment_books": "Etablisséman oyo ebimisi nanu buku te.",
+        "description_establishment_teach": "Ba cours en ligne ezali nanu te pona etablisséman oyo.",
+        "description_governments": "Awa, ba institution oyo ba membres bazali na yango ekolakisama.",
+        "description_government_events": "Institution oyo ebimisi nanu milulu te."
+    },
+    "unpaid": {
+        "consultation": "Ba consultations o commander",
+        "subscription": "Ba abonnements o commander",
+        "add": "Commander lisusu"
+    },
+    "back_list": "Zonga na liste",
+    "work": {
+        "title": "Makambo etali mosala",
+        "publish_new": "Tinda mosala",
+        "publishing_info": "Tokolandela mosala na yo liboso ete emonana na plateforme mobimba.",
+        "publication_date": "Date etindamaki :",
+        "work_title": "Titre ya mosala",
+        "work_content": "Ndimbola",
+        "work_url": "URL ya YouTube",
+        "media_length": "Molayi (Heure:Minute:Seconde)",
+        "author": "Mokeli",
+        "editor": "Mokambi / Prodicter",
+        "is_public": {
+            "title": "Kotala efutamaka",
+            "description": "Pona ba medias, kotala ekosɛnga 2$, mpe pona ba lolenge mosusu ya misala ekosɛnga 1$. Boongo ezali na lotomo ya 20% ya mbongo moko na moko ya kotala.",
+            "consult_price": "Ntalo ya kotala"
+        },
+        "currency": {
+            "title": "Mbongo: ",
+            "label": "Pona mbongo na yo"
+        },
+        "for_org": "Ezali ya organizacion moko",
+        "type": "Lolenge : ",
+        "categories": "Catégories : ",
+        "category": "Catégorie : ",
+        "consultation_price": "Kotala",
+        "add_files": "Tia na ba fichiers",
+        "selected_files": "Ba fichiers otie :",
+        "max_files": "Limite ya {{ count }} fichiers ekoki. Ba fichiers misusu ekoti te."
+    },
+    "event": {
+        "about": "Oyo etali",
+        "chat": "Masolo",
+        "create": "Kela milulu",
+        "update": "Bongola milulu",
+        "i_participate": "Nakozala",
+        "i_m_not_participating": "Nakozala te",
+        "comment": "Commenter ...",
+        "participate_before_comment": "Esengeli o participer na événement avant o commenter.",
+        "data": {
+            "event_title": "Kombo ya milulu",
+            "event_description": "Lobela oyo etali milulu",
+            "start_at": "Mokolo/Ngonga ya ebandeli",
+            "end_at": "Mokolo/Ngonga ya suka",
+            "is_online": "Milulu na Internet (Webinaire)",
+            "event_place": "Esika ya milulu",
+            "event_place_address": "Adresse ya esika",
+            "cover_url": "Bakisa couverture"
+        }
+    },
+    "most_popular": "Oyo eza na lupemba ya makasi",
+    "have_account": "Ozali déjà na compte?",
+    "no_account": "Ozali na compte te?",
+    "select_date": "Pona mokolo",
+    "search": "Luka",
+    "search_result": "Ba résultats na « {{ query }} »",
+    "search_dictionary": "Luka nakati ya diksionɛrɛ",
+    "search_description": "Luka na Boongo",
+    "search_filter": "Luka pe filtrer",
+    "search_filter_description": "Na bouton vert okoki ko filtrer ba résultats na yo.",
+    "search_filter_type": "Pona type:",
+    "search_filter_categories": "Pona ba catégories:",
+    "search_filter_apply": "Salelá ba filtres",
+    "reading": "Kotanga",
+    "summary": "Résumés",
+    "add": "Bakisa",
+    "show": "Kolakisa",
+    "hide": "Kobombana",
+    "all_m": "Nyonso",
+    "all_f": "Nyonso",
+    "see_all": "Tala nionso",
+    "see_details": "Tala makambo na mikemike",
+    "expand": "Komisa mingi",
+    "cut": "Kata",
+    "report": "Funda",
+    "change_organization": "Bongola organization",
+    "program": {
+        "title": "Programme ya {{ class }} pona {{ course_year }}",
+        "data": {
+            "title": "Bakisa kelasi to pe promotion pona mbula oyo ya kotanga ({{ course_year }})",
+            "class": "Kelasi / Promotion",
+            "file": "Kotisa document"
+        }
+    },
+    "select_report_reason": "Pona tina yako funda",
+    "explanation_optional": "Explication (Facultatif)",
+    "delete": {
+        "just": "Longola",
+        "for_me": "Longola pona nga",
+        "for_everybody": "Longola pona batu nionso"
+    },
+    "confirm": "Ndimisa",
+    "save": "Bomba",
+    "send": "Tinda",
+    "publish": "Panza",
+    "cancel": "Tika",
+    "update": "Bongola",
+    "change": "Bongola",
+    "start": "Banda",
+    "register": "Mikomisa",
+    "i_register": "Nasala compte",
+    "continue_register": "Silisa ko mikomisa",
+    "login": "Nakoti",
+    "i_login": "Namimonisa",
+    "logout": "Na bima",
+    "personal_infos": "Ba sango ya moto ye moko",
+    "change_password": "Kobongola mot de passe",
+    "activation": {
+        "link": "S’abonner na nzela ya code",
+        "title": "Activer abonnément na nzela ya code",
+        "description": "Moko ya ba partenaires na biso akokaki kopesa yo code ya kosalela mbala moko pona ko activer abonnément.",
+        "partner": {
+            "label": "Partenaire",
+            "description": "Nani nde apesaki yo code na yo ?"
+        },
+        "code": {
+            "label": "Code",
+            "placeholder": "Koma code",
+            "error": "Esengeli okoma code !"
+        }
+    },
+    "subscription": {
+        "title": "Bakisa ba abonnéments na kitunga na yo",
+        "info": "Ozali na abonnément te. Banda ko s’abonner po otala.",
+        "type": "Lolenge ya abonnément",
+        "price": "Ntalo",
+        "link": "S’abonner",
+        "back": "Zonga na ba abonnéments"
+    },
+    "consultation": {
+        "info": "Kotala mosala oyo eza ofele te, ndenge okoki komona yango.",
+        "link": "Nafuta po natala"
+    },
+    "add_to_cart": "Bakisa na kitunga",
+    "add_to_favorite": "Bakisa na ba favoris",
+    "withdraw_from_cart": "Longola na kitunga",
+    "already_ordered": "Déjà commandé",
+    "already_selected": "Déjà eponami",
+    "withdraw": "Longola",
+    "pay": "Nafuta",
+    "amount_to_pay": "Mbongo ya kofuta :",
+    "payment_method": {
+        "mobile_money": {
+            "label": "Mobile money",
+            "title": "Kofuta na mobile money",
+            "descrciption": "Pona opérateur na yo mpe tia nimero ya telefone oyo esangisi yango.",
+            "go_bank_card": "Nasalela carte ya bank",
+            "operator": "Pona opérateur na yo",
+            "submitted": "Svp confirmer transaction na yo pe cliquez bouton oyo ezali awa na se"
+        },
+        "bank_card": {
+            "label": "Carte ya bank",
+            "title": "Kofuta na nzela ya karte ya kredi",
+            "descrciption": "Tyá makambo ya karte na yo ya bank.",
+            "go_mobile_money": "Nafuta na mobile money",
+            "use_card": "Nasalela Karte na nga",
+            "operator": "Pona opérateur na yo",
+            "name_on_card": "Kombo likolo ya karte",
+            "card_number": {
+                "label": "Nimero ya karte",
+                "placeholder": "1234 1234 1234 1234"
+            },
+            "expiration": {
+                "label": "Expiration",
+                "placeholder": "MM/YY"
+            },
+            "cvc": "CVC"
+        }
+    },
+    "media": {
+        "title": "Kotanga média",
+        "description": "Ez’otanga..."
+    },
+    "navigation": {
+        "home": {
+            "title": "Ebandeli",
+            "news": "Ba sango",
+            "books": "Ba buku"
+        },
+        "chat": {
+            "members": "Ba membres",
+            "organizations": "Ba organisations",
+            "circles": "Ba cercles",
+            "events": "Ba événema"
+        },
+        "account": {
+            "title": "Compte",
+            "profile": "Profil",
+            "my_works": "Misala na nga",
+            "my_cart": "Kitunga na nga",
+            "subscribers": "Ba abonné",
+            "subscriptions": "Ba abonema"
+        },
+        "profile": {
+            "works": "Misala",
+            "circles": "Ba cercles",
+            "consultations": "Ba consultations"
+        },
+        "establishment": {
+            "title": "Etablisséman",
+            "new": "Nakomisa etablisséman",
+            "publishing_info": "Établissement na yo ekomonana na batu nioso kaka sima ya kondimama na administrateur ya plateforme.",
+            "course_schedule": "Programme",
+            "event": "Milulu",
+            "authors": {
+                "title": "Bakomi mikanda",
+                "books": "Ba buku"
+            },
+            "data": {
+                "upload_photo": "Kotisa logo",
+                "name": "Kombo ya etablisséman",
+                "acronym": "Na mokuse (Acronyme)",
+                "legal_status": "Statut juridique (ex: SARL, ASBL, SA, ...)",
+                "description": "Lobelá etablisséman na yo",
+                "id_number": "Nimero ya identification",
+                "address": "Adresi",
+                "phone": "Nimero ya téléfon",
+                "email": "E-mail",
+                "p_o_box": "Boite Postale",
+                "year_of_creation": "Mbula ya bozalisi",
+                "website_url": "URL ya site web",
+                "choose_type": "Pona type"
+            }
+        },
+        "government": {
+            "title": "Ba institutions",
+            "new": "Nakomisa institution",
+            "publishing_info": "Institution na yo ekomonana na batu nioso kaka sima ya kondimama na administrateur ya plateforme.",
+            "event": "Milulu",
+            "data": {
+                "upload_photo": "Kotisa logo",
+                "name": "Kombo ya institution",
+                "acronym": "Na mokuse (Acronyme)",
+                "legal_status": "Statut juridique (ex: SARL, ASBL, SA, ...)",
+                "description": "Lobelá institution",
+                "id_number": "Nimero ya identification",
+                "address": "Adresi",
+                "phone": "Nimero ya téléfon",
+                "email": "E-mail",
+                "p_o_box": "Boite Postale",
+                "year_of_creation": "Mbula ya bozalisi",
+                "website_url": "URL ya site web",
+                "choose_type": "Pona type"
+            }
+        },
+        "settings": {
+            "title": "Ba paramètres",
+            "update_account": {
+                "title": "Bongola compte",
+                "description": "Ba informations oyo etali compte na yo. Okoki kozwa archive ya ba données personnelles na yo."
+            },
+            "privacy_and_safety": {
+                "title": "Nkuku pe bobateli makambu",
+                "description": "Landela kokota na compte na yo pe visibilité na yo (ya ba informations na yo) na misu ya ba membres misusu.",
+                "blocked_accounts": {
+                    "title": "Ba membres o kanga",
+                    "description": "Lakisa ba membres nionso oyo o bloqué."
+                },
+                "2fa_login": {
+                    "title": "Kokota na ba étapes mibale",
+                    "by_mail": "Na nzela ya E-mail",
+                    "by_phone": "Na nzela ya SMS"
+                }
+            },
+            "close_account": {
+                "title": "Bokangi ya compte",
+                "description": "Compte na yo ekoki kozonga na mikolo 30. Sala makasi obomba ba données personnelles na yo avant ya kokanga compte na yo.",
+                "save_perso_data": "Na bomba ba données personnelles na nga",
+                "link": "Kanga compte na nga"
+            }
+        },
+        "media": {
+            "title": "Ba media",
+            "favorite": "Oyo nalingaka"
+        },
+        "reading": "Lecture",
+        "summary": "Résumés",
+        "notification": "Ba notifications",
+        "about": "Oyo etali",
+        "terms": "Mibeko",
+        "privacy": "Nkuku",
+        "contact": "Benga biso",
+        "book": "Buku",
+        "magazine": "Mikanda",
+        "mapping": "Ba kartes",
+        "dictionary": "Dictionnaire",
+        "cart": "Kitunga na nga"
+    },
+    "auth": {
+        "organization": {
+            "title": "Pona organisation",
+            "new": "Bakisa organisation",
+            "label": "Etablisséman / Institution"
+        },
+        "firstname": "Prénom",
+        "lastname": "Nom",
+        "surname": "Post-nom",
+        "gender": {
+            "label": "Sexe",
+            "male": "Masculin",
+            "female": "Féminin"
+        },
+        "birthdate": "Date de naissance",
+        "city": "Ville",
+        "country": {
+            "title": "Choisir un pays",
+            "label": "Pays"
+        },
+        "address": "Adresse",
+        "address_1": "Adresse 1",
+        "address_2": "Adresse 2 (Facultative)",
+        "p_o_box": "Boite Postale",
+        "email": "E-mail",
+        "phone_code": {
+            "title": "Code ya téléphone ya mboka na yo",
+            "label": "Code tél.",
+            "search": "Luka mboka na yo ..."
+        },
+        "phone": "N° de téléphone",
+        "username": {
+            "label": "Pseudo",
+            "placeholder": "Create a username",
+            "message": "Ezali na ntina mingi mpo na masolo"
+        },
+        "login_username": "E-mail, n° de téléphone ou pseudo",
+        "password": {
+            "label": "Mot de passe",
+            "former": "Ancien mot de passe",
+            "new": "Nouveau mot de passe",
+            "error": "Le mot de passe est incorrect",
+            "forgotten": "Mot de passe oublié",
+            "reset": "Réinitialiser mot de passe",
+            "reset_message": "Okoki kotinda nimero nayo ya telefone mpo ete tokoka kobongola mot de passe na yo oyo tokotindela yo na nzela ya SMS mpe/to WhatsApp."
+        },
+        "confirm_password": {
+            "label": "Confirmer mot de passe",
+            "new": "Confirmer nouveau mot de passe",
+            "error": "Confirmation ekokani te"
+        },
+        "avatar": {
+            "label": "Modifier votre avatar",
+            "upload": "Uploader une photo",
+            "camera": "Utiliser la caméra"
+        },
+        "status": {
+            "disabled": {
+                "title": "Compte désactivé",
+                "description": "Osili ko désactiver compte na yo. Svp zongisa reactiver yango pona kosala ba opérations spécifiques.",
+                "link1": "Désactiver mon compte",
+                "link2": "Réactiver mon compte"
+            },
+            "blocked": {
+                "title": "Compte ekangami",
+                "description": "Compte na yo ekangami sikoyo mpo ozali kotosa mibeko na biso ya kosalela te. Bo contacter biso na ko cliquer bouton oyo ezali awa na se.",
+                "link1": "Reclamer déverrouillage na ngai"
+            }
+        },
+        "otp_code": {
+            "title": "Tala {{ référence }} na yo.",
+            "placeholder": "Koma code ...",
+            "message_email": "Koma code oyo etindameli yo na boîte email oyo okomisaki.",
+            "message_phone": "Koma lisusu code oyo ozwi na SMS na numéro ya téléfone oyo okomisaki.",
+            "send": "Tala",
+            "warning": "Code ekosala lisusu te sima ya 15 minutes"
+        },
+        "my_works": {
+            "description": "koma moko ya ba partenaires na biso po ozala na makoki ya kobimisa misala na yo oyo ekozala komonana na bato banso. Mpe yango ekopesa yo avantage ya kozua mbongo selon ba consultations publiques.",
+            "terms_link": "Svp fina na se pona komona ba conditions na biso.",
+            "start_button": "koma partenaire"
+        }
+    },
+    "notifications": {
+        "payment": {
+            "succeed": "Kofuta mbongo esimbi.",
+            "failed": "Kofuta mbongo esimbi te."
+        },
+        "message": {
+            "to_organization": "{{ username }} atindi message na organisation {{ organisation_name }}.",
+            "to_event": "{{ username }} atindi message na milulu « {{ event_title }} »."
+        },
+        "user": {
+            "new": "Boyeyi malamu na Boongo ! Tanga ba conditions ya kosalela pona osalela plateforme malamu.",
+            "back": "Bozongi malamu na Boongo ! Kende kotala politique ya confidentialité na biso, po tango mosusu ebonguani."
+        },
+        "partnership": {
+            "partner": "{{ username }} alingi akoma partenaire.",
+            "sponsor": "{{ username }} alingi a sponsoriser plateforme."
+        },
+        "event": {
+            "new": "{{ organisation_name }} akeli milulu ya sika.",
+            "title_changed": "{{ organisation_name }} abongoli kombo ya milulu « {{ former_event_title }} » ekomi « {{ event_title }} ».",
+            "request_for_membership": "{{ username }} alingi azala na milulu « {{ event_title }} ».",
+            "expulsion": "Balongoli yo na milulu « {{ event_title }} ».",
+            "separation": "{{ username }} abimi na milulu « {{ event_title }} ».",
+            "invitation": {
+                "speaker": "{{ organisation_name }} abengisi yo na milulu « {{ event_title }} lokola molobi.",
+                "member": "{{ organisation_name }} abengisi yo na milulu « {{ event_title }}."
+            }
+        },
+        "circle": {
+            "request_for_membership": "{{ username }} alingi akota na cercle ya masolo « {{ circle_name }} ».",
+            "expulsion": "Balongoli yo na cercle ya masolo « {{ circle_name }} ».",
+            "separation": "{{ username }} abimi na cercle ya masolo « {{ circle_name }} ».",
+            "invitation": {
+                "admin": "{{ username }} abengisi yo na cercle ya masolo « {{ circle_name }} » lokola mokambi.",
+                "member": "{{ username }} abengisi yo na cercle ya masolo « {{ circle_name }} »."
+            }
+        },
+        "work": {
+            "subscription": {
+                "one": "{{ username }} amikomisi pona kotala œuvre na yo.",
+                "two": "{{ username }} na membre mosusu bamikomisi pona kotala œuvre na yo.",
+                "many": "{{ count }} membres bamikomisi pona kotala œuvre na yo."
+            },
+            "consultation": {
+                "one": "{{ username }} atali œuvre na yo.",
+                "two": "{{ username }} na membre mosusu batali œuvre na yo.",
+                "many": "{{ count }} membres batali œuvre na yo."
+            },
+            "like": {
+                "one": "{{ username }} alingi œuvre na yo.",
+                "two": "{{ username }} na membre mosusu balingi œuvre na yo.",
+                "many": "{{ count }} membres balingi œuvre na yo."
+            },
+            "publishing": {
+                "one": "{{ username }} atié œuvre ya sika.",
+                "two": "{{ username }} na membre mosusu batié ba œuvres ya sika.",
+                "many": "{{ count }} membres batié ba œuvres ya sika."
+            }
+        }
+    }
+}

@@ -1,0 +1,117 @@
+            {/* Close modal */}
+            <TouchableOpacity style={{ position: 'absolute', right: PADDING.p01, top: PADDING.p01, zIndex: 10, width: 37, height: 37, backgroundColor: 'rgba(200,200,200,0.5)', padding: 2.6, borderRadius: 37 / 2 }} onPress={() => setFormEventModalVisible(false)}>
+              <Icon name='close' size={IMAGE_SIZE.s07} color='black' />
+            </TouchableOpacity>
+
+            {/* Brand / Title */}
+            <View style={[homeStyles.authlogo, { marginTop: PADDING.p15 }]}>
+              <LogoText width={200} height={48} />
+            </View>
+            <Text style={[homeStyles.authTitle, { fontSize: 21, fontWeight: '300', color: COLORS.black, textAlign: 'center' }]}>{t('event.create')}</Text>
+
+            {/* Event cover */}
+            <View style={{ position: 'relative', width: Dimensions.get('window').width, marginVertical: PADDING.p01 }}>
+              <TouchableOpacity style={{ position: 'absolute', top: 10, right: 10, zIndex: 9, backgroundColor: COLORS.primary, marginLeft: 140, borderRadius: 40 / 2, padding: PADDING.p01 }} onPress={imagePick}>
+                <Icon name='lead-pencil' size={20} color='white' />
+              </TouchableOpacity>
+              <Image style={{ width: Dimensions.get('window').width, height: 250 }} source={{ uri: imageData || `${WEB.boongo_url}/assets/img/banner-event.png` }} />
+            </View>
+
+            <View style={{ padding: PADDING.p07 }}>
+              {/* Event title */}
+              <TextInput
+                style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
+                label={t('event.data.event_title')}
+                value={eventTitle}
+                placeholder={t('event.data.event_title')}
+                placeholderTextColor={COLORS.dark_secondary}
+                onChangeText={setEventTitle}
+              />
+
+              {/* Event description */}
+              <TextInput
+                multiline
+                onContentSizeChange={(e) =>
+                  setInputDescHeight(e.nativeEvent.contentSize.height)
+                }
+                style={[homeStyles.authInput, { height: Math.max(40, inputDescHeight), color: COLORS.black, borderColor: COLORS.light_secondary }]}
+                value={eventDescription}
+                placeholder={t('event.data.event_description')}
+                placeholderTextColor={COLORS.dark_secondary}
+                onChangeText={setEventDescription} />
+
+              <View style={{ flexDirection: 'row', width: '100%', marginBottom: PADDING.p01, padding: PADDING.p00, borderWidth: 1, borderColor: COLORS.light_secondary, borderRadius: 5 }}>
+                {/* Start at */}
+                <View style={{ width: '50%', paddingVertical: PADDING.p00 }}>
+                  <Icon name='calendar' size={IMAGE_SIZE.s09} color={COLORS.dark_secondary} style={{ alignSelf: 'center' }} />
+                  <Text style={{ textAlign: 'center', color: COLORS.dark_secondary }}>{t('event.data.start_at')}</Text>
+                  <TouchableOpacity onPress={() => setStartPickerVisible(true)}>
+                    <Text style={{ color: COLORS.black, textAlign: 'center' }}>{startDate.toLocaleString()}</Text>
+                  </TouchableOpacity>
+
+                  <DateTimePickerModal
+                    isVisible={isStartPickerVisible}
+                    mode="datetime"
+                    date={startDate}
+                    onConfirm={date => {
+                      setStartDate(date);
+                      setStartPickerVisible(false);  // ← refermer en premier :contentReference[oaicite:1]{index=1}
+                    }}
+                    onCancel={() => setStartPickerVisible(false)}
+                  />
+                </View>
+
+                {/* End at */}
+                <View style={{ width: '50%', paddingVertical: PADDING.p00 }}>
+                  <Icon name='calendar' size={IMAGE_SIZE.s09} color={COLORS.dark_secondary} style={{ alignSelf: 'center' }} />
+                  <Text style={{ textAlign: 'center', color: COLORS.dark_secondary }}>{t('event.data.end_at')}</Text>
+                  <TouchableOpacity onPress={() => setEndPickerVisible(true)}>
+                    <Text style={{ color: COLORS.black, textAlign: 'center' }}>{endDate.toLocaleString()}</Text>
+                  </TouchableOpacity>
+
+                  <DateTimePickerModal
+                    isVisible={isEndPickerVisible}
+                    mode="datetime"
+                    date={endDate}
+                    onConfirm={date => {
+                      setEndDate(date);
+                      setEndPickerVisible(false);
+                    }}
+                    onCancel={() => setEndPickerVisible(false)}
+                  />
+                </View>
+              </View>
+
+              {/* Choose whether the event is online */}
+              <View style={{ width: Dimensions.get('window').width - PADDING.p15 }}>
+                <TouchableOpacity onPress={() => setIsOnline(!isOnline)} style={{ width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: PADDING.p00 }}>
+                  <Icon name={!isOnline ? 'checkbox-blank-outline' : 'checkbox-outline'} size={IMAGE_SIZE.s07} color={!isOnline ? COLORS.dark_secondary : COLORS.black} />
+                  <Text style={{ color: COLORS.dark_secondary, marginLeft: PADDING.p00 }}>{t('event.data.is_online')}</Text>
+                </TouchableOpacity>
+
+                {/* Champ de lieu ou URL */}
+                {!isOnline && (
+                  <TextInput
+                    style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
+                    label={t('event.data.event_place')}
+                    value={eventPlace}
+                    placeholder={t('event.data.event_place')}
+                    placeholderTextColor={COLORS.dark_secondary}
+                    onChangeText={setEventPlace}
+                  />
+                )}
+                {/* {isOnline && (
+                  <TextInput
+                    placeholder="URL de l'événement"
+                    value={eventPlace}
+                    onChangeText={setEventPlace}
+                    style={{ borderBottomWidth: 1, marginBottom: 10 }}
+                  />
+                )} */}
+              </View>
+
+              {/* Submit */}
+              <Button style={[homeStyles.authButton, { backgroundColor: COLORS.success }]} onPress={handleAddEvent}>
+                <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('send')}</Text>
+              </Button>
+            </View>
