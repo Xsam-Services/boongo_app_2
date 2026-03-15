@@ -67,6 +67,8 @@ import ProfileScreen from './screens/profile';
 import MobileSubscribeScreen from './screens/subscribe_mobile';
 import BankCardSubscribeScreen from './screens/subscribe_bank_card';
 import NewsDataScreen from './screens/news_data';
+import UpdatePasswordScreen from './screens/Auth/update-password';
+import AccountGuard from './AccountGuard';
 
 // =============== Bottom tab ===============
 const BottomTab = createBottomTabNavigator();
@@ -185,6 +187,7 @@ const LoginStackNav = () => {
       <Stack.Screen name='PasswordReset' component={PasswordResetScreen} />
       <Stack.Screen name='CheckEmailOTP' component={CheckEmailOTPScreen} />
       <Stack.Screen name='CheckPhoneOTP' component={CheckPhoneOTPScreen} />
+      <Stack.Screen name='UpdatePassword' component={UpdatePasswordScreen} />
       <Stack.Screen name='About' component={AboutBottomTab} />
     </Stack.Navigator>
   );
@@ -309,8 +312,12 @@ const HomeStackNav = () => {
 };
 
 const DrawerNav = () => {
+  const { userInfo } = useContext(AuthContext);
+
+  const restricted = [4, 5, 29].includes(userInfo?.status?.id);
+
   return (
-    <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />} screenOptions={{ headerShown: false }}>
+    <Drawer.Navigator swipeEnabled={!restricted} drawerContent={props => <DrawerContent {...props} />} screenOptions={{ headerShown: false }}>
       <Drawer.Screen name='Home' component={HomeStackNav} />
     </Drawer.Navigator>
   );
@@ -320,7 +327,7 @@ const App = () => {
   // =============== Language ===============
   const { t } = useTranslation();
   // =============== Get contexts ===============
-  const { userInfo, splashLoading } = useContext(AuthContext);
+  const { userInfo, splashLoading, changeStatus, logout } = useContext(AuthContext);
   // =============== Get data ===============
   const [showSplash, setShowSplash] = useState(true);
 
@@ -409,7 +416,9 @@ const App = () => {
   return (
     <NavigationContainer>
       {userInfo.id ? (
-        <DrawerNav />
+        <AccountGuard userInfo={userInfo} changeStatus={changeStatus} logout={logout}>
+          <DrawerNav />
+        </AccountGuard>
       ) : (
         <LoginStackNav />
       )}

@@ -128,14 +128,14 @@ const RegisterScreen = () => {
           onChangeText={text => setUsername(text)} />
         <Text style={{ fontSize: 12, color: COLORS.dark_secondary, letterSpacing: 0.5, textAlign: 'right', marginBottom: PADDING.p02 }}>{t('auth.username.message')}</Text>
 
-        {/* E-mail */}
+        {/* E-mail
         <TextInput
           style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
           value={email}
           placeholder={t('auth.email')}
           placeholderTextColor={COLORS.dark_secondary}
           onChangeText={text => setEmail(text.toLowerCase())}
-          autoCapitalize='none' />
+          autoCapitalize='none' /> */}
 
         <View style={{ flexDirection: 'row' }}>
           {/* Phone code  */}
@@ -207,18 +207,20 @@ const RegisterScreen = () => {
             startRegister(firstname, lastname, null, null, null, city, null, null, null, email, (phoneCode && phone ? `${phoneCode}${phone}` : null), username, null, null, null, role.id, null);
 
             if (!registerError) {
-              if (email && phone) {
-                navigation.navigate('CheckEmailOTP', { emailAddress: email, phoneNumber: (phoneCode && phone ? `${phoneCode}${phone}` : null) });
+              navigation.navigate('CheckPhoneOTP', { isPasswordReset: false, phoneNumber: (phoneCode && phone ? `${phoneCode}${phone}` : null) });
 
-              } else {
-                if (email) {
-                  navigation.navigate('CheckEmailOTP', { emailAddress: email, phoneNumber: (phoneCode && phone ? `${phoneCode}${phone}` : null) });
-                }
+              // if (email && phone) {
+              //   navigation.navigate('CheckEmailOTP', { emailAddress: email, phoneNumber: (phoneCode && phone ? `${phoneCode}${phone}` : null) });
 
-                if (phone) {
-                  navigation.navigate('CheckPhoneOTP', { emailAddress: email, phoneNumber: (phoneCode && phone ? `${phoneCode}${phone}` : null) });
-                }
-              }
+              // } else {
+              //   if (email) {
+              //     navigation.navigate('CheckEmailOTP', { emailAddress: email, phoneNumber: (phoneCode && phone ? `${phoneCode}${phone}` : null) });
+              //   }
+
+              //   if (phone) {
+              //     navigation.navigate('CheckPhoneOTP', { emailAddress: email, phoneNumber: (phoneCode && phone ? `${phoneCode}${phone}` : null) });
+              //   }
+              // }
             }
           }}>
           <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('start')}</Text>

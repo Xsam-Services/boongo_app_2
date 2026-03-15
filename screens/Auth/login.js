@@ -38,7 +38,7 @@ const LoginScreen = ({ route }) => {
       <View style={{ flex: 1, backgroundColor: COLORS.white }}>
         <Spinner visible={isLoading} />
 
-        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingVertical: PADDING.p10, paddingHorizontal: PADDING.p10 }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingVertical: PADDING.p16, paddingHorizontal: PADDING.p10 }}>
           {/* Brand / Title */}
           <View style={[homeStyles.authlogo, { marginBottom: PADDING.p10 }]}>
             <LogoText width={200} height={48} />

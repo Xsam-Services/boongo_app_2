@@ -73,7 +73,8 @@
         "cannot_be_empty": "This cannot be empty.",
         "cannot_switch_like": "Unable to update your like. Try again.",
         "report_reason_empty": "Please select a reason!",
-        "no_addressee_selected": "No addressee selected!"
+        "no_addressee_selected": "No addressee selected!",
+        "phone": "Please enter the phone number"
     },
     "success_message": {
         "message_reported": "Message reported!"
@@ -469,6 +470,12 @@
                 "title": "Account blocked",
                 "description": "Your account is currently blocked because you do not comply with our terms of use. Please contact us by clicking the button below.",
                 "link1": "Claim my unlocking"
+            },
+            "deleted": {
+                "title": "Account deleted",
+                "description": "You have 60 days to reactivate your account. Otherwise, it will be lost forever.",
+                "link1": "Delete my account",
+                "link2": "Reactivate my account"
             }
         },
         "otp_code": {

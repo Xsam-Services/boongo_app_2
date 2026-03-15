@@ -3,7 +3,7 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useContext, useState } from 'react';
-import { View, Text, TextInput, ScrollView } from 'react-native';
+import { View, Text, TextInput, ScrollView, ToastAndroid } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Button, Divider } from 'react-native-paper';
@@ -18,7 +18,8 @@ import homeStyles from '../style';
 
 const CheckPhoneOTPScreen = ({ route }) => {
   // =============== Get parameters ===============
-  const { emailAddress, phoneNumber } = route.params;
+  // const { emailAddress, phoneNumber } = route.params;
+  const { isPasswordReset, phoneNumber } = route.params;
   // =============== Colors ===============
   const COLORS = useColors();
   // =============== Language ===============
@@ -26,20 +27,37 @@ const CheckPhoneOTPScreen = ({ route }) => {
   // =============== Navigation ===============
   const navigation = useNavigation();
   // =============== Get contexts ===============
-  const { isLoading, checkOTP, registerError } = useContext(AuthContext);
+  const { isLoading, checkPhoneOTP, registerError } = useContext(AuthContext);
   // =============== Get data ===============
   const [code, setCode] = useState('');
 
   const handleCheckPhoneCode = async () => {
-    const result = await checkOTP(null, phoneNumber, code);
+    // const result = await checkOTP(emailAddress, phoneNumber, code);
 
-    console.log(registerError);
+    // if (!registerError) {
+    //   if (result === 'email_not_validated') {
+    //     navigation.navigate('CheckEmailOTP', { emailAddress: emailAddress, phoneNumber: phoneNumber });
 
-    if (!registerError) {
-      if (result === 'email_not_validated') {
-        navigation.navigate('CheckEmailOTP', { emailAddress: emailAddress, phoneNumber: phoneNumber });
+    //   } else {
+    //     navigation.navigate('ContinueRegister');
+    //   }
+    // }
+    const result = await checkPhoneOTP(isPasswordReset, phoneNumber, code);
 
-      } else {
+    if (!result.success) {
+      console.log(result.error);
+      ToastAndroid.show(result.error, ToastAndroid.LONG);
+
+      return;
+    }
+
+    if (isPasswordReset) {
+      navigation.navigate('UpdatePassword', { userId: result.data.user.id, apiToken: result.data.user.api_token, formerPassword: result.data.passwordReset.former_password });
+
+    } else {
+      console.log(registerError);
+
+      if (!registerError) {
         navigation.navigate('ContinueRegister');
       }
     }

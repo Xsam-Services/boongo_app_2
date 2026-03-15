@@ -91,6 +91,89 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
+    const checkPhoneOTP = async (isPasswordReset, phone, token) => {
+        if (typeof isPasswordReset !== 'boolean' || !phone || !token) {
+            ToastAndroid.show(t('error_message.missing_parameters'), ToastAndroid.LONG);
+
+            return {
+                success: false,
+                error: 'missing_parameters'
+            };
+        }
+
+        setIsLoading(true);
+
+        try {
+            const res = await axios.post(
+                `${API.boongo_url}/password_reset/check_token/phone`,
+                { phone, token }
+            );
+
+            const message = res.data.message;
+            const userData = res.data.data.user;
+            const passwordResetData = res.data.data.password_reset;
+
+            ToastAndroid.show(message, ToastAndroid.LONG);
+
+            if (!res.data.success) {
+
+                setRegisterError(message);
+
+                return {
+                    success: false,
+                    error: message
+                };
+            }
+
+            setRegisterError(null);
+
+            await AsyncStorage.removeItem('startRegisterInfo');
+
+            setStartRegisterInfo({});
+
+            if (!isPasswordReset) {
+                await AsyncStorage.setItem('endRegisterInfo', JSON.stringify(userData));
+
+                setEndRegisterInfo(userData);
+            }
+
+            return {
+                success: true,
+                data: {
+                    user: userData,
+                    passwordReset: passwordResetData
+                }
+            };
+
+        } catch (error) {
+
+            let message;
+
+            if (error.response) {
+                message = error.response.data.message || error.response.data;
+
+            } else if (error.request) {
+                message = t('error') + ' ' + t('error_message.no_server_response');
+
+            } else {
+                message = error.message;
+            }
+
+            ToastAndroid.show(message, ToastAndroid.LONG);
+            setRegisterError(message);
+
+            return {
+                success: false,
+                error: message
+            };
+
+        } finally {
+
+            setIsLoading(false);
+
+        }
+    };
+
     const checkOTP = async (email, phone, token) => {
         setIsLoading(true);
 
@@ -347,38 +430,70 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
-    const changePassword = (id, former_password, new_password, confirm_new_password) => {
+    const changePassword = async (id, api_token, former_password, new_password, confirm_new_password) => {
+        if (!id || !api_token || !former_password || !new_password || !confirm_new_password) {
+            ToastAndroid.show(t('error_message.missing_parameters'), ToastAndroid.LONG);
+
+            return {
+                success: false,
+                error: 'missing_parameters'
+            };
+        }
+
         setIsLoading(true);
 
-        axios.put(`${API.boongo_url}/user/update_password/${id}`, {
-            former_password, new_password, confirm_new_password
-        }, {
-            headers: { 'Authorization': `Bearer ${userInfo.api_token}` }
-        }).then(res => {
+        try {
+            const res = await axios.put(
+                `${API.boongo_url}/user/update_password/${id}`,
+                {
+                    former_password,
+                    new_password,
+                    confirm_new_password
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${api_token}`
+                    }
+                }
+            );
+
             const message = res.data.message;
 
-            ToastAndroid.show(`${message}`, ToastAndroid.LONG);
-            console.log(`${message}`);
+            ToastAndroid.show(message, ToastAndroid.LONG);
+            console.log(message);
 
-            setIsLoading(false);
+            return {
+                success: true,
+                message: message
+            };
 
-        }).catch(error => {
+        } catch (error) {
+
+            let message;
+
             if (error.response) {
-                // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
-                console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
+                message = error.response.data.message || error.response.data;
+                console.log(`${error.response.status} -> ${message}`);
 
             } else if (error.request) {
-                // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                message = t('error') + ' ' + t('error_message.no_server_response');
 
             } else {
-                // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                message = error.message;
             }
 
+            ToastAndroid.show(message, ToastAndroid.LONG);
+
+            return {
+                success: false,
+                error: message
+            };
+
+        } finally {
+
             setIsLoading(false);
-        });
+
+        }
     };
 
     const changeRole = (action, user_id, role_id) => {
@@ -993,7 +1108,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ isLoading, userInfo, paymentURL, startRegisterInfo, endRegisterInfo, registerError, splashLoading, pushToken, login, logout, resetPaymentURL, startRegister, checkOTP, endRegister, update, updateAvatar, changePassword, changeRole, changeOrganization, changeStatus, activateSubscriptionByCode, disableSubscriptionByCode, validateSubscription, invalidateSubscription, validateConsultations, invalidateConsultations, addToCart, removeFromCart, purchase, addMembership, removeMembership }}>
+            value={{ isLoading, userInfo, paymentURL, startRegisterInfo, endRegisterInfo, registerError, splashLoading, pushToken, login, logout, resetPaymentURL, startRegister, checkPhoneOTP, checkOTP, endRegister, update, updateAvatar, changePassword, changeRole, changeOrganization, changeStatus, activateSubscriptionByCode, disableSubscriptionByCode, validateSubscription, invalidateSubscription, validateConsultations, invalidateConsultations, addToCart, removeFromCart, purchase, addMembership, removeMembership }}>
             {children}
         </AuthContext.Provider>
     );

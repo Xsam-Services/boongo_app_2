@@ -11,8 +11,8 @@ import { Button } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Spinner from 'react-native-loading-spinner-overlay';
-import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import ImagePicker from 'react-native-image-crop-picker';
 import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
 import { API, PADDING } from '../../tools/constants';
@@ -27,7 +27,7 @@ const SettingsScreen = () => {
   // =============== Navigation ===============
   const navigation = useNavigation();
   // =============== Get contexts ===============
-  const { userInfo, isLoading, updateAvatar, update } = useContext(AuthContext);
+  const { userInfo, isLoading, updateAvatar, update, changeStatus } = useContext(AuthContext);
   // =============== Get data ===============
   const [firstname, setFirstname] = useState(userInfo.firstname);
   const [lastname, setLastname] = useState(userInfo.lastname);
@@ -41,6 +41,8 @@ const SettingsScreen = () => {
   const [username, setUsername] = useState(userInfo.username);
   const [password, setPassword] = useState(null);
   const [confirm_password, setConfirmPassword] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // =============== Image crop picker ===============
   const imagePick = () => {
@@ -225,6 +227,8 @@ const SettingsScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+      <Spinner visible={isLoading} />
+
       {/* Custom header */}
       <View style={{ flexDirection: 'row', paddingVertical: PADDING.p02 }}>
         <TouchableOpacity style={{ position: 'absolute', left: 7, top: 5, zIndex: 10 }} onPress={() => navigation.goBack()}>
@@ -236,9 +240,7 @@ const SettingsScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={{ flexGrow: 1, paddingHorizontal: 30 }}>
-        <Spinner visible={isLoading} />
-
+      <ScrollView style={{ flexGrow: 1, paddingHorizontal: PADDING.p05 }}>
         {/* Profil photo */}
         <View style={{ alignItems: 'center', marginVertical: PADDING.p01 }}>
           <Image style={{ width: 160, height: 160, borderRadius: 160 / 2 }} source={{ uri: userInfo.avatar_url }} />
@@ -248,7 +250,7 @@ const SettingsScreen = () => {
         </View>
 
         {/* Personal infos */}
-        <View style={[homeStyles.cardEmpty, { marginBottom: PADDING.vertical, marginLeft: 0 }]}>
+        <View style={[homeStyles.cardEmpty, { marginVertical: PADDING.p05, padding: PADDING.p10, marginLeft: 0, borderWidth: 1, borderColor: COLORS.light_secondary, borderRadius: PADDING.p05 }]}>
           {/* Organization  */}
           <Text style={{ color: COLORS.dark_secondary, paddingVertical: 5, paddingHorizontal: PADDING.horizontal }}>{t('auth.organization.label')}</Text>
           <Dropdown
@@ -462,27 +464,55 @@ const SettingsScreen = () => {
 
           {/* Password */}
           <Text style={{ color: COLORS.dark_secondary, paddingVertical: 5, paddingHorizontal: PADDING.horizontal }}>{t('auth.password.label')}</Text>
-          <TextInput
-            style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
-            value={password}
-            placeholder={t('auth.password.label')}
-            placeholderTextColor={COLORS.dark_secondary}
-            onChangeText={text => setPassword(text)} secureTextEntry />
+          <View style={{ position: 'relative' }}>
+            <TextInput
+              style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
+              value={password}
+              placeholder={t('auth.password.label')}
+              placeholderTextColor={COLORS.dark_secondary}
+              onChangeText={text => setPassword(text)} secureTextEntry={!showPassword} />
+            <TouchableOpacity style={{ position: 'absolute', top: 9, right: 7 }} onPress={() => setShowPassword(prev => !prev)}>
+              <Icon name={showPassword ? 'eye-off-outline' : 'eye-outline'} color={COLORS.dark_secondary} size={30} />
+            </TouchableOpacity>
+          </View>
 
           {/* Confirm password */}
           <Text style={{ color: COLORS.dark_secondary, paddingVertical: 5, paddingHorizontal: PADDING.horizontal }}>{t('auth.confirm_password.label')}</Text>
-          <TextInput
-            style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
-            value={confirm_password}
-            placeholder={t('auth.confirm_password.label')}
-            placeholderTextColor={COLORS.dark_secondary}
-            onChangeText={text => setConfirmPassword(text)} secureTextEntry />
+          <View style={{ position: 'relative' }}>
+            <TextInput
+              style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
+              value={confirm_password}
+              placeholder={t('auth.confirm_password.label')}
+              placeholderTextColor={COLORS.dark_secondary}
+              onChangeText={text => setConfirmPassword(text)} secureTextEntry={!showConfirmPassword} />
+            <TouchableOpacity style={{ position: 'absolute', top: 9, right: 7 }} onPress={() => setShowConfirmPassword(prev => !prev)}>
+              <Icon name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'} color={COLORS.dark_secondary} size={30} />
+            </TouchableOpacity>
+          </View>
 
           {/* Submit */}
           <Button style={[homeStyles.authButton, { backgroundColor: COLORS.primary, marginTop: 16 }]} onPress={() => {
             update(userInfo.id, firstname, lastname, surname, gender, birthdate, city, address_1, address_2, p_o_box, email, phone, username, password, confirm_password, country, currency, null, organization);
-            navigation.navigate('Account'); }}>
+            navigation.navigate('Account');
+          }}>
             <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('update')}</Text>
+          </Button>
+        </View>
+
+        {/* Account management */}
+        <View style={[homeStyles.cardEmpty, { marginVertical: PADDING.p05, padding: PADDING.p10, marginLeft: 0, borderWidth: 1, borderColor: COLORS.light_secondary, borderRadius: PADDING.p05 }]}>
+          {/* Disable account */}
+          <Button style={[homeStyles.authButton, { backgroundColor: COLORS.warning, marginVertical: PADDING.p00 }]} onPress={() => {
+            changeStatus(userInfo.id, 4);
+            navigation.navigate('HomeStack');
+          }}>
+            <Text style={[homeStyles.authButtonText, { color: 'black' }]}>{t('auth.status.disabled.link1')}</Text>
+          </Button>
+          <Button style={[homeStyles.authButton, { backgroundColor: COLORS.danger, marginVertical: PADDING.p00 }]} onPress={() => {
+            changeStatus(userInfo.id, 29);
+            navigation.navigate('HomeStack');
+          }}>
+            <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('auth.status.deleted.link1')}</Text>
           </Button>
         </View>
       </ScrollView>
@@ -490,4 +520,4 @@ const SettingsScreen = () => {
   )
 }
 
-export default SettingsScreen
+export default SettingsScreen;

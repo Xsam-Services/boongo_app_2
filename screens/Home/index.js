@@ -351,6 +351,8 @@ const HomeScreen = () => {
   const COLORS = useColors();
   // =============== Language ===============
   const { t } = useTranslation();
+  // =============== Get contexts ===============
+  const { userInfo } = useContext(AuthContext);
   // =============== Get data ===============
   const newsListRef = useRef(null);
   const booksListRef = useRef(null);

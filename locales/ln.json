@@ -73,7 +73,8 @@
         "cannot_be_empty": "Oyo ekoki kozala mpamba te.",
         "cannot_switch_like": "Incapable ya ko bongola like na yo. Meká lisusu.",
         "report_reason_empty": "Poná tina moko !",
-        "no_addressee_selected": "Oponi mutu ya kotindela te !"
+        "no_addressee_selected": "Oponi mutu ya kotindela te !",
+        "phone": "Tia niméro na yo ya téléfon"
     },
     "success_message": {
         "message_reported": "Message efundami malamu !"
@@ -460,15 +461,21 @@
         },
         "status": {
             "disabled": {
-                "title": "Compte désactivé",
-                "description": "Osili ko désactiver compte na yo. Svp zongisa reactiver yango pona kosala ba opérations spécifiques.",
-                "link1": "Désactiver mon compte",
-                "link2": "Réactiver mon compte"
+                "title": "Compte ekatani",
+                "description": "Osili ko kata compte na yo. Svp zongisa yango pona kosala ba opérations misusu olingi kosala.",
+                "link1": "Nakata compte na ngai",
+                "link2": "Nazongisa compte na ngai"
             },
             "blocked": {
                 "title": "Compte ekangami",
                 "description": "Compte na yo ekangami sikoyo mpo ozali kotosa mibeko na biso ya kosalela te. Bo contacter biso na ko cliquer bouton oyo ezali awa na se.",
                 "link1": "Reclamer déverrouillage na ngai"
+            },
+            "deleted": {
+                "title": "Compte elongwe",
+                "description": "Oza na mikolo 60 po na kozongisa compte na yo. Soki te, ekokende pona libela.",
+                "link1": "Nalongola compte na ngai",
+                "link2": "Nazongisa compte na ngai"
             }
         },
         "otp_code": {

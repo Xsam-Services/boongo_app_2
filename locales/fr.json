@@ -73,7 +73,8 @@
         "cannot_be_empty": "Ceci ne peut pas être vide.",
         "cannot_switch_like": "Impossible de mettre à jour votre like. Essayez à nouveau.",
         "report_reason_empty": "Veuillez sélectionner un motif !",
-        "no_addressee_selected": "Aucun destinataire sélectionné !"
+        "no_addressee_selected": "Aucun destinataire sélectionné !",
+        "phone": "Veuillez mettre le numéro de téléphone"
     },
     "success_message": {
         "message_reported": "Message signalé !"
@@ -469,6 +470,12 @@
                 "title": "Compte bloqué",
                 "description": "Votre compte est bloqué pour l’instant parce que vous ne respectez pas nos conditions d’utilisation. Veuillez nous contacter en cliquant sur le bouton ci-dessous.",
                 "link1": "Réclamer mon déblocage"
+            },
+            "deleted": {
+                "title": "Compte supprimé",
+                "description": "Vous avez 60 jours pour réactiver votre compte. Sinon il sera perdu pour toujours.",
+                "link1": "Supprimer mon compte",
+                "link2": "Réactiver mon compte"
             }
         },
         "otp_code": {

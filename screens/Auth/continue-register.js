@@ -9,6 +9,7 @@ import { Button, Divider } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { API, PADDING } from '../../tools/constants';
 import { AuthContext } from '../../contexts/AuthContext';
@@ -36,6 +37,8 @@ const ContinueRegisterScreen = () => {
   // const [p_o_box, setPOBox] = useState(null);
   const [password, setPassword] = useState(null);
   const [confirm_password, setConfirmPassword] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   // COUNTRY dropdown
   const [isFocus, setIsFocus] = useState(false);
   const [country, setCountry] = useState(null);
@@ -242,20 +245,30 @@ const ContinueRegisterScreen = () => {
           onChangeText={text => setPOBox(text)} /> */}
 
         {/* Password */}
-        <TextInput
-          style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
-          value={password}
-          placeholder={t('auth.password.label')}
-          placeholderTextColor={COLORS.dark_secondary}
-          onChangeText={text => setPassword(text)} secureTextEntry />
+        <View style={{ position: 'relative' }}>
+          <TextInput
+            style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
+            value={password}
+            placeholder={t('auth.password.label')}
+            placeholderTextColor={COLORS.dark_secondary}
+            onChangeText={text => setPassword(text)} secureTextEntry={!showPassword} />
+          <TouchableOpacity style={{ position: 'absolute', top: 9, right: 7 }} onPress={() => setShowPassword(prev => !prev)}>
+            <Icon name={showPassword ? 'eye-off-outline' : 'eye-outline'} color={COLORS.dark_secondary} size={30} />
+          </TouchableOpacity>
+        </View>
 
         {/* Confirm password */}
-        <TextInput
-          style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
-          value={confirm_password}
-          placeholder={t('auth.confirm_password.label')}
-          placeholderTextColor={COLORS.dark_secondary}
-          onChangeText={text => setConfirmPassword(text)} secureTextEntry />
+        <View style={{ position: 'relative' }}>
+          <TextInput
+            style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
+            value={confirm_password}
+            placeholder={t('auth.confirm_password.label')}
+            placeholderTextColor={COLORS.dark_secondary}
+            onChangeText={text => setConfirmPassword(text)} secureTextEntry={!showConfirmPassword} />
+          <TouchableOpacity style={{ position: 'absolute', top: 9, right: 7 }} onPress={() => setShowConfirmPassword(prev => !prev)}>
+            <Icon name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'} color={COLORS.dark_secondary} size={30} />
+          </TouchableOpacity>
+        </View>
 
         {/* Submit */}
         <Button style={[homeStyles.authButton, { backgroundColor: COLORS.success }]} onPress={() => { endRegister(endRegisterInfo.id, firstname, null, surname, gender, birthdate, city, address_1, null, null, null, null, null, password, confirm_password, country.id, null, null); }}>
