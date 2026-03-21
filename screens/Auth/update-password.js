@@ -3,11 +3,12 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useContext, useState } from 'react';
-import { Text, View, TextInput, ScrollView, ToastAndroid } from 'react-native';
+import { Text, View, TextInput, ScrollView, ToastAndroid, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Button, Divider } from 'react-native-paper';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PADDING } from '../../tools/constants';
 import { AuthContext } from '../../contexts/AuthContext';
 import FooterComponent from '../footer';
@@ -32,15 +33,15 @@ const UpdatePasswordScreen = ({ route }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleUpdatePassword = async () => {
-    console.log('User data');
-    console.log('================');
-    console.log(`ID: ${userId}`);
-    console.log(`API token: ${apiToken}`);
-    console.log(`former password: ${formerPassword}`);
-    console.log(`new password: ${password}`);
-    console.log(`confirm new password: ${confirm_password}`);
+  console.log('User data');
+  console.log('================');
+  console.log(`ID: ${userId}`);
+  console.log(`API token: ${apiToken}`);
+  console.log(`former password updatePW: ${formerPassword}`);
+  console.log(`new password: ${password}`);
+  console.log(`confirm new password: ${confirm_password}`);
 
+  const handleUpdatePassword = async () => {
     const result = await changePassword(userId, apiToken, formerPassword, password, confirm_password);
 
     if (!result.success) {

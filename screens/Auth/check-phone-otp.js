@@ -52,6 +52,7 @@ const CheckPhoneOTPScreen = ({ route }) => {
     }
 
     if (isPasswordReset) {
+      console.log(`Former password CheckOTP: ${result.data.passwordReset.former_password}`);
       navigation.navigate('UpdatePassword', { userId: result.data.user.id, apiToken: result.data.user.api_token, formerPassword: result.data.passwordReset.former_password });
 
     } else {
