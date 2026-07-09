@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "build:ios": "./node_modules/.bin/react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios --reset-cache"
   },
   "dependencies": {
     "@freakycoder/react-native-text-area": "^0.1.5",
@@ -68,7 +69,7 @@
     "react-native-popup-menu": "^0.17.0",
     "react-native-reanimated": "3.19.3",
     "react-native-safe-area-context": "^5.6.1",
-    "react-native-screens": "^4.10.0",
+    "react-native-screens": "4.10.0",
     "react-native-secure-screen": "^0.0.1",
     "react-native-sound": "^0.11.2",
     "react-native-sqlite-storage": "^6.0.1",
