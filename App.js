@@ -13,9 +13,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { forbid } from 'react-native-secure-screen';
+import * as ScreenCapture from 'expo-screen-capture';
 import Orientation from 'react-native-orientation-locker';
-import TrackPlayer, { Capability, Event } from 'react-native-track-player';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PADDING } from './tools/constants';
 import DrawerContent from './DrawerContent';
@@ -346,63 +345,18 @@ const App = () => {
     };
   }, []);
 
-  // =============== Lock screen captures ===============
+  // prevent screen captures from all app
   useEffect(() => {
-    const applySecurity = async () => {
-      await forbid();
+    const preventScreenCapture = async () => {
+      await ScreenCapture.preventScreenCaptureAsync();
     };
 
-    applySecurity();
-  }, []);
-
-  // =============== Setup Track Player ===============
-  useEffect(() => {
-    setupPlayer();
+    preventScreenCapture();
 
     return () => {
-      TrackPlayer.reset(); // Cleaning when the component is disassembled
+      ScreenCapture.allowScreenCaptureAsync();
     };
   }, []);
-
-  const setupPlayer = async () => {
-    await TrackPlayer.setupPlayer();
-    console.log('Track player setup success!');
-
-    // Configure notification options to allow background playback
-    await TrackPlayer.updateOptions({
-      stopWithAppPause: true, // Stop playback when the app is paused
-      capabilities: [
-        Capability.Play,
-        Capability.Pause,
-        Capability.Stop,
-        Capability.SeekTo
-      ],
-      compactCapabilities: [
-        Capability.Play,
-        Capability.Pause,
-        Capability.Stop
-      ],
-      notification: { // Notification options
-        icon: 'ic_notification',
-        title: t('media.title'),
-        text: t('media.description'),
-        largeIcon: 'ic_notification',
-      }
-    });
-
-    // Add the event to handle actions on the notification
-    TrackPlayer.addEventListener(Event.RemotePlay, async () => {
-      await TrackPlayer.play();
-    });
-
-    TrackPlayer.addEventListener(Event.RemotePause, async () => {
-      await TrackPlayer.pause();
-    });
-
-    TrackPlayer.addEventListener(Event.RemoteStop, async () => {
-      await TrackPlayer.stop();
-    });
-  };
 
   if (splashLoading) {
     return <SplashScreen />;
