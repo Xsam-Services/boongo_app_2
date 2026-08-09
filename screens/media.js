@@ -55,7 +55,8 @@ const Medias = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
     };
 
     try {
-      const res = await axios.get(`${API.boongo_url}/category/find_by_group/Catégorie%20pour%20œuvre`, { headers });
+      const group = encodeURIComponent('Catégorie pour œuvre');
+      const res = await axios.get(`${API.boongo_url}/category/find_by_group/${group}`, { headers });
       const data = res.data.data;
       const itemAll = { id: 0, category_name: t('all_f'), category_name_fr: "Toutes", category_name_en: "All", category_name_ln: "Nioso", category_description: null, };
 

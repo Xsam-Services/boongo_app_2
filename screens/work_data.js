@@ -7,7 +7,7 @@ import { View, Text, RefreshControl, Image, TouchableOpacity, FlatList, Linking,
 import { ScrollView } from 'react-native-gesture-handler';
 import { useTranslation } from 'react-i18next';
 import { Divider } from 'react-native-paper';
-import { NetworkInfo } from 'react-native-network-info';
+import NetInfo from '@react-native-community/netinfo';
 import Spinner from 'react-native-loading-spinner-overlay';
 import * as RNLocalize from 'react-native-localize';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
@@ -220,8 +220,14 @@ const WorkDataScreen = ({ route, navigation }) => {
     getWork();
   }, [work]);
 
-  const getWork = () => {
-    NetworkInfo.getIPAddress().then(ip_address => {
+  // Vander Otis
+  // Replaced react-native-network-info with @react-native-community/netinfo (NetInfo.fetch)
+  // and refactored to async/await for Expo compatibility and New Architecture support.
+  const getWork = async () => {
+    try {
+      const state = await NetInfo.fetch();
+      const ip_address = state.details?.ipAddress || '';
+
       const config = {
         method: 'GET',
         url: `${API.boongo_url}/work/${itemId}`,
@@ -231,33 +237,21 @@ const WorkDataScreen = ({ route, navigation }) => {
           'X-ip-address': ip_address,
           'X-user-agent': UserAgent.getUserAgent(),
           'Authorization': `Bearer ${userInfo.api_token}`,
-        }
+        },
       };
 
-      axios(config)
-        .then(res => {
-          const workData = res.data.data;
-          const workCategories = res.data.data.categories.length;
+      const res = await axios(config);
+      const workData = res.data.data;
 
-          setWork(workData);
-          setCategoryCount(workCategories);
+      setWork(workData);
+      console.log(workData.organization_owner.type.alias);
 
-          // Update "likeCount" and "hasLiked"
-          const isAlreadyLiked = workData.likes.some(like => like.user.id === userInfo.id);
-
-          setLikeCount(workData.likes.length);
-          setHasLiked(isAlreadyLiked);
-
-          console.log(`${userInfo.firstname} a aimé cette œuvre : ${hasLiked}`);
-
-          setLoading(false);
-
-          return workData;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    })
+      return workData;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {

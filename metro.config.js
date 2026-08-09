@@ -1,29 +1,16 @@
-const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
-const { wrapWithReanimatedMetroConfig } = require('react-native-reanimated/metro-config');
+const { getDefaultConfig } = require('expo/metro-config');
+const { mergeConfig } = require('@react-native/metro-config');
 
-/**
- * Metro configuration
- * https://reactnative.dev/docs/metro
- *
- * @type {import('metro-config').MetroConfig}
- */
+const config = getDefaultConfig(__dirname);
 
-// Get Metro Default Configuration
-const defaultConfig = getDefaultConfig(__dirname);
+config.transformer.babelTransformerPath = require.resolve(
+    'react-native-svg-transformer/expo'
+);
 
-// Configuration for transforming SVG files
-const svgConfig = {
-  transformer: {
-    babelTransformerPath: require.resolve('react-native-svg-transformer'),
-  },
-  resolver: {
-    assetExts: defaultConfig.resolver.assetExts.filter((ext) => ext !== 'svg'),
-    sourceExts: [...defaultConfig.resolver.sourceExts, 'svg'],
-  },
-};
+config.resolver.assetExts = config.resolver.assetExts.filter(
+    ext => ext !== 'svg'
+);
 
-// Merge Reanimated config with SVG config
-const mergedConfig = mergeConfig(defaultConfig, svgConfig);
+config.resolver.sourceExts.push('svg');
 
-// Wrap the configuration with the one required by Reanimated
-module.exports = wrapWithReanimatedMetroConfig(mergedConfig);
+module.exports = mergeConfig(config, {});

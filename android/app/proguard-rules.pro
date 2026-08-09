@@ -7,10 +7,8 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
-# Add any project specific keep options here:
+# react-native-reanimated
+-keep class com.swmansion.reanimated.** { *; }
+-keep class com.facebook.react.turbomodule.** { *; }
 
-# Règles pour pdfiumandroid (Support 16KB)
--keep class com.shockwave.pdfium.** { *; }
--dontwarn com.shockwave.pdfium.**
--keep class io.legere.pdfiumandroid.** { *; }
--dontwarn io.legere.pdfiumandroid.**
+# Add any project specific keep options here:

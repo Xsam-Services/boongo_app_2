@@ -6,7 +6,8 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { View, Text, RefreshControl, Image, Dimensions, TouchableOpacity, FlatList, Modal } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useTranslation } from 'react-i18next';
-import { NetworkInfo } from 'react-native-network-info';
+import NetInfo from '@react-native-community/netinfo';
+import Constants from 'expo-constants';
 import * as RNLocalize from 'react-native-localize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import UserAgent from 'react-native-user-agent';
@@ -75,35 +76,45 @@ const NewsDataScreen = ({ route, navigation }) => {
     getWork();
   }, []);
 
-  const getWork = () => {
-    NetworkInfo.getIPAddress().then(ip_address => {
+  // Vander Otis
+  // Replaced react-native-network-info with @react-native-community/netinfo
+  // and react-native-user-agent with expo-constants (Constants.getWebViewUserAgentAsync).
+  // Refactored to async/await using Promise.all for IP and User-Agent retrieval
+  // to ensure compatibility with Expo and New Architecture support.
+  const getWork = async () => {
+    try {
+      // Récupération en parallèle de l'IP et du User-Agent
+      const [netState, userAgent] = await Promise.all([
+        NetInfo.fetch(),
+        Constants.getWebViewUserAgentAsync(),
+      ]);
+
+      const ipAddress = netState.details?.ipAddress || '';
+
       const config = {
         method: 'GET',
         url: `${API.boongo_url}/work/${itemId}`,
         headers: {
           'X-localization': getLanguage(),
           'X-user-id': userInfo.id,
-          'X-ip-address': ip_address,
-          'X-user-agent': UserAgent.getUserAgent(),
+          'X-ip-address': ipAddress,
+          'X-user-agent': userAgent || '',
           'Authorization': `Bearer ${userInfo.api_token}`,
-        }
+        },
       };
 
-      axios(config)
-        .then(res => {
-          const workData = res.data.data;
+      const res = await axios(config);
+      const workData = res.data.data;
 
-          setWork(workData);
-          setLoading(false);
+      setWork(workData);
+      console.log(workData.organization_owner.type.alias);
 
-          console.log(workData.organization_owner.type.alias);
-
-          return workData;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    })
+      return workData;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // =============== Show/Hide modal ===============

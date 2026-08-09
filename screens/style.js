@@ -334,6 +334,7 @@ const homeStyles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         fontSize: 16,
+        height: 50
     },
 
     authTextarea: {

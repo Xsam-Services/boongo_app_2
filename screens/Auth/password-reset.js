@@ -18,6 +18,8 @@ import useColors from '../../hooks/useColors';
 import homeStyles from '../style';
 import axios from 'axios';
 
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 const PasswordResetScreen = () => {
   // =============== Colors ===============
   const COLORS = useColors();
@@ -124,7 +126,7 @@ const PasswordResetScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.white }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }} edges={['top']}>
       <Spinner visible={loading} />
 
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingVertical: PADDING.p16, paddingHorizontal: PADDING.p10 }}>
@@ -203,7 +205,7 @@ const PasswordResetScreen = () => {
         <Divider style={[homeStyles.authDivider, { backgroundColor: COLORS.light_secondary }]} />
         <FooterComponent color={COLORS.dark_secondary} />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

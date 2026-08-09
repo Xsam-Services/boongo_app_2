@@ -16,6 +16,9 @@ import LogoText from '../../assets/img/brand.svg';
 import homeStyles from '../style';
 import useColors from '../../hooks/useColors';
 
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+
 const LoginScreen = ({ route }) => {
   // =============== Colors ===============
   const COLORS = useColors();
@@ -35,7 +38,7 @@ const LoginScreen = ({ route }) => {
     const { message } = route.params;
 
     return (
-      <View style={{ flex: 1, backgroundColor: COLORS.white }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }} edges={['top']}>
         <Spinner visible={isLoading} />
 
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingVertical: PADDING.p16, paddingHorizontal: PADDING.p10 }}>
@@ -93,12 +96,12 @@ const LoginScreen = ({ route }) => {
           {/* Copyright */}
           <FooterComponent color={COLORS.dark_secondary} />
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
 
   } else {
     return (
-      <View style={{ flex: 1, backgroundColor: COLORS.white }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }} edges={['top']}>
         <Spinner visible={isLoading} />
 
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingVertical: PADDING.p16, paddingHorizontal: PADDING.p10 }}>
@@ -150,7 +153,7 @@ const LoginScreen = ({ route }) => {
           {/* Copyright */}
           <FooterComponent color={COLORS.dark_secondary} />
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 };

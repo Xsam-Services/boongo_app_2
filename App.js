@@ -13,9 +13,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { forbid } from 'react-native-secure-screen';
-import Orientation from 'react-native-orientation-locker';
-import TrackPlayer, { Capability, Event } from 'react-native-track-player';
+import * as ScreenCapture from 'expo-screen-capture';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PADDING } from './tools/constants';
 import DrawerContent from './DrawerContent';
@@ -69,6 +67,7 @@ import BankCardSubscribeScreen from './screens/subscribe_bank_card';
 import NewsDataScreen from './screens/news_data';
 import UpdatePasswordScreen from './screens/Auth/update-password';
 import AccountGuard from './AccountGuard';
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // =============== Bottom tab ===============
 const BottomTab = createBottomTabNavigator();
@@ -337,72 +336,20 @@ const App = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // =============== Lock screen orientation ===============
+  // Vander Otis
+  // Replaced react-native-secure-screen with Expo ScreenCapture
+  // to prevent screen captures across the entire application.
   useEffect(() => {
-    Orientation.lockToPortrait();
+    const preventScreenCapture = async () => {
+      await ScreenCapture.preventScreenCaptureAsync();
+    };
+
+    preventScreenCapture();
 
     return () => {
-      Orientation.unlockAllOrientations();
+      ScreenCapture.allowScreenCaptureAsync();
     };
   }, []);
-
-  // =============== Lock screen captures ===============
-  useEffect(() => {
-    const applySecurity = async () => {
-      await forbid();
-    };
-
-    applySecurity();
-  }, []);
-
-  // =============== Setup Track Player ===============
-  useEffect(() => {
-    setupPlayer();
-
-    return () => {
-      TrackPlayer.reset(); // Cleaning when the component is disassembled
-    };
-  }, []);
-
-  const setupPlayer = async () => {
-    await TrackPlayer.setupPlayer();
-    console.log('Track player setup success!');
-
-    // Configure notification options to allow background playback
-    await TrackPlayer.updateOptions({
-      stopWithAppPause: true, // Stop playback when the app is paused
-      capabilities: [
-        Capability.Play,
-        Capability.Pause,
-        Capability.Stop,
-        Capability.SeekTo
-      ],
-      compactCapabilities: [
-        Capability.Play,
-        Capability.Pause,
-        Capability.Stop
-      ],
-      notification: { // Notification options
-        icon: 'ic_notification',
-        title: t('media.title'),
-        text: t('media.description'),
-        largeIcon: 'ic_notification',
-      }
-    });
-
-    // Add the event to handle actions on the notification
-    TrackPlayer.addEventListener(Event.RemotePlay, async () => {
-      await TrackPlayer.play();
-    });
-
-    TrackPlayer.addEventListener(Event.RemotePause, async () => {
-      await TrackPlayer.pause();
-    });
-
-    TrackPlayer.addEventListener(Event.RemoteStop, async () => {
-      await TrackPlayer.stop();
-    });
-  };
 
   if (splashLoading) {
     return <SplashScreen />;
@@ -427,13 +374,15 @@ const App = () => {
 }
 
 export default () => (
-  <ThemeProvider>
-    <AuthProvider>
-      <SearchProvider>
-        <PaperProvider>
-          <App />
-        </PaperProvider>
-      </SearchProvider>
-    </AuthProvider>
-  </ThemeProvider>
+  <SafeAreaProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <SearchProvider>
+          <PaperProvider>
+            <App />
+          </PaperProvider>
+        </SearchProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  </SafeAreaProvider>
 );
