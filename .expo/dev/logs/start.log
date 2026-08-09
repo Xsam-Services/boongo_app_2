@@ -145,3 +145,16 @@
 {"_e":"metro:bundling:progress","_t":1786293822583,"id":"4","progress":0.9263611051466267,"total":2132,"current":2052}
 {"_e":"metro:bundling:progress","_t":1786293822684,"id":"4","progress":0.9982142860704939,"total":2239,"current":2237}
 {"_e":"metro:bundling:failed","_t":1786293822697,"id":"4","message":"Unable to resolve \"react-native-network-info\" from \"screens/work_data.js\"\n   8 | import { useTranslation } from 'react-i18next';\n   9 | import { Divider } from 'react-native-paper';\n> 10 | import { NetworkInfo } from 'react-native-network-info';\n     |                              ^\n  11 | import Spinner from 'react-native-loading-spinner-overlay';\n  12 | import * as RNLocalize from 'react-native-localize';\n  13 | import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39mscreens/work_data.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"react-native-network-info\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./screens/work_data\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"react-native-network-info","originModulePath":"screens/work_data.js"}
+{"_e":"metro:bundling:started","_t":1786294756251,"id":"5","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786294756252,"id":"5","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786294756261,"id":"5","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786294756361,"id":"5","progress":0.12472188057102584,"total":269,"current":95}
+{"_e":"metro:bundling:progress","_t":1786294756463,"id":"5","progress":0.22821483154921343,"total":561,"current":268}
+{"_e":"metro:bundling:progress","_t":1786294756563,"id":"5","progress":0.28042117757318047,"total":863,"current":457}
+{"_e":"metro:bundling:progress","_t":1786294756688,"id":"5","progress":0.4281986992176454,"total":1030,"current":674}
+{"_e":"metro:bundling:progress","_t":1786294756788,"id":"5","progress":0.5792964963380125,"total":1327,"current":1010}
+{"_e":"metro:bundling:progress","_t":1786294756888,"id":"5","progress":0.7054264793588066,"total":1549,"current":1301}
+{"_e":"metro:bundling:progress","_t":1786294756988,"id":"5","progress":0.813646266789608,"total":1878,"current":1694}
+{"_e":"metro:bundling:progress","_t":1786294757088,"id":"5","progress":0.937544434353,"total":2143,"current":2075}
+{"_e":"metro:bundling:progress","_t":1786294757188,"id":"5","progress":0.999,"total":2254,"current":2254}
+{"_e":"metro:bundling:done","_t":1786294757490,"id":"5","total":2254,"ms":1238.249416}
