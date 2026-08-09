@@ -10,7 +10,10 @@
       "package": "com.boongo_app_2"
     },
     "plugins": [
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "expo-sqlite",
+      "expo-sharing",
+      "expo-font"
     ]
   }
 }
