@@ -3,12 +3,9 @@
     "name": "boongo_app_2",
     "slug": "boongo_app",
     "version": "1.3.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "bundleIdentifier": "com.reborn.boongo"
     },
