@@ -67,6 +67,7 @@ import BankCardSubscribeScreen from './screens/subscribe_bank_card';
 import NewsDataScreen from './screens/news_data';
 import UpdatePasswordScreen from './screens/Auth/update-password';
 import AccountGuard from './AccountGuard';
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // =============== Bottom tab ===============
 const BottomTab = createBottomTabNavigator();
@@ -373,13 +374,15 @@ const App = () => {
 }
 
 export default () => (
-  <ThemeProvider>
-    <AuthProvider>
-      <SearchProvider>
-        <PaperProvider>
-          <App />
-        </PaperProvider>
-      </SearchProvider>
-    </AuthProvider>
-  </ThemeProvider>
+  <SafeAreaProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <SearchProvider>
+          <PaperProvider>
+            <App />
+          </PaperProvider>
+        </SearchProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  </SafeAreaProvider>
 );

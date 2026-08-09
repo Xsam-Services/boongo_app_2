@@ -17,6 +17,8 @@ import useColors from '../../hooks/useColors';
 import homeStyles from '../style';
 import axios from 'axios';
 
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 const RegisterScreen = () => {
   // =============== Colors ===============
   const COLORS = useColors();
@@ -93,7 +95,7 @@ const RegisterScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.white }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }} edges={['top']}>
       <Spinner visible={isLoading} />
 
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingVertical: PADDING.p16, paddingHorizontal: PADDING.p10 }}>
@@ -239,7 +241,7 @@ const RegisterScreen = () => {
         <Divider style={[homeStyles.authDivider, { backgroundColor: COLORS.light_secondary }]} />
         <FooterComponent color={COLORS.dark_secondary} />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

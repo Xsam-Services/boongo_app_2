@@ -15,6 +15,8 @@ import LogoText from '../../assets/img/brand.svg';
 import homeStyles from '../style';
 import FooterComponent from '../footer';
 
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 const OnboardScreen = () => {
   // =============== Colors ===============
   const COLORS = useColors();
@@ -51,7 +53,7 @@ const OnboardScreen = () => {
   };
 
   return (
-    <>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }} edges={['top']}>
       <StatusBar barStyle='light-content' backgroundColor={COLORS.danger} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}>
         {/* Onboard top */}
@@ -65,7 +67,7 @@ const OnboardScreen = () => {
           {/* Slides */}
           <Carousel style={homeStyles.onboardSlide} autoplay={true} loop={true} showsControls={false} showsDots={true} autoplayInterval={10000}>
             {slides.map(item =>
-              <View key={item.id} style={[homeStyles.onboardSlideItem, {marginTop: (item.entity !== 'home' ? 30 : 5)}]}>
+              <View key={item.id} style={[homeStyles.onboardSlideItem, { marginTop: (item.entity !== 'home' ? 30 : 5) }]}>
                 {getImageSlide(item.entity)}
                 {item.entity !== 'home' && (
                   <Text style={[homeStyles.onboardSlideText, { color: COLORS.black }]}>{t('welcome_description.' + item.entity)}</Text>
@@ -102,7 +104,7 @@ const OnboardScreen = () => {
           </View>
         </View>
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
 };
 
