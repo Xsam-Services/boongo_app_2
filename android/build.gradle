@@ -4,8 +4,8 @@ buildscript {
         minSdkVersion = 24
         compileSdkVersion = 35
         targetSdkVersion = 35
-        // ndkVersion = "27.1.12297006"
-        ndkVersion = "27.0.12077973"
+        ndkVersion = "27.1.12297006"
+        // ndkVersion = "27.0.12077973"
         kotlinVersion = "2.0.21"
     }
     repositories {
@@ -16,6 +16,15 @@ buildscript {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+    }
+}
+
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            // Force support for 16 Ko alignment in PDFiumAndroid
+            force 'io.legere:pdfiumandroid:1.0.34'
+        }
     }
 }
 
