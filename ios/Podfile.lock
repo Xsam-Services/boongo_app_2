@@ -105,6 +105,8 @@ PODS:
     - ExpoModulesCore
   - ExpoSQLite (57.0.1):
     - ExpoModulesCore
+  - ExpoSystemUI (57.0.2):
+    - ExpoModulesCore
   - FBLazyVector (0.86.2)
   - hermes-engine (250829098.0.16):
     - hermes-engine/Pre-built (= 250829098.0.16)
@@ -2730,6 +2732,7 @@ DEPENDENCIES:
   - ExpoScreenOrientation (from `../node_modules/expo-screen-orientation/ios`)
   - ExpoSharing (from `../node_modules/expo-sharing/ios`)
   - ExpoSQLite (from `../node_modules/expo-sqlite/ios`)
+  - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - lottie-react-native (from `../node_modules/lottie-react-native`)
@@ -2875,6 +2878,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-sharing/ios"
   ExpoSQLite:
     :path: "../node_modules/expo-sqlite/ios"
+  ExpoSystemUI:
+    :path: "../node_modules/expo-system-ui/ios"
   FBLazyVector:
     :path: "../node_modules/react-native/Libraries/FBLazyVector"
   hermes-engine:
@@ -3097,6 +3102,7 @@ SPEC CHECKSUMS:
   ExpoScreenOrientation: 17fd81b2bdb7615b4b540335673aaf98a358281f
   ExpoSharing: 58dd4c1cb1a9b40d0a123e1350936a83020b0979
   ExpoSQLite: ddd65ed74bdebcff20f6766e682f9321ecb28ab8
+  ExpoSystemUI: ff3142b323ae7b4d11dc0b1dc4acfa30d92be7dc
   FBLazyVector: 3c3be9a019176b5699455f7f66c5444b78a411c6
   hermes-engine: f73c74fd6fa27fd730cf7f29c5730c5b9751fd55
   lottie-ios: 8f959969761e9c45d70353667d00af0e5b9cadb3
@@ -3203,6 +3209,6 @@ SPEC CHECKSUMS:
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Yoga: 9891cfb1c680f64de9c41b09e7453dea33454d2b
 
-PODFILE CHECKSUM: d7b9379829939eb0d03a670f51ba2e12a0f515f2
+PODFILE CHECKSUM: 30505dfd938c34760ac5509fb74b3f6c8ff483dd
 
 COCOAPODS: 1.16.2

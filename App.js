@@ -14,7 +14,6 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import * as ScreenCapture from 'expo-screen-capture';
-import * as ScreenOrientation from 'expo-screen-orientation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PADDING } from './tools/constants';
 import DrawerContent from './DrawerContent';
@@ -334,23 +333,6 @@ const App = () => {
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 4500); // 7 secondes
     return () => clearTimeout(timer);
-  }, []);
-
-  // Vander Otis
-  // Replaced react-native-orientation-locker with Expo ScreenOrientation
-  // to lock the application to portrait mode.
-  useEffect(() => {
-    const lockOrientation = async () => {
-      await ScreenOrientation.lockAsync(
-        ScreenOrientation.OrientationLock.PORTRAIT
-      );
-    };
-
-    lockOrientation();
-
-    return () => {
-      ScreenOrientation.unlockAsync();
-    };
   }, []);
 
   // Vander Otis
