@@ -22,6 +22,12 @@
       "expo-font",
       "expo-asset",
       [
+        "expo-screen-orientation",
+        {
+          "initialOrientation": "PORTRAIT"
+        }
+      ],
+      [
         "expo-audio",
         {
           "enableBackgroundPlayback": true

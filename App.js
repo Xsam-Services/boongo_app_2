@@ -14,7 +14,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import * as ScreenCapture from 'expo-screen-capture';
-import Orientation from 'react-native-orientation-locker';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PADDING } from './tools/constants';
 import DrawerContent from './DrawerContent';
@@ -336,16 +336,26 @@ const App = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // =============== Lock screen orientation ===============
+  // Vander Otis
+  // Replaced react-native-orientation-locker with Expo ScreenOrientation
+  // to lock the application to portrait mode.
   useEffect(() => {
-    Orientation.lockToPortrait();
+    const lockOrientation = async () => {
+      await ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT
+      );
+    };
+
+    lockOrientation();
 
     return () => {
-      Orientation.unlockAllOrientations();
+      ScreenOrientation.unlockAsync();
     };
   }, []);
 
-  // prevent screen captures from all app
+  // Vander Otis
+  // Replaced react-native-secure-screen with Expo ScreenCapture
+  // to prevent screen captures across the entire application.
   useEffect(() => {
     const preventScreenCapture = async () => {
       await ScreenCapture.preventScreenCaptureAsync();
