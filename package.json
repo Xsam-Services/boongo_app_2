@@ -71,6 +71,7 @@
     "react-native-localize": "^3.4.2",
     "react-native-masked-text": "^1.12.5",
     "react-native-modal-datetime-picker": "^18.0.0",
+    "react-native-onboard": "^2.6.0",
     "react-native-pager-view": "8.0.2",
     "react-native-paper": "^5.13.3",
     "react-native-paper-dates": "^0.22.40",
