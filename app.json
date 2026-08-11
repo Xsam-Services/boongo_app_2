@@ -29,7 +29,8 @@
         {
           "enableBackgroundPlayback": true
         }
-      ]
+      ],
+      "expo-splash-screen"
     ]
   }
 }
