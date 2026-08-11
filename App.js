@@ -68,6 +68,7 @@ import NewsDataScreen from './screens/news_data';
 import UpdatePasswordScreen from './screens/Auth/update-password';
 import AccountGuard from './AccountGuard';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import OnboardingScreen from './screens/onboarding/OnboardingScreen';
 
 // =============== Bottom tab ===============
 const BottomTab = createBottomTabNavigator();
@@ -326,7 +327,7 @@ const App = () => {
   // =============== Language ===============
   const { t } = useTranslation();
   // =============== Get contexts ===============
-  const { userInfo, splashLoading, changeStatus, logout } = useContext(AuthContext);
+  const { userInfo, splashLoading, isFirstTime, changeStatus, logout, saveFirstTimeCompleted } = useContext(AuthContext);
   // =============== Get data ===============
   const [showSplash, setShowSplash] = useState(true);
 
@@ -358,6 +359,10 @@ const App = () => {
   // ====== Affichage du Splash GIF (10 secondes) ======
   if (showSplash) {
     return <SplashScreen />;
+  }
+
+  if (isFirstTime) {
+    return <OnboardingScreen saveFirstTime={saveFirstTimeCompleted} />;
   }
 
   return (

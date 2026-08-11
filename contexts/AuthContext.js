@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../tools/constants';
 
 export const AuthContext = createContext();
+let onboardingCompletedCache = null;
 
 export const AuthProvider = ({ children }) => {
     // =============== Get data ===============
@@ -21,6 +22,37 @@ export const AuthProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [splashLoading, setSplashLoading] = useState(false);
     const [pushToken, setPushToken] = useState(null);
+
+    const [isFirstTime, setIsFirstTime] = useState(true);
+
+    const checkFirstTimeUser = async () => {
+        try {
+            // Use cached value if available to avoid AsyncStorage read
+            const onboardingCompleted =
+                onboardingCompletedCache !== null
+                    ? onboardingCompletedCache
+                    : await AsyncStorage.getItem("onboardingCompleted");
+
+            if (onboardingCompletedCache === null) {
+                onboardingCompletedCache = onboardingCompleted;
+            }
+
+            setIsFirstTime(onboardingCompleted !== "true");
+        } catch (error) {
+            console.error("Error checking onboarding status:", error);
+            setIsFirstTime(true);
+        }
+    };
+
+    const saveFirstTimeCompleted = async () => {
+        try {
+            await AsyncStorage.setItem("onboardingCompleted", "true");
+            onboardingCompletedCache = "true";
+            setIsFirstTime(false);
+        } catch (error) {
+            console.error("Error saving onboarding completion:", error);
+        }
+    };
 
     // Get system language
     const getLanguage = () => {
@@ -1102,13 +1134,20 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        isLoggedIn();
-        getPushToken();
+        const initializeApp = async () => {
+            await checkFirstTimeUser();
+            isLoggedIn();
+            getPushToken();
+        };
+
+        initializeApp();
     }, [])
 
     return (
         <AuthContext.Provider
-            value={{ isLoading, userInfo, paymentURL, startRegisterInfo, endRegisterInfo, registerError, splashLoading, pushToken, login, logout, resetPaymentURL, startRegister, checkPhoneOTP, checkOTP, endRegister, update, updateAvatar, changePassword, changeRole, changeOrganization, changeStatus, activateSubscriptionByCode, disableSubscriptionByCode, validateSubscription, invalidateSubscription, validateConsultations, invalidateConsultations, addToCart, removeFromCart, purchase, addMembership, removeMembership }}>
+            value={{
+                isFirstTime, isLoading, userInfo, paymentURL, startRegisterInfo, endRegisterInfo, registerError, splashLoading, pushToken, login, logout, resetPaymentURL, startRegister, checkPhoneOTP, checkOTP, endRegister, update, updateAvatar, changePassword, changeRole, changeOrganization, changeStatus, activateSubscriptionByCode, disableSubscriptionByCode, validateSubscription, invalidateSubscription, validateConsultations, invalidateConsultations, addToCart, removeFromCart, purchase, addMembership, removeMembership, saveFirstTimeCompleted,
+            }}>
             {children}
         </AuthContext.Provider>
     );

@@ -102,47 +102,46 @@ const News = ({ handleScroll, showBackToTop, listRef }) => {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
-      <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={[homeStyles.cardEmpty, { height: Dimensions.get('window').height, marginLeft: 0, paddingHorizontal: 2 }]}>
-          <Animated.FlatList
-            ref={flatListRef}
-            data={combinedData}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({ item }) => <NewsItemComponent item={item} />}
-            showsVerticalScrollIndicator={false}
-            alwaysBounceVertical={false}
-            onScroll={handleScroll}
-            onEndReached={onEndReached}
-            onEndReachedThreshold={0.1}
-            scrollEventThrottle={16}
-            contentContainerStyle={homeStyles.scrollableList}
-            windowSize={10}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                progressViewOffset={105}
-              />
-            }
-            // contentInset={{ top: 105 }}
-            // contentOffset={{ y: -105 }}
-            ListEmptyComponent={
-              <EmptyListComponent
-                iconName='script-text-outline'
-                title={t('empty_list.title')}
-                description={t('empty_list.description_news')}
-              />
-            }
-            ListFooterComponent={() =>
-              isLoading ? (
-                <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text>
-              ) : null
-            }
-          />
-        </View>
-      </SafeAreaView>
-    </View>
+
+    <SafeAreaView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1, backgroundColor: COLORS.light_secondary }} edges={['top']}>
+      <View style={[homeStyles.cardEmpty, { height: Dimensions.get('window').height, marginLeft: 0, paddingHorizontal: 2 }]}>
+        <Animated.FlatList
+          ref={flatListRef}
+          data={combinedData}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({ item }) => <NewsItemComponent item={item} />}
+          showsVerticalScrollIndicator={false}
+          alwaysBounceVertical={false}
+          onScroll={handleScroll}
+          onEndReached={onEndReached}
+          onEndReachedThreshold={0.1}
+          scrollEventThrottle={16}
+          contentContainerStyle={homeStyles.scrollableList}
+          windowSize={10}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              progressViewOffset={105}
+            />
+          }
+          // contentInset={{ top: 105 }}
+          // contentOffset={{ y: -105 }}
+          ListEmptyComponent={
+            <EmptyListComponent
+              iconName='script-text-outline'
+              title={t('empty_list.title')}
+              description={t('empty_list.description_news')}
+            />
+          }
+          ListFooterComponent={() =>
+            isLoading ? (
+              <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text>
+            ) : null
+          }
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
