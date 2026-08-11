@@ -103,6 +103,8 @@ PODS:
     - Yoga
   - ExpoSharing (57.0.10):
     - ExpoModulesCore
+  - ExpoSplashScreen (57.0.6):
+    - ExpoModulesCore
   - ExpoSQLite (57.0.1):
     - ExpoModulesCore
   - ExpoSystemUI (57.0.2):
@@ -2731,6 +2733,7 @@ DEPENDENCIES:
   - ExpoScreenCapture (from `../node_modules/expo-screen-capture/ios`)
   - ExpoScreenOrientation (from `../node_modules/expo-screen-orientation/ios`)
   - ExpoSharing (from `../node_modules/expo-sharing/ios`)
+  - ExpoSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - ExpoSQLite (from `../node_modules/expo-sqlite/ios`)
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -2876,6 +2879,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-screen-orientation/ios"
   ExpoSharing:
     :path: "../node_modules/expo-sharing/ios"
+  ExpoSplashScreen:
+    :path: "../node_modules/expo-splash-screen/ios"
   ExpoSQLite:
     :path: "../node_modules/expo-sqlite/ios"
   ExpoSystemUI:
@@ -3101,6 +3106,7 @@ SPEC CHECKSUMS:
   ExpoScreenCapture: 1728376b2a32a05dc1f6bae6a8d19b1bd33926f9
   ExpoScreenOrientation: 17fd81b2bdb7615b4b540335673aaf98a358281f
   ExpoSharing: 58dd4c1cb1a9b40d0a123e1350936a83020b0979
+  ExpoSplashScreen: 2dda363bfc268b92f00530ee7fa2a3be4534cf57
   ExpoSQLite: ddd65ed74bdebcff20f6766e682f9321ecb28ab8
   ExpoSystemUI: ff3142b323ae7b4d11dc0b1dc4acfa30d92be7dc
   FBLazyVector: 3c3be9a019176b5699455f7f66c5444b78a411c6

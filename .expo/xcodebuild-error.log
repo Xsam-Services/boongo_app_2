@@ -1,8 +1,0 @@
-** BUILD FAILED **
-
-
-The following build commands failed:
-	SwiftCompile normal arm64 Compiling\ SQLiteOptions.swift /Users/vanderotis/Documents/code/Reborn/boongo_app_2/node_modules/expo-sqlite/ios/SQLiteOptions.swift (in target 'ExpoSQLite' from project 'Pods')
-	SwiftCompile normal arm64 /Users/vanderotis/Documents/code/Reborn/boongo_app_2/node_modules/expo-sqlite/ios/SQLiteOptions.swift (in target 'ExpoSQLite' from project 'Pods')
-	Building workspace Boongo with scheme Boongo and configuration Debug
-(3 failures)
