@@ -1,10 +1,13 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import AboutScreen from './screens/About';
-import TermsScreen from './screens/About/terms';
-import PrivacyScreen from './screens/About/privacy';
-import ContactScreen from './screens/About/contact';
+import AboutScreen from '../screens/About';
+import TermsScreen from '../screens/About/terms';
+import PrivacyScreen from '../screens/About/privacy';
+import ContactScreen from '../screens/About/contact';
+import useColors from "../hooks/useColors";
+import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 const BottomTab = createBottomTabNavigator();
 

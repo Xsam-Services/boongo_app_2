@@ -24,10 +24,10 @@ import AccountGuard from './AccountGuard';
 import * as SplashScreenManager from 'expo-splash-screen';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import OnboardingScreen from './screens/onboarding/OnboardingScreen';
-import { HomeStackNavigation } from './screens/navigations/HomeStackNavigation';
-import { AboutBottomTabNavigation } from './screens/navigations/AboutBottomTabNavigation';
-import { DrawerNavigation } from './screens/navigations/DrawerNavigation';
-import { LoginStackNavigation } from './screens/navigations/LoginStackNavigation';
+import { HomeStackNavigation } from './navigations/HomeStackNavigation';
+import { AboutBottomTabNavigation } from './navigations/AboutBottomTabNavigation';
+import { DrawerNavigation } from './navigations/DrawerNavigation';
+import { LoginStackNavigation } from './navigations/LoginStackNavigation';
 
 
 const App = () => {

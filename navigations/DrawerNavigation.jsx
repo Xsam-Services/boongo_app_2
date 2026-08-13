@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { HomeStackNavigation } from "./HomeStackNavigation";
+import { AuthContext } from "../contexts/AuthContext";
 
 const Drawer = createDrawerNavigator();
 
