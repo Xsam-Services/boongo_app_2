@@ -3,9 +3,18 @@
     "all_rights_reserved": "Tous droits réservés",
     "welcome_title": "Bienvenue {{ firstname }}",
     "welcome_description": {
-        "work": "Publiez vos ouvrages de tout type (livre, revue & journal ou carte géographique) pour les rendre accessibles au public, et échangez avec les abonnés à vos ouvrages.",
-        "establishment": "Enregistrez votre établissement (scolaire, académique ou autre), échangez avec des enseignants ou des élèves/étudiants, et partagez vos programmes et événements.",
-        "government": "Enregistrez votre institution gouvernementale (ministère, entreprise publique ou autre) pour pouvoir partager vos événements et échanger avec le public."
+        "work": {
+            "title": "Publiez & Valorisez vos ouvrages",
+            "subtitle": "Publiez vos ouvrages de tout type (livre, revue & journal ou carte géographique) pour les rendre accessibles au public, et échangez avec les abonnés à vos ouvrages."
+        },
+        "establishment": {
+            "title": "Digitalisez votre établissement",
+            "subtitle": "Enregistrez votre établissement (scolaire, académique ou autre), échangez avec des enseignants ou des élèves/étudiants, et partagez vos programmes et événements."
+        },
+        "government": {
+            "title": "Involvez les citoyens & le public",
+            "subtitle": "Enregistrez votre institution gouvernementale (ministère, entreprise publique ou autre) pour pouvoir partager vos événements et échanger avec le public."
+        }
     },
     "slogan": "Le guide du savoir !",
     "about_boongo": "A propos de l’appli Boongo",

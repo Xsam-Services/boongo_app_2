@@ -3,9 +3,18 @@
     "all_rights_reserved": "Makoki nyonso mazali ya biso",
     "welcome_title": "Boyeyi malamu {{ firstname }}",
     "welcome_description": {
-        "work": "Bimisa misala na yo ya ndenge nionso (buku, Zulunalo to Karte ya mokili) mpo ete bato nyonso bákoka komona yango, mpe solola na ba oyo basali abonemá ya misala na yo.",
-        "establishment": "Komisa etablisséman na yo (école, université, to mosusu), solola na balakisi to bayekoli, mpe kabola ba programmes mpe ba événements na yo.",
-        "government": "Komisa institution ya gouvernement na yo (ministère, entreprise publique, to mosusu) po okoka kokabola ba événements na yo, pe okoka kosolola na public."
+        "work": {
+            "title": "Bimisa & Netola misala na yo",
+            "subtitle": "Bimisa misala na yo ya ndenge nionso (buku, zulunalo to karte) mpo bato nyonso bákoka komona yango, mpe solola na ba abonnés na yo."
+        },
+        "establishment": {
+            "title": "Komisa eteyelo na yo ya sika",
+            "subtitle": "Komisa etablisséman na yo (école, université to mosusu), solola na balakisi to bayekoli, mpe kabola ba programmes mpe ba événements na yo."
+        },
+        "government": {
+            "title": "Solola na bafandi & na public",
+            "subtitle": "Komisa institution ya gouvernement na yo (ministère, entreprise publique to mosusu) mpo okoka kokabola ba événements na yo mpe kosolola na public."
+        }
     },
     "slogan": "Motambwisi na boyebi!",
     "about_boongo": "Oyo etali appli Pepoo",

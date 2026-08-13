@@ -1,34 +1,39 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { OnboardFlow } from 'react-native-onboard';
+import useColors from "../../hooks/useColors";
 
 const OnboardingScreen = ({ saveFirstTime }) => {
+    const { t } = useTranslation();
+    const COLORS = useColors();
+
     return (
         <OnboardFlow
             pages={[
                 {
-                    title: 'Toute la connaissance de la RDC à portée de main',
-                    subtitle: 'Accédez à des milliers de livres, publications et médias numériques adaptés à vos besoins et à vos études.',
-                    imageUri: Image.resolveAssetSource(require('../../assets/img/onboarding/reading-glasses-pana.png')).uri,
+                    title: t('welcome_description.work.title'),
+                    subtitle: t('welcome_description.work.subtitle'),
+                    imageUri: Image.resolveAssetSource(require('../../assets/img/onboarding/publish-article-online.png')).uri,
                     primaryButtonTitle: 'Suivant',
                 },
                 {
-                    title: 'Prenez des notes & Apprenez en ligne',
-                    subtitle: 'Marquez vos références directement liées aux pages de vos ouvrages et suivez des cours dispensés par des enseignants qualifiés.',
-                    imageUri: Image.resolveAssetSource(require('../../assets/img/onboarding/ebook-bro.png')).uri,
+                    title: t('welcome_description.establishment.title'),
+                    subtitle: t('welcome_description.establishment.subtitle'),
+                    imageUri: Image.resolveAssetSource(require('../../assets/img/onboarding/digitalize-college.png')).uri,
                     primaryButtonTitle: 'Suivant',
                 },
                 {
-                    title: 'Lisez sans vous ruiner',
-                    subtitle: 'Ne payez plus des ouvrages complets au prix fort. Abonnez-vous pour la durée de votre choix et consultez tous vos contenus librement.',
-                    imageUri: Image.resolveAssetSource(require('../../assets/img/onboarding/bookmarks-rafiki.png')).uri,
+                    title: t('welcome_description.government.title'),
+                    subtitle: t('welcome_description.government.subtitle'),
+                    imageUri: Image.resolveAssetSource(require('../../assets/img/onboarding/public-establishment.png')).uri,
                     primaryButtonTitle: 'Commencer',
                 }
             ]}
             type={'fullscreen'}
-            primaryButtonStyle={{ backgroundColor: '#E74746' }}
+            primaryButtonStyle={{ backgroundColor: COLORS.primary }}
             primaryButtonTextStyle={{ color: '#FFF', fontWeight: 'bold' }}
-            paginationSelectedColor="#DB6031"
+            paginationSelectedColor={COLORS.primary}
             onDone={() => {
                 console.log('Onboarding completed');
                 saveFirstTime()
@@ -38,7 +43,6 @@ const OnboardingScreen = ({ saveFirstTime }) => {
 }
 
 export default OnboardingScreen;
-
 
 const styles = StyleSheet.create({
     button: {

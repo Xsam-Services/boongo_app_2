@@ -3,9 +3,18 @@
     "all_rights_reserved": "All rights reserved",
     "welcome_title": "Welcome {{ firstname }}",
     "welcome_description": {
-        "work": "Publish your works of all types (book, magazine & newspaper or geographical map) to make them accessible to the public, and interact with subscribers to your works.",
-        "establishment": "Register your institution (establishment, academic or other), interact with teachers or students, and share your programs and events.",
-        "government": "Register your government institution (ministry, public company, or other) to be able to share your events and interact with the public."
+        "work": {
+            "title": "Publish & Promote Your Works",
+            "subtitle": "Publish your works of all types (books, magazines, newspapers, or maps) to make them accessible to the public, and interact with your subscribers."
+        },
+        "establishment": {
+            "title": "Digitize Your Institution",
+            "subtitle": "Register your educational or academic institution, engage with teachers and students, and share your programs and events."
+        },
+        "government": {
+            "title": "Engage with Citizens & the Public",
+            "subtitle": "Register your government institution (ministry, public enterprise, or agency) to share official updates, events, and interact with the public."
+        }
     },
     "slogan": "The knowledge guide!",
     "about_boongo": "About the Boongo app",

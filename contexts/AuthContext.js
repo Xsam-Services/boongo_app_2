@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
     const [isFirstTime, setIsFirstTime] = useState(true);
 
     const checkFirstTimeUser = async () => {
+        await AsyncStorage.removeItem("onboardingCompleted");
         try {
             // Use cached value if available to avoid AsyncStorage read
             const onboardingCompleted =
@@ -46,8 +47,8 @@ export const AuthProvider = ({ children }) => {
 
     const saveFirstTimeCompleted = async () => {
         try {
-            await AsyncStorage.setItem("onboardingCompleted", "true");
-            onboardingCompletedCache = "true";
+            // await AsyncStorage.setItem("onboardingCompleted", "true");
+            // onboardingCompletedCache = "true";
             setIsFirstTime(false);
         } catch (error) {
             console.error("Error saving onboarding completion:", error);
