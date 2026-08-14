@@ -3,38 +3,28 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useContext, useEffect, useState } from 'react'
-import { AuthContext, AuthProvider } from './contexts/AuthContext';
-import { SearchContext, SearchProvider } from './contexts/SearchContext';
 import { Provider as PaperProvider } from 'react-native-paper';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { Dimensions, TextInput, TouchableOpacity, View } from 'react-native';
-
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as ScreenCapture from 'expo-screen-capture';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PADDING } from './tools/constants';
-import DrawerContent from './DrawerContent';
-import Logo from './assets/img/icon.svg';
-import useColors from './hooks/useColors';
-import homeStyles from './screens/style';
-import SplashScreen from './screens/splash_screen';
-import AccountGuard from './AccountGuard';
-
 import * as SplashScreenManager from 'expo-splash-screen';
-import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import OnboardingScreen from './screens/onboarding/OnboardingScreen';
-import { HomeStackNavigation } from './navigations/HomeStackNavigation';
-import { AboutBottomTabNavigation } from './navigations/AboutBottomTabNavigation';
-import { DrawerNavigation } from './navigations/DrawerNavigation';
-import { LoginStackNavigation } from './navigations/LoginStackNavigation';
+import { NavigationContainer } from '@react-navigation/native';
+
+import { ThemeProvider } from './src/contexts/ThemeContext';
+import { AuthContext, AuthProvider } from './src/contexts/AuthContext';
+import { SearchProvider } from './src/contexts/SearchContext';
+import SplashScreen from './src/screens/SplashScreen';
+import AccountGuard from './src/screens/AccountGuard';
+import OnboardingScreen from './src/screens/onboarding/OnboardingScreen';
+// import { DrawerNavigation } from './src/navigations/DrawerNavigation';
+import { LoginStackNavigation } from './src/navigations/LoginStackNavigation';
+
+import './src/services/i18next';
 
 
 const App = () => {
-  // =============== Language ===============
-  const { t } = useTranslation();
   // =============== Get contexts ===============
   const { userInfo, splashLoading, isFirstTime, changeStatus, logout, saveFirstTimeCompleted } = useContext(AuthContext);
+
   // =============== Get data ===============
   const [showSplash, setShowSplash] = useState(true);
 
@@ -76,7 +66,7 @@ const App = () => {
     <NavigationContainer>
       {userInfo.id ? (
         <AccountGuard userInfo={userInfo} changeStatus={changeStatus} logout={logout}>
-          <DrawerNavigation />
+          {/* <DrawerNavigation /> */}
         </AccountGuard>
       ) : (
         <LoginStackNavigation />
