@@ -96,7 +96,13 @@ export const AuthProvider = ({ children }) => {
             setStartRegisterInfo(userData);
 
             AsyncStorage.setItem('startRegisterInfo', JSON.stringify(userData));
-            ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+            // ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+            Toast.show({
+                type: 'error',
+                text1: 'Erreur',
+                text2: message || 'Une erreur s\'est produite',
+                position: 'top'
+            });
             console.log(`${message}`);
 
             setIsLoading(false);
@@ -105,18 +111,36 @@ export const AuthProvider = ({ children }) => {
         }).catch(error => {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                // ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data?.message || 'Une erreur s\'est produite',
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
                 setRegisterError(`${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
                 // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                // ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: t('error') + ' ' + t('error_message.no_server_response') || 'Une erreur s\'est produite',
+                    position: 'top'
+                });
                 setRegisterError(t('error') + ' ' + t('error_message.no_server_response'));
 
             } else {
                 // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                // ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error || 'Une erreur s\'est produite',
+                    position: 'top'
+                });
                 setRegisterError(`${error}`);
             }
 

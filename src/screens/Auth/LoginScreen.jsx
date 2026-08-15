@@ -1,7 +1,3 @@
-/**
- * @author Vander Otis
- * @see https://github.com/vanotis720
- */
 import React, { useContext, useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';

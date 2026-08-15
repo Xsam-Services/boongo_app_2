@@ -421,6 +421,10 @@
             "title": "Connectez-vous",
             "subtitle": "Content de vous revoir !"
         },
+        "register": {
+            "title": "Créer un compte",
+            "subtitle": "Inscrivez-vous pour continuer"
+        },
         "organization": {
             "title": "Choisir une organisation",
             "new": "Ajouter organisation",

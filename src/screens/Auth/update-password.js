@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Divider } from 'react-native-paper';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PADDING } from '../../tools/constants';
+import { API, PADDING } from '../../tools/constants';
 import { AuthContext } from '../../contexts/AuthContext';
 import FooterComponent from '../footer';
 import LogoText from '../../../assets/img/brand.svg';

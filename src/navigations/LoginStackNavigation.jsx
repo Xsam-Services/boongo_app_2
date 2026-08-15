@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import WelcomeScreen from "../screens/Auth/WelcomeScreen";
 import LoginScreen from '../screens/Auth/LoginScreen';
-import RegisterScreen from '../screens/Auth/register';
+import RegisterScreen from '../screens/Auth/RegisterScreen';
 import ContinueRegisterScreen from '../screens/Auth/continue-register';
 import PasswordResetScreen from '../screens/Auth/password-reset';
 import CheckEmailOTPScreen from '../screens/Auth/check-email-otp';

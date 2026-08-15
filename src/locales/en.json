@@ -421,6 +421,10 @@
             "title": "Login account",
             "subtitle": "Welcome back !"
         },
+        "register": {
+            "title": "Create Account",
+            "subtitle": "Sign up to continue"
+        },
         "organization": {
             "title": "Choose an organization",
             "new": "Add organization",
