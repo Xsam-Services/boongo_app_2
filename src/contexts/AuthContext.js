@@ -7,6 +7,7 @@ import { ToastAndroid } from 'react-native';
 import * as RNLocalize from 'react-native-localize';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 import { API } from '../tools/constants';
 
 export const AuthContext = createContext();
@@ -26,7 +27,6 @@ export const AuthProvider = ({ children }) => {
     const [isFirstTime, setIsFirstTime] = useState(true);
 
     const checkFirstTimeUser = async () => {
-        // await AsyncStorage.removeItem("onboardingCompleted");
         try {
             // Use cached value if available to avoid AsyncStorage read
             const onboardingCompleted =
@@ -1052,7 +1052,12 @@ export const AuthProvider = ({ children }) => {
             setUserInfo(userData);
 
             AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-            ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+            // ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+            Toast.show({
+                type: 'success',
+                text1: message,
+                position: 'top'
+            });
 
             console.log(`${message}`);
             setIsLoading(false);
@@ -1060,16 +1065,34 @@ export const AuthProvider = ({ children }) => {
         }).catch(error => {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                // ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data?.message || 'Une erreur ss\'est produite',
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
                 // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
-
+                // ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                let errorMessage = t('error') + ' ' + t('error_message.no_server_response');
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: errorMessage || 'Une erreur ss\'est produite',
+                    position: 'top'
+                });
             } else {
                 // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                // ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error || 'Une erreur ss\'est produite',
+                    position: 'top'
+                });
             }
 
             setIsLoading(false);

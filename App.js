@@ -8,6 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as ScreenCapture from 'expo-screen-capture';
 import * as SplashScreenManager from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 import { ThemeProvider } from './src/contexts/ThemeContext';
 import { AuthContext, AuthProvider } from './src/contexts/AuthContext';
@@ -17,20 +18,15 @@ import AccountGuard from './src/screens/AccountGuard';
 import OnboardingScreen from './src/screens/onboarding/OnboardingScreen';
 // import { DrawerNavigation } from './src/navigations/DrawerNavigation';
 import { LoginStackNavigation } from './src/navigations/LoginStackNavigation';
-
 import './src/services/i18next';
 
-
 const App = () => {
-  // =============== Get contexts ===============
   const { userInfo, splashLoading, isFirstTime, changeStatus, logout, saveFirstTimeCompleted } = useContext(AuthContext);
 
-  // =============== Get data ===============
   const [showSplash, setShowSplash] = useState(true);
 
-  // ====== Gérer la durée du SplashScreen ======
   useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 4500); // 7 secondes
+    const timer = setTimeout(() => setShowSplash(false), 4000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -49,12 +45,7 @@ const App = () => {
     };
   }, []);
 
-  if (splashLoading) {
-    return <SplashScreen />;
-  }
-
-  // ====== Affichage du Splash GIF (10 secondes) ======
-  if (showSplash) {
+  if (splashLoading || showSplash) {
     return <SplashScreen />;
   }
 
@@ -71,6 +62,7 @@ const App = () => {
       ) : (
         <LoginStackNavigation />
       )}
+      <Toast />
     </NavigationContainer>
   );
 }
@@ -82,6 +74,7 @@ export default () => (
         <SearchProvider>
           <PaperProvider>
             <App />
+            <Toast />
           </PaperProvider>
         </SearchProvider>
       </AuthProvider>

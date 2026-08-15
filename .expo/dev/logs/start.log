@@ -5709,3 +5709,172 @@
 {"_e":"metro:client_log","_t":1786713801900,"level":"log","data":["{\"id\":5,\"role_name\":\"Membre\",\"role_description\":\"Personne qui consulte les œuvres publiées sur la plateforme.\",\"created_at\":\"2025-07-30 23:22:23\",\"updated_at\":\"2025-07-30 23:22:23\"}"]}
 {"_e":"metro:client_log","_t":1786713808318,"level":"log","data":["[TypeError: undefined is not a function]"]}
 {"_e":"metro:client_log","_t":1786713809513,"level":"log","data":["{\"id\":5,\"role_name\":\"Membre\",\"role_description\":\"Personne qui consulte les œuvres publiées sur la plateforme.\",\"created_at\":\"2025-07-30 23:22:23\",\"updated_at\":\"2025-07-30 23:22:23\"}"]}
+{"_e":"metro:bundling:started","_t":1786713994780,"id":"3c","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786713994780,"id":"3c","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786713994892,"id":"3c","total":1,"ms":111.518333}
+{"_e":"metro:client_log","_t":1786714000510,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:bundling:started","_t":1786714146359,"id":"3j","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786714146361,"id":"3j","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786714146593,"id":"3j","total":1,"ms":232.726125}
+{"_e":"metro:client_log","_t":1786714152160,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:client_log","_t":1786714188156,"level":"log","data":["[TypeError: undefined is not a function]"]}
+{"_e":"metro:client_log","_t":1786714188450,"level":"log","data":["{\"id\":5,\"role_name\":\"Membre\",\"role_description\":\"Personne qui consulte les œuvres publiées sur la plateforme.\",\"created_at\":\"2025-07-30 23:22:23\",\"updated_at\":\"2025-07-30 23:22:23\"}"]}
+{"_e":"metro:bundling:started","_t":1786714209704,"id":"3t","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786714209705,"id":"3t","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786714209766,"id":"3t","total":1,"ms":60.836042}
+{"_e":"metro:client_log","_t":1786714215150,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:client_log","_t":1786714240694,"level":"log","data":["[TypeError: undefined is not a function]"]}
+{"_e":"metro:client_log","_t":1786714241038,"level":"log","data":["{\"id\":5,\"role_name\":\"Membre\",\"role_description\":\"Personne qui consulte les œuvres publiées sur la plateforme.\",\"created_at\":\"2025-07-30 23:22:23\",\"updated_at\":\"2025-07-30 23:22:23\"}"]}
+{"_e":"metro:client_log","_t":1786714258349,"level":"log","data":["[TypeError: undefined is not a function]"]}
+{"_e":"metro:client_log","_t":1786714259486,"level":"log","data":["{\"id\":5,\"role_name\":\"Membre\",\"role_description\":\"Personne qui consulte les œuvres publiées sur la plateforme.\",\"created_at\":\"2025-07-30 23:22:23\",\"updated_at\":\"2025-07-30 23:22:23\"}"]}
+{"_e":"metro:client_log","_t":1786714282064,"level":"log","data":["[TypeError: undefined is not a function]"]}
+{"_e":"metro:client_log","_t":1786714283458,"level":"log","data":["{\"id\":5,\"role_name\":\"Membre\",\"role_description\":\"Personne qui consulte les œuvres publiées sur la plateforme.\",\"created_at\":\"2025-07-30 23:22:23\",\"updated_at\":\"2025-07-30 23:22:23\"}"]}
+{"_e":"metro:bundling:started","_t":1786714298553,"id":"46","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786714298554,"id":"46","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786714298633,"id":"46","total":1,"ms":78.95475}
+{"_e":"metro:client_log","_t":1786714304749,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:bundling:started","_t":1786714332673,"id":"4e","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786714332675,"id":"4e","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786714332752,"id":"4e","total":1,"ms":77.075417}
+{"_e":"metro:client_log","_t":1786714338114,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:bundling:started","_t":1786714347623,"id":"4l","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786714347623,"id":"4l","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786714347838,"id":"4l","total":1,"ms":215.435459}
+{"_e":"metro:client_log","_t":1786714354224,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:bundling:started","_t":1786714359524,"id":"4t","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786714359524,"id":"4t","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786714359739,"id":"4t","total":1,"ms":215.061042}
+{"_e":"root:init","_t":1786794668585,"format":"v0-jsonl","version":"57.0.13"}
+{"_e":"env:mode","_t":1786794668586,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1786794668589,"mode":"development","files":[],"env":{}}
+{"_e":"devserver:start","_t":1786794669079,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1786794669453,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1786794669752,"plugins":[{"packageName":"expo-sqlite","bannerTitle":"expo-sqlite","cliBanner":false,"webpageEndpoint":"/_expo/plugins/expo-sqlite"}]}
+{"_e":"metro:instantiate","_t":1786794670693,"atlas":false,"workers":6,"host":"::","port":8081}
+{"_e":"metro:bundling:started","_t":1786794818515,"id":"1","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786794818521,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786794818546,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786794818655,"id":"1","progress":0.09,"total":10,"current":3}
+{"_e":"metro:bundling:progress","_t":1786794818774,"id":"1","progress":0.09,"total":60,"current":11}
+{"_e":"metro:bundling:progress","_t":1786794818885,"id":"1","progress":0.09,"total":146,"current":22}
+{"_e":"metro:bundling:progress","_t":1786794818985,"id":"1","progress":0.09,"total":158,"current":27}
+{"_e":"metro:bundling:progress","_t":1786794819088,"id":"1","progress":0.09,"total":161,"current":29}
+{"_e":"metro:bundling:progress","_t":1786794819190,"id":"1","progress":0.09,"total":273,"current":61}
+{"_e":"metro:bundling:progress","_t":1786794819288,"id":"1","progress":0.09,"total":308,"current":77}
+{"_e":"metro:bundling:progress","_t":1786794819391,"id":"1","progress":0.09,"total":339,"current":92}
+{"_e":"metro:bundling:progress","_t":1786794819495,"id":"1","progress":0.10932622268470342,"total":372,"current":123}
+{"_e":"metro:bundling:progress","_t":1786794819597,"id":"1","progress":0.10932622268470342,"total":423,"current":137}
+{"_e":"metro:bundling:progress","_t":1786794819705,"id":"1","progress":0.10932622268470342,"total":449,"current":145}
+{"_e":"metro:bundling:progress","_t":1786794819806,"id":"1","progress":0.12052115710989492,"total":458,"current":159}
+{"_e":"metro:bundling:progress","_t":1786794819906,"id":"1","progress":0.124310766287597,"total":485,"current":171}
+{"_e":"metro:bundling:progress","_t":1786794820010,"id":"1","progress":0.12843730161381936,"total":519,"current":186}
+{"_e":"metro:bundling:progress","_t":1786794820111,"id":"1","progress":0.16354887543252597,"total":544,"current":220}
+{"_e":"metro:bundling:progress","_t":1786794820210,"id":"1","progress":0.2217377791330456,"total":584,"current":275}
+{"_e":"metro:bundling:progress","_t":1786794820330,"id":"1","progress":0.22908904960187013,"total":585,"current":280}
+{"_e":"metro:bundling:progress","_t":1786794820429,"id":"1","progress":0.31030133777757757,"total":596,"current":332}
+{"_e":"metro:bundling:progress","_t":1786794820529,"id":"1","progress":0.36152058964909467,"total":632,"current":380}
+{"_e":"metro:bundling:progress","_t":1786794820630,"id":"1","progress":0.4061299241538307,"total":692,"current":441}
+{"_e":"metro:bundling:progress","_t":1786794820731,"id":"1","progress":0.4438366572410785,"total":731,"current":487}
+{"_e":"metro:bundling:progress","_t":1786794820831,"id":"1","progress":0.4500034203767389,"total":802,"current":538}
+{"_e":"metro:bundling:progress","_t":1786794820931,"id":"1","progress":0.4802964557177287,"total":847,"current":587}
+{"_e":"metro:bundling:progress","_t":1786794821031,"id":"1","progress":0.545564089541956,"total":857,"current":633}
+{"_e":"metro:bundling:progress","_t":1786794821131,"id":"1","progress":0.5857115172575094,"total":865,"current":662}
+{"_e":"metro:bundling:progress","_t":1786794821239,"id":"1","progress":0.5857115172575094,"total":951,"current":691}
+{"_e":"metro:bundling:progress","_t":1786794821341,"id":"1","progress":0.5857115172575094,"total":971,"current":713}
+{"_e":"metro:bundling:progress","_t":1786794821441,"id":"1","progress":0.5857115172575094,"total":1013,"current":757}
+{"_e":"metro:bundling:progress","_t":1786794821541,"id":"1","progress":0.606258376551483,"total":1048,"current":816}
+{"_e":"metro:bundling:progress","_t":1786794821641,"id":"1","progress":0.7078101787564195,"total":1065,"current":896}
+{"_e":"metro:bundling:progress","_t":1786794821745,"id":"1","progress":0.7194674744897959,"total":1120,"current":950}
+{"_e":"metro:bundling:progress","_t":1786794821864,"id":"1","progress":0.7194674744897959,"total":1144,"current":958}
+{"_e":"metro:bundling:progress","_t":1786794821965,"id":"1","progress":0.7194674744897959,"total":1245,"current":978}
+{"_e":"metro:bundling:progress","_t":1786794822065,"id":"1","progress":0.7194674744897959,"total":1305,"current":1087}
+{"_e":"metro:bundling:progress","_t":1786794822165,"id":"1","progress":0.7752364544047126,"total":1347,"current":1186}
+{"_e":"metro:bundling:progress","_t":1786794822265,"id":"1","progress":0.8024345996332367,"total":1353,"current":1212}
+{"_e":"metro:bundling:progress","_t":1786794822365,"id":"1","progress":0.8387397132653588,"total":1390,"current":1273}
+{"_e":"metro:bundling:progress","_t":1786794822465,"id":"1","progress":0.8633400437818927,"total":1454,"current":1351}
+{"_e":"metro:bundling:progress","_t":1786794822565,"id":"1","progress":0.8775670245015194,"total":1487,"current":1393}
+{"_e":"metro:bundling:progress","_t":1786794822665,"id":"1","progress":0.898417274502838,"total":1534,"current":1454}
+{"_e":"metro:bundling:progress","_t":1786794822765,"id":"1","progress":0.9707488054643926,"total":1561,"current":1538}
+{"_e":"metro:bundling:progress","_t":1786794822900,"id":"1","progress":0.999,"total":1576,"current":1576}
+{"_e":"metro:bundling:done","_t":1786794823081,"id":"1","total":1576,"ms":4563.609541}
+{"_e":"metro:bundling:started","_t":1786794983490,"id":"4","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786794983491,"id":"4","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786794983557,"id":"4","total":1,"ms":66.361791}
+{"_e":"metro:client_log","_t":1786795310705,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:client_log","_t":1786795312790,"level":"log","data":["[TypeError: undefined is not a function]"]}
+{"_e":"metro:client_log","_t":1786795314414,"level":"log","data":["{\"id\":5,\"role_name\":\"Membre\",\"role_description\":\"Personne qui consulte les œuvres publiées sur la plateforme.\",\"created_at\":\"2025-07-30 23:22:23\",\"updated_at\":\"2025-07-30 23:22:23\"}"]}
+{"_e":"metro:bundling:failed","_t":1786795340674,"id":null,"message":"Unable to resolve \"../screens/Auth/login\" from \"src/navigations/LoginStackNavigation.jsx\"\n  3 |\n  4 | import WelcomeScreen from \"../screens/Auth/WelcomeScreen\";\n> 5 | import LoginScreen from '../screens/Auth/login';\n    |                          ^\n  6 | import RegisterScreen from '../screens/Auth/register';\n  7 | import ContinueRegisterScreen from '../screens/Auth/continue-register';\n  8 | import PasswordResetScreen from '../screens/Auth/password-reset';","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/navigations/LoginStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/Auth/login\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/LoginStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"../screens/Auth/login","originModulePath":"src/navigations/LoginStackNavigation.jsx"}
+{"_e":"metro:client_log","_t":1786795825800,"level":"log","data":["[TypeError: undefined is not a function]"]}
+{"_e":"metro:client_log","_t":1786795828741,"level":"log","data":["{\"id\":5,\"role_name\":\"Membre\",\"role_description\":\"Personne qui consulte les œuvres publiées sur la plateforme.\",\"created_at\":\"2025-07-30 23:22:23\",\"updated_at\":\"2025-07-30 23:22:23\"}"]}
+{"_e":"metro:client_log","_t":1786795955798,"level":"error","data":["[ReferenceError: Property 'StyleSheet' doesn't exist]"]}
+{"_e":"metro:client_log","_t":1786795966846,"level":"error","data":["[TypeError: Cannot read property 'create' of undefined]"]}
+{"_e":"metro:client_log","_t":1786795996212,"level":"error","data":["[ReferenceError: Property 'homeStyles' doesn't exist]"]}
+{"_e":"metro:client_log","_t":1786796191981,"level":"error","data":["[TypeError: Cannot read property 'message' of undefined]"]}
+{"_e":"metro:client_log","_t":1786796218288,"level":"error","data":["[TypeError: Cannot read property 'message' of undefined]"]}
+{"_e":"metro:client_log","_t":1786796364114,"level":"log","data":["[TypeError: undefined is not a function]"]}
+{"_e":"metro:client_log","_t":1786796370370,"level":"log","data":["[TypeError: undefined is not a function]"]}
+{"_e":"metro:client_log","_t":1786797194872,"level":"error","data":["[ReferenceError: Property 'ju' doesn't exist]"]}
+{"_e":"metro:client_log","_t":1786797828484,"level":"error","data":["[ReferenceError: Property 'COLORS' doesn't exist]"]}
+{"_e":"metro:client_log","_t":1786798525753,"level":"log","data":["[TypeError: undefined is not a function]"]}
+{"_e":"metro:bundling:started","_t":1786798665666,"id":"1d","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786798665667,"id":"1d","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786798665824,"id":"1d","total":1,"ms":157.932708}
+{"_e":"metro:bundling:started","_t":1786798846791,"id":"1g","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786798846801,"id":"1g","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786798847094,"id":"1g","total":1,"ms":302.793083}
+{"_e":"metro:bundling:started","_t":1786798860010,"id":"1j","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786798860010,"id":"1j","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786798860079,"id":"1j","total":1,"ms":69.406667}
+{"_e":"metro:bundling:started","_t":1786798880097,"id":"1m","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786798880098,"id":"1m","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786798880187,"id":"1m","total":1,"ms":89.579}
+{"_e":"metro:bundling:started","_t":1786799031379,"id":"1p","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786799031379,"id":"1p","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786799031450,"id":"1p","total":1,"ms":70.945}
+{"_e":"metro:client_log","_t":1786799042431,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:client_log","_t":1786799042996,"level":"log","data":["[TypeError: undefined is not a function]"]}
+{"_e":"metro:client_log","_t":1786799044536,"level":"log","data":["{\"id\":5,\"role_name\":\"Membre\",\"role_description\":\"Personne qui consulte les œuvres publiées sur la plateforme.\",\"created_at\":\"2025-07-30 23:22:23\",\"updated_at\":\"2025-07-30 23:22:23\"}"]}
+{"_e":"metro:client_log","_t":1786799069288,"level":"log","data":["[TypeError: undefined is not a function]"]}
+{"_e":"metro:client_log","_t":1786799078316,"level":"warn","data":["ToastAndroid is not supported on this platform."]}
+{"_e":"metro:client_log","_t":1786799078320,"level":"log","data":["400 -> Utilisateur inconnu."]}
+{"_e":"metro:bundling:failed","_t":1786799750108,"id":null,"message":"SyntaxError: /Users/vanderotis/Documents/code/Reborn/boongo_app_2/src/screens/Auth/LoginScreen.jsx: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (60:6)\n\n  58 |       // {/* : ''} */}\n  59 |\n> 60 |       <TextInput\n     |       ^\n  61 |         style={[styles.authInput, { color: COLORS.black, borderColor: COLORS.dark_light }]}\n  62 |         value={username}\n  63 |         placeholder={t('auth.login_username')}","importStack":null,"filename":"src/screens/Auth/LoginScreen.jsx","targetModuleName":null,"originModulePath":null}
+{"_e":"root:init","_t":1786800027802,"format":"v0-jsonl","version":"57.0.13"}
+{"_e":"env:mode","_t":1786800027803,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1786800027805,"mode":"development","files":[],"env":{}}
+{"_e":"devserver:start","_t":1786800029025,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1786800029371,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1786800029723,"plugins":[{"packageName":"expo-sqlite","bannerTitle":"expo-sqlite","cliBanner":false,"webpageEndpoint":"/_expo/plugins/expo-sqlite"}]}
+{"_e":"metro:instantiate","_t":1786800032312,"atlas":false,"workers":6,"host":"::","port":8081}
+{"_e":"metro:bundling:started","_t":1786800053231,"id":"1","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786800053231,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786800053238,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786800053340,"id":"1","progress":0.01965237138614726,"total":107,"current":15}
+{"_e":"metro:bundling:progress","_t":1786800053441,"id":"1","progress":0.053770216341104814,"total":207,"current":48}
+{"_e":"metro:bundling:progress","_t":1786800053543,"id":"1","progress":0.05735172442684931,"total":309,"current":74}
+{"_e":"metro:bundling:progress","_t":1786800053645,"id":"1","progress":0.06805293005671077,"total":414,"current":108}
+{"_e":"metro:bundling:progress","_t":1786800053745,"id":"1","progress":0.12265423353839586,"total":454,"current":159}
+{"_e":"metro:bundling:progress","_t":1786800053845,"id":"1","progress":0.28189529125381974,"total":501,"current":266}
+{"_e":"metro:bundling:progress","_t":1786800053945,"id":"1","progress":0.418344841984626,"total":671,"current":434}
+{"_e":"metro:bundling:progress","_t":1786800054045,"id":"1","progress":0.5223658498236786,"total":844,"current":610}
+{"_e":"metro:bundling:progress","_t":1786800054146,"id":"1","progress":0.563248751997004,"total":1002,"current":752}
+{"_e":"metro:bundling:progress","_t":1786800054246,"id":"1","progress":0.6376240094754865,"total":1211,"current":967}
+{"_e":"metro:bundling:progress","_t":1786800054346,"id":"1","progress":0.8112475931921339,"total":1299,"current":1170}
+{"_e":"metro:bundling:progress","_t":1786800054446,"id":"1","progress":0.840715593468034,"total":1396,"current":1280}
+{"_e":"metro:bundling:progress","_t":1786800054546,"id":"1","progress":0.8932250111978948,"total":1512,"current":1429}
+{"_e":"metro:bundling:progress","_t":1786800054669,"id":"1","progress":0.999,"total":1580,"current":1580}
+{"_e":"metro:bundling:done","_t":1786800054747,"id":"1","total":1580,"ms":1516.736333}
+{"_e":"metro:bundling:started","_t":1786800085382,"id":"4","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786800085383,"id":"4","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786800085462,"id":"4","total":1,"ms":78.996708}
+{"_e":"metro:bundling:started","_t":1786800449316,"id":"7","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786800449319,"id":"7","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786800449406,"id":"7","total":1,"ms":89.08675}
+{"_e":"metro:client_log","_t":1786800473361,"level":"log","data":["400 -> Ce champ est obligatoire."]}
+{"_e":"metro:bundling:started","_t":1786800488137,"id":"a","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786800488139,"id":"a","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786800488319,"id":"a","total":1,"ms":181.191125}
+{"_e":"metro:client_log","_t":1786800501789,"level":"log","data":["400 -> Ce champ est obligatoire."]}
+{"_e":"metro:client_log","_t":1786800509304,"level":"log","data":["400 -> Ce champ est obligatoire."]}
+{"_e":"metro:client_log","_t":1786800526243,"level":"log","data":["400 -> Utilisateur inconnu."]}
+{"_e":"metro:client_log","_t":1786800835694,"level":"log","data":["400 -> Ce champ est obligatoire."]}
+{"_e":"metro:client_log","_t":1786801116442,"level":"log","data":["400 -> Utilisateur inconnu."]}

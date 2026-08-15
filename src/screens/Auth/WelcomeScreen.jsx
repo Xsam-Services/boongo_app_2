@@ -54,7 +54,7 @@ const OnboardScreen = () => {
         />
       </View>
 
-      <View style={[styles.bottomCard, { backgroundColor: COLORS.dark_light }]}>
+      <View style={[styles.bottomCard, { backgroundColor: COLORS.dark_light, borderColor: COLORS.primary_transparent }]}>
         <TouchableOpacity
           style={[styles.button, { backgroundColor: COLORS.primary }]}
           onPress={() => navigation.navigate('Register')}
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
   bottomCard: {
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
+    borderTopWidth: 1,
     paddingHorizontal: PADDING.p04 || 24,
     paddingTop: 24,
     paddingBottom: 20,

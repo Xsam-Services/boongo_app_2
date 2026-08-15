@@ -417,6 +417,10 @@
             "title": "Welcome",
             "subtitle": "Login or signup to continue"
         },
+        "login": {
+            "title": "Login account",
+            "subtitle": "Welcome back !"
+        },
         "organization": {
             "title": "Choose an organization",
             "new": "Add organization",

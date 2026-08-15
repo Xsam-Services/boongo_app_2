@@ -2,7 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import WelcomeScreen from "../screens/Auth/WelcomeScreen";
-import LoginScreen from '../screens/Auth/login';
+import LoginScreen from '../screens/Auth/LoginScreen';
 import RegisterScreen from '../screens/Auth/register';
 import ContinueRegisterScreen from '../screens/Auth/continue-register';
 import PasswordResetScreen from '../screens/Auth/password-reset';

@@ -417,6 +417,10 @@
             "title": "Boyei malamu",
             "subtitle": "Kota to inscrire yo po okoba"
         },
+        "login": {
+            "title": "Kota na kati",
+            "subtitle": "Boyei malamu lisusu!"
+        },
         "organization": {
             "title": "Pona organisation",
             "new": "Bakisa organisation",
