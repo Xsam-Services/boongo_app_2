@@ -76,7 +76,12 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             // If the user is logged in and the token does not exist, display the error
             if (userInfo && Object.keys(userInfo).length > 0) {
-                ToastAndroid.show(`Error retrieving push token: ${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `Error retrieving push token: ${error}`,
+                    position: 'top'
+                });
                 console.error(`Error retrieving push token: ${error}`);
             }
             // If the user is logged out, do not display anything
@@ -96,11 +101,10 @@ export const AuthProvider = ({ children }) => {
             setStartRegisterInfo(userData);
 
             AsyncStorage.setItem('startRegisterInfo', JSON.stringify(userData));
-            // ToastAndroid.show(`${message}`, ToastAndroid.LONG);
             Toast.show({
-                type: 'error',
-                text1: 'Erreur',
-                text2: message || 'Une erreur s\'est produite',
+                type: 'success',
+                text1: 'Succès',
+                text2: message,
                 position: 'top'
             });
             console.log(`${message}`);
@@ -111,11 +115,10 @@ export const AuthProvider = ({ children }) => {
         }).catch(error => {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                // ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
                 Toast.show({
                     type: 'error',
                     text1: 'Erreur',
-                    text2: error.response.data?.message || 'Une erreur s\'est produite',
+                    text2: error.response.data?.message || error.response.data,
                     position: 'top'
                 });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
@@ -123,7 +126,6 @@ export const AuthProvider = ({ children }) => {
 
             } else if (error.request) {
                 // The request was made but no response was received
-                // ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
                 Toast.show({
                     type: 'error',
                     text1: 'Erreur',
@@ -134,7 +136,6 @@ export const AuthProvider = ({ children }) => {
 
             } else {
                 // An error occurred while configuring the query
-                // ToastAndroid.show(`${error}`, ToastAndroid.LONG);
                 Toast.show({
                     type: 'error',
                     text1: 'Erreur',
@@ -150,7 +151,12 @@ export const AuthProvider = ({ children }) => {
 
     const checkPhoneOTP = async (isPasswordReset, phone, token) => {
         if (typeof isPasswordReset !== 'boolean' || !phone || !token) {
-            ToastAndroid.show(t('error_message.missing_parameters'), ToastAndroid.LONG);
+            Toast.show({
+                type: 'error',
+                text1: 'Erreur',
+                text2: t('error_message.missing_parameters'),
+                position: 'top'
+            });
 
             return {
                 success: false,
@@ -170,7 +176,12 @@ export const AuthProvider = ({ children }) => {
             const userData = res.data.data.user;
             const passwordResetData = res.data.data.password_reset;
 
-            ToastAndroid.show(message, ToastAndroid.LONG);
+            Toast.show({
+                type: 'success',
+                text1: 'Information',
+                text2: message,
+                position: 'top'
+            });
 
             if (!res.data.success) {
 
@@ -216,7 +227,12 @@ export const AuthProvider = ({ children }) => {
                 message = error.message;
             }
 
-            ToastAndroid.show(message, ToastAndroid.LONG);
+            Toast.show({
+                type: 'error',
+                text1: 'Erreur',
+                text2: message,
+                position: 'top'
+            });
             setRegisterError(message);
 
             return {
@@ -250,7 +266,12 @@ export const AuthProvider = ({ children }) => {
             } else {
                 setIsLoading(false);
 
-                ToastAndroid.show(t('error_message.missing_parameters'), ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: t('error_message.missing_parameters'),
+                    position: 'top'
+                });
 
                 return 'missing_parameters';
             }
@@ -261,12 +282,22 @@ export const AuthProvider = ({ children }) => {
             emailVerified = !!userData.email_verified_at;
             phoneVerified = !!userData.phone_verified_at;
 
-            ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+            Toast.show({
+                type: 'info',
+                text1: 'Information',
+                text2: message,
+                position: 'top'
+            });
 
             setIsLoading(false);
 
             if (res.data.success === false) {
-                ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: message,
+                    position: 'top'
+                });
                 console.log(`${message}`);
                 setRegisterError(`${message}`);
 
@@ -345,18 +376,33 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data.message || error.response.data,
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
                 setRegisterError(`${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
                 // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: t('error') + ' ' + t('error_message.no_server_response'),
+                    position: 'top'
+                });
                 setRegisterError(t('error') + ' ' + t('error_message.no_server_response'));
 
             } else {
                 // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `${error}`,
+                    position: 'top'
+                });
                 setRegisterError(`${error}`);
             }
 
@@ -382,7 +428,12 @@ export const AuthProvider = ({ children }) => {
 
             AsyncStorage.removeItem('endRegisterInfo');
             AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-            ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+            Toast.show({
+                type: 'success',
+                text1: 'Succès',
+                text2: message,
+                position: 'top'
+            });
             console.log(`${message}`);
 
             setIsLoading(false);
@@ -390,18 +441,33 @@ export const AuthProvider = ({ children }) => {
         }).catch(error => {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data.message || error.response.data,
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
                 setRegisterError(`${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
                 // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: t('error') + ' ' + t('error_message.no_server_response'),
+                    position: 'top'
+                });
                 setRegisterError(t('error') + ' ' + t('error_message.no_server_response'));
 
             } else {
                 // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `${error}`,
+                    position: 'top'
+                });
                 setRegisterError(`${error}`);
             }
 
@@ -425,7 +491,12 @@ export const AuthProvider = ({ children }) => {
             setUserInfo(userData);
 
             AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-            ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+            Toast.show({
+                type: 'success',
+                text1: 'Succès',
+                text2: message,
+                position: 'top'
+            });
             console.log(`Message: ${message}`);
 
             setIsLoading(false);
@@ -433,16 +504,31 @@ export const AuthProvider = ({ children }) => {
         }).catch(error => {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data.message || error.response.data,
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
                 // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: t('error') + ' ' + t('error_message.no_server_response'),
+                    position: 'top'
+                });
 
             } else {
                 // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `${error}`,
+                    position: 'top'
+                });
             }
 
             setIsLoading(false);
@@ -463,7 +549,12 @@ export const AuthProvider = ({ children }) => {
             setUserInfo(userData);
 
             AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-            ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+            Toast.show({
+                type: 'success',
+                text1: 'Succès',
+                text2: message,
+                position: 'top'
+            });
             console.log(`${message}`);
 
             setIsLoading(false);
@@ -471,16 +562,31 @@ export const AuthProvider = ({ children }) => {
         }).catch(error => {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data.message || error.response.data,
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
                 // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: t('error') + ' ' + t('error_message.no_server_response'),
+                    position: 'top'
+                });
 
             } else {
                 // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `${error}`,
+                    position: 'top'
+                });
             }
 
             setIsLoading(false);
@@ -489,7 +595,12 @@ export const AuthProvider = ({ children }) => {
 
     const changePassword = async (id, api_token, former_password, new_password, confirm_new_password) => {
         if (!id || !api_token || !former_password || !new_password || !confirm_new_password) {
-            ToastAndroid.show(t('error_message.missing_parameters'), ToastAndroid.LONG);
+            Toast.show({
+                type: 'error',
+                text1: 'Erreur',
+                text2: t('error_message.missing_parameters'),
+                position: 'top'
+            });
 
             return {
                 success: false,
@@ -516,7 +627,12 @@ export const AuthProvider = ({ children }) => {
 
             const message = res.data.message;
 
-            ToastAndroid.show(message, ToastAndroid.LONG);
+            Toast.show({
+                type: 'success',
+                text1: 'Succès',
+                text2: message,
+                position: 'top'
+            });
             console.log(message);
 
             return {
@@ -539,7 +655,12 @@ export const AuthProvider = ({ children }) => {
                 message = error.message;
             }
 
-            ToastAndroid.show(message, ToastAndroid.LONG);
+            Toast.show({
+                type: 'error',
+                text1: 'Erreur',
+                text2: message,
+                position: 'top'
+            });
 
             return {
                 success: false,
@@ -565,7 +686,12 @@ export const AuthProvider = ({ children }) => {
             setUserInfo(userData);
 
             AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-            ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+            Toast.show({
+                type: 'success',
+                text1: 'Succès',
+                text2: message,
+                position: 'top'
+            });
             console.log(`${message}`);
 
             setIsLoading(false);
@@ -573,16 +699,31 @@ export const AuthProvider = ({ children }) => {
         }).catch(error => {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data.message || error.response.data,
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
                 // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: t('error') + ' ' + t('error_message.no_server_response'),
+                    position: 'top'
+                });
 
             } else {
                 // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `${error}`,
+                    position: 'top'
+                });
             }
 
             setIsLoading(false);
@@ -601,7 +742,12 @@ export const AuthProvider = ({ children }) => {
             setUserInfo(userData);
 
             AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-            ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+            Toast.show({
+                type: 'success',
+                text1: 'Succès',
+                text2: message,
+                position: 'top'
+            });
             console.log(`${message}`);
 
             setIsLoading(false);
@@ -609,16 +755,31 @@ export const AuthProvider = ({ children }) => {
         }).catch(error => {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data.message || error.response.data,
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
                 // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: t('error') + ' ' + t('error_message.no_server_response'),
+                    position: 'top'
+                });
 
             } else {
                 // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `${error}`,
+                    position: 'top'
+                });
             }
 
             setIsLoading(false);
@@ -637,7 +798,12 @@ export const AuthProvider = ({ children }) => {
             setUserInfo(userData);
 
             AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-            ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+            Toast.show({
+                type: 'success',
+                text1: 'Succès',
+                text2: message,
+                position: 'top'
+            });
             console.log(`${message}`);
 
             setIsLoading(false);
@@ -645,16 +811,31 @@ export const AuthProvider = ({ children }) => {
         }).catch(error => {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data.message || error.response.data,
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
                 // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: t('error') + ' ' + t('error_message.no_server_response'),
+                    position: 'top'
+                });
 
             } else {
                 // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `${error}`,
+                    position: 'top'
+                });
             }
 
             setIsLoading(false);
@@ -676,7 +857,12 @@ export const AuthProvider = ({ children }) => {
                 if (isCodeActive) {
                     setUserInfo(userData);
                     AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-                    ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Succès',
+                        text2: message,
+                        position: 'top'
+                    });
                     console.log(`${message}`);
                 }
 
@@ -687,16 +873,31 @@ export const AuthProvider = ({ children }) => {
             .catch(error => {
                 if (error.response) {
                     // The request was made and the server responded with a status code
-                    ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Erreur',
+                        text2: error.response.data.message || error.response.data,
+                        position: 'top'
+                    });
                     console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
 
                 } else if (error.request) {
                     // The request was made but no response was received
-                    ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Erreur',
+                        text2: t('error') + ' ' + t('error_message.no_server_response'),
+                        position: 'top'
+                    });
 
                 } else {
                     // An error occurred while configuring the query
-                    ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Erreur',
+                        text2: `${error}`,
+                        position: 'top'
+                    });
                 }
 
                 setIsLoading(false);
@@ -869,7 +1070,12 @@ export const AuthProvider = ({ children }) => {
                 setUserInfo(userData);
 
                 AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-                ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'success',
+                    text1: 'Succès',
+                    text2: message,
+                    position: 'top'
+                });
 
                 console.log(`${message}`);
                 setIsLoading(false);
@@ -878,16 +1084,31 @@ export const AuthProvider = ({ children }) => {
         }).catch(error => {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data.message || error.response.data,
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
                 // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: t('error') + ' ' + t('error_message.no_server_response'),
+                    position: 'top'
+                });
 
             } else {
                 // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `${error}`,
+                    position: 'top'
+                });
             }
 
             setIsLoading(false);
@@ -909,7 +1130,12 @@ export const AuthProvider = ({ children }) => {
                 setUserInfo(userData);
 
                 AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-                ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'success',
+                    text1: 'Succès',
+                    text2: message,
+                    position: 'top'
+                });
 
                 console.log(`${message}`);
                 setIsLoading(false);
@@ -918,16 +1144,31 @@ export const AuthProvider = ({ children }) => {
         }).catch(error => {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data.message || error.response.data,
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
                 // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: t('error') + ' ' + t('error_message.no_server_response'),
+                    position: 'top'
+                });
 
             } else {
                 // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `${error}`,
+                    position: 'top'
+                });
             }
 
             setIsLoading(false);
@@ -959,7 +1200,12 @@ export const AuthProvider = ({ children }) => {
                 setUserInfo(userData);
 
                 AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-                ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'success',
+                    text1: 'Succès',
+                    text2: message,
+                    position: 'top'
+                });
 
                 console.log(`${message}`);
                 setIsLoading(false);
@@ -968,16 +1214,31 @@ export const AuthProvider = ({ children }) => {
         }).catch(error => {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data.message || error.response.data,
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
                 // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: t('error') + ' ' + t('error_message.no_server_response'),
+                    position: 'top'
+                });
 
             } else {
                 // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `${error}`,
+                    position: 'top'
+                });
             }
 
             setIsLoading(false);
@@ -1001,7 +1262,12 @@ export const AuthProvider = ({ children }) => {
                 setUserInfo(userData);
 
                 AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-                ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'success',
+                    text1: 'Succès',
+                    text2: message,
+                    position: 'top'
+                });
 
                 console.log(`${message}`);
                 setIsLoading(false);
@@ -1010,14 +1276,29 @@ export const AuthProvider = ({ children }) => {
             setIsLoading(false);
         }).catch(error => {
             if (error.response) {
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data.message || error.response.data,
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
-                ToastAndroid.show('Erreur de connexion au serveur', ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: 'Erreur de connexion au serveur',
+                    position: 'top'
+                });
 
             } else {
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `${error}`,
+                    position: 'top'
+                });
             }
 
             setIsLoading(false);
@@ -1041,7 +1322,12 @@ export const AuthProvider = ({ children }) => {
                 setUserInfo(userData);
 
                 AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-                ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'success',
+                    text1: 'Succès',
+                    text2: message,
+                    position: 'top'
+                });
 
                 console.log(`${message}`);
                 setIsLoading(false);
@@ -1050,14 +1336,29 @@ export const AuthProvider = ({ children }) => {
             setIsLoading(false);
         }).catch(error => {
             if (error.response) {
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data.message || error.response.data,
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
-                ToastAndroid.show('Erreur de connexion au serveur', ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: 'Erreur de connexion au serveur',
+                    position: 'top'
+                });
 
             } else {
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `${error}`,
+                    position: 'top'
+                });
             }
 
             setIsLoading(false);
@@ -1076,7 +1377,6 @@ export const AuthProvider = ({ children }) => {
             setUserInfo(userData);
 
             AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-            // ToastAndroid.show(`${message}`, ToastAndroid.LONG);
             Toast.show({
                 type: 'success',
                 text1: message,
@@ -1089,32 +1389,29 @@ export const AuthProvider = ({ children }) => {
         }).catch(error => {
             if (error.response) {
                 // The request was made and the server responded with a status code
-                // ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
                 Toast.show({
                     type: 'error',
                     text1: 'Erreur',
-                    text2: error.response.data?.message || 'Une erreur ss\'est produite',
+                    text2: error.response.data?.message || 'Une erreur s\'est produite',
                     position: 'top'
                 });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
 
             } else if (error.request) {
                 // The request was made but no response was received
-                // ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
                 let errorMessage = t('error') + ' ' + t('error_message.no_server_response');
                 Toast.show({
                     type: 'error',
                     text1: 'Erreur',
-                    text2: errorMessage || 'Une erreur ss\'est produite',
+                    text2: errorMessage || 'Une erreur s\'est produite',
                     position: 'top'
                 });
             } else {
                 // An error occurred while configuring the query
-                // ToastAndroid.show(`${error}`, ToastAndroid.LONG);
                 Toast.show({
                     type: 'error',
                     text1: 'Erreur',
-                    text2: error || 'Une erreur ss\'est produite',
+                    text2: error || 'Une erreur s\'est produite',
                     position: 'top'
                 });
             }
@@ -1143,42 +1440,45 @@ export const AuthProvider = ({ children }) => {
     };
 
     const isLoggedIn = async () => {
+        // await AsyncStorage.removeItem('userInfo');
         try {
             setSplashLoading(true);
 
-            let userInfo = await AsyncStorage.getItem('userInfo');
-            userInfo = JSON.parse(userInfo);
+            let storedUserInfo = await AsyncStorage.getItem('userInfo');
 
-            if (userInfo) {
-                setUserInfo(userInfo);
+            if (storedUserInfo) {
+                let parsedUserInfo = JSON.parse(storedUserInfo);
+                setUserInfo(parsedUserInfo);
             }
-
-            setSplashLoading(false);
 
         } catch (error) {
             if (error.response) {
-                // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: error.response.data.message || error.response.data,
+                    position: 'top'
+                });
                 console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
-
             } else if (error.request) {
-                // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
-
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: t('error') + ' ' + t('error_message.no_server_response'),
+                    position: 'top'
+                });
             } else {
-                // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erreur',
+                    text2: `${error}`,
+                    position: 'top'
+                });
             }
-
+        } finally {
+            // S'assure que le splash screen s'arrête dans tous les cas (succès ou échec)
             setSplashLoading(false);
         }
-
-        setIsLoading(true);
-
-        AsyncStorage.removeItem('userInfo');
-
-        setUserInfo({});
-        setIsLoading(false);
     };
 
     useEffect(() => {

@@ -4,11 +4,11 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import WelcomeScreen from "../screens/Auth/WelcomeScreen";
 import LoginScreen from '../screens/Auth/LoginScreen';
 import RegisterScreen from '../screens/Auth/RegisterScreen';
-import ContinueRegisterScreen from '../screens/Auth/continue-register';
-import PasswordResetScreen from '../screens/Auth/password-reset';
-import CheckEmailOTPScreen from '../screens/Auth/check-email-otp';
-import CheckPhoneOTPScreen from '../screens/Auth/check-phone-otp';
-import UpdatePasswordScreen from '../screens/Auth/update-password';
+import ContinueRegisterScreen from '../screens/Auth/ContinueRegisterScreen';
+import PasswordResetScreen from '../screens/Auth/PasswordResetScreen';
+import CheckEmailOTPScreen from '../screens/Auth/CheckEmailOTPScreen';
+import CheckPhoneOTPScreen from '../screens/Auth/CheckPhoneOTPScreen';
+import UpdatePasswordScreen from '../screens/Auth/UpdatePasswordScreen';
 import { AboutBottomTabNavigation } from "./AboutBottomTabNavigation";
 import useColors from "../hooks/useColors";
 

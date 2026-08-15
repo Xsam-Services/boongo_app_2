@@ -80,10 +80,9 @@ const LoginScreen = ({ route }) => {
         placeholder={t('auth.login_username')}
         placeholderTextColor={COLORS.dark_secondary}
         onChangeText={text => setUsername(text)}
+        keyboardType='ascii-capable'
+        autoCapitalize='none'
       />
-      {/* {errors.login ? (
-        <Text style={styles.messageText}>{errors.login}</Text>
-      ) : null} */}
 
       <View style={styles.passwordContainer}>
         <TextInput
@@ -97,9 +96,6 @@ const LoginScreen = ({ route }) => {
           <Octicons name={showPassword ? 'eye-closed' : 'eye'} size={26} color={COLORS.dark_secondary} />
         </TouchableOpacity>
       </View>
-      {/* {errors.password ? (
-        <Text style={styles.messageText}>{errors.password}</Text>
-      ) : null} */}
 
       <TouchableOpacity
         style={styles.forgotPasswordContainer}
