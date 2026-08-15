@@ -6225,3 +6225,29 @@
 {"_e":"metro:client_log","_t":1786815759482,"level":"log","data":["new password: 11111111"]}
 {"_e":"metro:client_log","_t":1786815759482,"level":"log","data":["confirm new password: 11111111"]}
 {"_e":"metro:client_log","_t":1786815760309,"level":"log","data":["Vous êtes connecté(e)"]}
+{"_e":"metro:bundling:started","_t":1786815868976,"id":"3c","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786815868976,"id":"3c","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786815869024,"id":"3c","total":1,"ms":47.562625}
+{"_e":"metro:client_log","_t":1786815873971,"level":"error","data":["[TypeError: Class constructor invoked without new]"]}
+{"_e":"metro:bundling:started","_t":1786815901360,"id":"3g","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786815901360,"id":"3g","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786815901404,"id":"3g","total":1,"ms":44.43075}
+{"_e":"metro:bundling:started","_t":1786815910045,"id":"3i","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786815910045,"id":"3i","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786815910115,"id":"3i","total":1,"ms":70.280334}
+{"_e":"metro:bundling:started","_t":1786815948701,"id":"3k","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786815948701,"id":"3k","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786815948747,"id":"3k","total":1,"ms":45.946083}
+{"_e":"metro:bundling:started","_t":1786815967124,"id":"3m","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786815967124,"id":"3m","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786815967182,"id":"3m","total":1,"ms":57.227625}
+{"_e":"metro:bundling:started","_t":1786815981498,"id":"3o","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786815981499,"id":"3o","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786815981551,"id":"3o","total":1,"ms":52.021916}
+{"_e":"root:init","_t":1786817569952,"format":"v0-jsonl","version":"57.0.13"}
+{"_e":"env:mode","_t":1786817569954,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1786817569955,"mode":"development","files":["../../../.env.local"],"env":{"EXPO_PUBLIC_REST_COUNTRIES_API_KEY":"rc_live_f08c44d2057c44a0917ad1e01bbb6b62"}}
+{"_e":"devserver:start","_t":1786817570352,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1786817570590,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1786817570802,"plugins":[{"packageName":"expo-sqlite","bannerTitle":"expo-sqlite","cliBanner":false,"webpageEndpoint":"/_expo/plugins/expo-sqlite"}]}
+{"_e":"metro:instantiate","_t":1786817571474,"atlas":false,"workers":6,"host":"::","port":8081}

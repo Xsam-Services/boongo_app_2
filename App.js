@@ -16,7 +16,7 @@ import { SearchProvider } from './src/contexts/SearchContext';
 import SplashScreen from './src/screens/SplashScreen';
 import AccountGuard from './src/screens/AccountGuard';
 import OnboardingScreen from './src/screens/onboarding/OnboardingScreen';
-// import { DrawerNavigation } from './src/navigations/DrawerNavigation';
+import { DrawerNavigation } from './src/navigations/DrawerNavigation';
 import { LoginStackNavigation } from './src/navigations/LoginStackNavigation';
 import './src/services/i18next';
 
@@ -57,7 +57,7 @@ const App = () => {
     <NavigationContainer>
       {userInfo.id ? (
         <AccountGuard userInfo={userInfo} changeStatus={changeStatus} logout={logout}>
-          {/* <DrawerNavigation /> */}
+          <DrawerNavigation />
         </AccountGuard>
       ) : (
         <LoginStackNavigation />
