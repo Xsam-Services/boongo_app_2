@@ -39,10 +39,10 @@ const MobileSubscribeScreen = ({ route }) => {
   const [channel, setChannel] = useState(null);
   const [channelOpen, setChannelOpen] = useState(false);
   const [channelItems, setChannelItems] = useState([
-    { operatorImage: require('../assets/img/operator-m-pesa.png'), label: 'M-PESA', value: 'M-Pesa' },
-    { operatorImage: require('../assets/img/operator-airtel-money.png'), label: 'Airtel money', value: 'Airtel money' },
-    { operatorImage: require('../assets/img/operator-orange-money.png'), label: 'Orange money', value: 'Orange money' },
-    { operatorImage: require('../assets/img/operator-afrimoney.png'), label: 'Afrimoney', value: 'Afrimoney' }
+    { operatorImage: require('../../assets/img/operator-m-pesa.png'), label: 'M-PESA', value: 'M-Pesa' },
+    { operatorImage: require('../../assets/img/operator-airtel-money.png'), label: 'Airtel money', value: 'Airtel money' },
+    { operatorImage: require('../../assets/img/operator-orange-money.png'), label: 'Orange money', value: 'Orange money' },
+    { operatorImage: require('../../assets/img/operator-afrimoney.png'), label: 'Afrimoney', value: 'Afrimoney' }
   ]);
 
   const handleChannelChange = (item) => {
@@ -145,7 +145,7 @@ const MobileSubscribeScreen = ({ route }) => {
         <SafeAreaView style={{ height: Dimensions.get('screen').height - 200, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: PADDING.p01 }}>
           {formSubmitted ? (
             <>
-              <Image style={{ width: 150, height: 200, marginBottom: PADDING.p07 }} source={require('../assets/img/human-hand-holding-smartphone.png')} />
+              <Image style={{ width: 150, height: 200, marginBottom: PADDING.p07 }} source={require('./../../assets/img/human-hand-holding-smartphone.png')} />
               <Text style={[homeStyles.cardEmptyTitle, { color: COLORS.black, textAlign: 'center', marginBottom: PADDING.p02, paddingHorizontal: PADDING.p02 }]}>{t('payment_method.mobile_money.submitted')}</Text>
               <Button style={[homeStyles.authButton, { width: 100, backgroundColor: COLORS.primary }]} onPress={() => { navigation.navigate('HomeStack'); }}>
                 <Text style={[homeStyles.authButtonText, { color: 'white' }]}>OK</Text>
@@ -154,7 +154,7 @@ const MobileSubscribeScreen = ({ route }) => {
           ) : (
             <>
               {/* Image */}
-              <Image style={{ width: 100, height: 100, borderRadius: 100 / 2, marginBottom: PADDING.p07 }} source={require('../assets/img/mobile_money_payment.png')} />
+              <Image style={{ width: 100, height: 100, borderRadius: 100 / 2, marginBottom: PADDING.p07 }} source={require('./../../assets/img/mobile_money_payment.png')} />
 
               {/* Title / Description */}
               <Text style={[homeStyles.cardEmptyTitle, { color: COLORS.black, textAlign: 'center', marginBottom: PADDING.p02, paddingHorizontal: PADDING.p02 }]}>{t('payment_method.mobile_money.title')}</Text>

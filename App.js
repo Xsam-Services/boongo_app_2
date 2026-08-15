@@ -55,14 +55,13 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      {userInfo.id ? (
+      {userInfo && userInfo.id ? (
         <AccountGuard userInfo={userInfo} changeStatus={changeStatus} logout={logout}>
           <DrawerNavigation />
         </AccountGuard>
       ) : (
         <LoginStackNavigation />
       )}
-      <Toast />
     </NavigationContainer>
   );
 }

@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }) => {
     const [isFirstTime, setIsFirstTime] = useState(true);
 
     const checkFirstTimeUser = async () => {
+        // await AsyncStorage.removeItem("onboardingCompleted");
         try {
             // Use cached value if available to avoid AsyncStorage read
             const onboardingCompleted =
@@ -1440,7 +1441,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const isLoggedIn = async () => {
-        // await AsyncStorage.removeItem('userInfo');
+        await AsyncStorage.removeItem('userInfo');
         try {
             setSplashLoading(true);
 

@@ -9,8 +9,8 @@ import { DrawerActions, useNavigation, useRoute } from '@react-navigation/native
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FaIcon from 'react-native-vector-icons/FontAwesome6';
 import { PADDING, TEXT_SIZE } from '../tools/constants';
-import Logo from '../assets/img/icon.svg';
-import LogoText from '../assets/img/text.svg';
+import Logo from './../../assets/img/icon.svg';
+import LogoText from './../../assets/img/brand.svg';
 import homeStyles from './style';
 import useColors from '../hooks/useColors';
 import { AuthContext } from '../contexts/AuthContext';

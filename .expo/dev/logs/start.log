@@ -6285,3 +6285,293 @@
 {"_e":"metro:bundling:progress","_t":1786817765900,"id":"1","progress":0.999,"total":2179,"current":2050}
 {"_e":"metro:bundling:progress","_t":1786817766000,"id":"1","progress":0.999,"total":2306,"current":2257}
 {"_e":"metro:bundling:failed","_t":1786817766038,"id":"1","message":"Unable to resolve \"../../.././../../assets/img/brand.svg\" from \"src/screens/Organization/Government/add_government.js\"\n  15 | import { AuthContext } from '../../../contexts/AuthContext';\n  16 | import { API, PADDING, WEB } from '../../../tools/constants';\n> 17 | import LogoText from '../../.././../../assets/img/brand.svg';\n     |                       ^\n  18 | import useColors from '../../../hooks/useColors';\n  19 | import homeStyles from '../../style';\n  20 |","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/Organization/Government/add_government.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../../.././../../assets/img/brand.svg\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/HomeStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/Organization/Government/add_government\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/DrawerNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./HomeStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/DrawerNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"../../.././../../assets/img/brand.svg","originModulePath":"src/screens/Organization/Government/add_government.js"}
+{"_e":"root:init","_t":1786817996741,"format":"v0-jsonl","version":"57.0.13"}
+{"_e":"env:mode","_t":1786817996742,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1786817996744,"mode":"development","files":["../../../.env.local"],"env":{"EXPO_PUBLIC_REST_COUNTRIES_API_KEY":"rc_live_f08c44d2057c44a0917ad1e01bbb6b62"}}
+{"_e":"devserver:start","_t":1786817997095,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1786817997388,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1786817997663,"plugins":[{"packageName":"expo-sqlite","bannerTitle":"expo-sqlite","cliBanner":false,"webpageEndpoint":"/_expo/plugins/expo-sqlite"}]}
+{"_e":"metro:instantiate","_t":1786817998462,"atlas":false,"workers":6,"host":"::","port":8081}
+{"_e":"metro:bundling:started","_t":1786818010294,"id":"1","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818010294,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818010297,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818010397,"id":"1","progress":0.0582639714625446,"total":290,"current":70}
+{"_e":"metro:bundling:progress","_t":1786818010497,"id":"1","progress":0.17887745532559962,"total":558,"current":236}
+{"_e":"metro:bundling:progress","_t":1786818010597,"id":"1","progress":0.3307113419726032,"total":666,"current":383}
+{"_e":"metro:bundling:progress","_t":1786818010697,"id":"1","progress":0.4444444444444444,"total":888,"current":592}
+{"_e":"metro:bundling:progress","_t":1786818010797,"id":"1","progress":0.6330748931522617,"total":1106,"current":880}
+{"_e":"metro:bundling:progress","_t":1786818010897,"id":"1","progress":0.6330748931522617,"total":1388,"current":1072}
+{"_e":"metro:bundling:progress","_t":1786818011003,"id":"1","progress":0.6658649302625004,"total":1462,"current":1193}
+{"_e":"metro:bundling:progress","_t":1786818011103,"id":"1","progress":0.7661302796430723,"total":1732,"current":1516}
+{"_e":"metro:bundling:progress","_t":1786818011203,"id":"1","progress":0.8415335497590266,"total":2069,"current":1898}
+{"_e":"metro:bundling:progress","_t":1786818011303,"id":"1","progress":0.9770951394308611,"total":2344,"current":2317}
+{"_e":"metro:bundling:failed","_t":1786818011310,"id":"1","message":"Unable to resolve \"../../.././../../assets/img/brand.svg\" from \"src/screens/Organization/Government/add_government.js\"\n  15 | import { AuthContext } from '../../../contexts/AuthContext';\n  16 | import { API, PADDING, WEB } from '../../../tools/constants';\n> 17 | import LogoText from '../../.././../../assets/img/brand.svg';\n     |                       ^\n  18 | import useColors from '../../../hooks/useColors';\n  19 | import homeStyles from '../../style';\n  20 |","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/Organization/Government/add_government.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../../.././../../assets/img/brand.svg\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/HomeStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/Organization/Government/add_government\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/DrawerNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./HomeStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/DrawerNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"../../.././../../assets/img/brand.svg","originModulePath":"src/screens/Organization/Government/add_government.js"}
+{"_e":"metro:bundling:started","_t":1786818124342,"id":"2","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818124343,"id":"2","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818124349,"id":"2","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818124448,"id":"2","progress":0.09235284196323157,"total":385,"current":117}
+{"_e":"metro:bundling:progress","_t":1786818124583,"id":"2","progress":0.22136732764939626,"total":644,"current":303}
+{"_e":"metro:bundling:progress","_t":1786818124683,"id":"2","progress":0.4133760936847482,"total":829,"current":533}
+{"_e":"metro:bundling:progress","_t":1786818124783,"id":"2","progress":0.6053693695934725,"total":1203,"current":936}
+{"_e":"metro:bundling:progress","_t":1786818124883,"id":"2","progress":0.6270054144106622,"total":1715,"current":1358}
+{"_e":"metro:bundling:progress","_t":1786818124983,"id":"2","progress":0.8084419114805772,"total":1963,"current":1765}
+{"_e":"metro:bundling:progress","_t":1786818125083,"id":"2","progress":0.9509278191427799,"total":2254,"current":2198}
+{"_e":"metro:bundling:failed","_t":1786818125114,"id":"2","message":"Unable to resolve \"../.././../../assets/img/brand.svg\" from \"src/screens/Organization/organization_data.js\"\n  20 | import EmptyListComponent from '../../components/empty_list';\n  21 | import WorkItemComponent from '../../components/work_item';\n> 22 | import LogoText from '../.././../../assets/img/brand.svg';\n     |                       ^\n  23 | import useColors from '../../hooks/useColors';\n  24 | import homeStyles from '../style';\n  25 |","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/Organization/organization_data.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../.././../../assets/img/brand.svg\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/HomeStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/Organization/organization_data\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/DrawerNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./HomeStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/DrawerNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"../.././../../assets/img/brand.svg","originModulePath":"src/screens/Organization/organization_data.js"}
+{"_e":"metro:bundling:started","_t":1786818165814,"id":"3","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818165815,"id":"3","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818165817,"id":"3","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818165919,"id":"3","progress":0.10326473930059336,"total":445,"current":143}
+{"_e":"metro:bundling:progress","_t":1786818166056,"id":"3","progress":0.2536205176897818,"total":693,"current":349}
+{"_e":"metro:bundling:progress","_t":1786818166156,"id":"3","progress":0.41337247378647124,"total":857,"current":551}
+{"_e":"metro:bundling:progress","_t":1786818166256,"id":"3","progress":0.5889085422254955,"total":1221,"current":937}
+{"_e":"metro:bundling:progress","_t":1786818166356,"id":"3","progress":0.5889085422254955,"total":1670,"current":1268}
+{"_e":"metro:bundling:progress","_t":1786818166456,"id":"3","progress":0.8117556963734807,"total":1949,"current":1756}
+{"_e":"metro:bundling:progress","_t":1786818166556,"id":"3","progress":0.9433745153086714,"total":2228,"current":2164}
+{"_e":"metro:bundling:progress","_t":1786818166657,"id":"3","progress":0.999,"total":2352,"current":2351}
+{"_e":"metro:bundling:progress","_t":1786818167017,"id":"3","progress":0.999,"total":2352,"current":2352}
+{"_e":"metro:bundling:progress","_t":1786818167118,"id":"3","progress":0.999,"total":2357,"current":2355}
+{"_e":"metro:bundling:progress","_t":1786818167281,"id":"3","progress":0.999,"total":2357,"current":2356}
+{"_e":"metro:bundling:progress","_t":1786818167383,"id":"3","progress":0.999,"total":2367,"current":2364}
+{"_e":"metro:bundling:progress","_t":1786818167594,"id":"3","progress":0.999,"total":2367,"current":2365}
+{"_e":"metro:bundling:failed","_t":1786818167620,"id":"3","message":"Unable to resolve \"../../.././../../assets/img/brand.svg\" from \"src/screens/Organization/Establishment/add_establishment.js\"\n  15 | import { AuthContext } from '../../../contexts/AuthContext';\n  16 | import { API, PADDING, WEB } from '../../../tools/constants';\n> 17 | import LogoText from '../../.././../../assets/img/brand.svg';\n     |                       ^\n  18 | import useColors from '../../../hooks/useColors';\n  19 | import homeStyles from '../../style';\n  20 |","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/Organization/Establishment/add_establishment.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../../.././../../assets/img/brand.svg\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/HomeStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/Organization/Establishment/add_establishment\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/DrawerNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./HomeStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/DrawerNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"../../.././../../assets/img/brand.svg","originModulePath":"src/screens/Organization/Establishment/add_establishment.js"}
+{"_e":"metro:bundling:started","_t":1786818188109,"id":"4","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818188109,"id":"4","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818188113,"id":"4","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818188212,"id":"4","progress":0.11043463712076146,"total":328,"current":109}
+{"_e":"metro:bundling:progress","_t":1786818188312,"id":"4","progress":0.14265034217853023,"total":511,"current":193}
+{"_e":"metro:bundling:progress","_t":1786818188412,"id":"4","progress":0.3904164163700244,"total":749,"current":468}
+{"_e":"metro:bundling:progress","_t":1786818188512,"id":"4","progress":0.4636096790123457,"total":1125,"current":766}
+{"_e":"metro:bundling:progress","_t":1786818188612,"id":"4","progress":0.5612917520403425,"total":1551,"current":1162}
+{"_e":"metro:bundling:progress","_t":1786818188712,"id":"4","progress":0.7404219437636239,"total":1842,"current":1585}
+{"_e":"metro:bundling:progress","_t":1786818188812,"id":"4","progress":0.8593238925695725,"total":2178,"current":2019}
+{"_e":"metro:bundling:failed","_t":1786818188877,"id":"4","message":"Unable to resolve \"../../../assets/img/brand.svg\" from \"src/screens/Organization/Government/add_government.js\"\n  15 | import { AuthContext } from '../../../contexts/AuthContext';\n  16 | import { API, PADDING, WEB } from '../../../tools/constants';\n> 17 | import LogoText from '../../../assets/img/brand.svg';\n     |                       ^\n  18 | import useColors from '../../../hooks/useColors';\n  19 | import homeStyles from '../../style';\n  20 |","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/Organization/Government/add_government.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../../../assets/img/brand.svg\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/HomeStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/Organization/Government/add_government\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/DrawerNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./HomeStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/DrawerNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"../../../assets/img/brand.svg","originModulePath":"src/screens/Organization/Government/add_government.js"}
+{"_e":"metro:bundling:started","_t":1786818549446,"id":"5","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818549447,"id":"5","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818549453,"id":"5","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818549553,"id":"5","progress":0.08955168189252555,"total":401,"current":120}
+{"_e":"metro:bundling:progress","_t":1786818549653,"id":"5","progress":0.17599048185603805,"total":615,"current":258}
+{"_e":"metro:bundling:progress","_t":1786818549753,"id":"5","progress":0.36329517733158184,"total":730,"current":440}
+{"_e":"metro:bundling:progress","_t":1786818549853,"id":"5","progress":0.4335672592382009,"total":934,"current":615}
+{"_e":"metro:bundling:progress","_t":1786818549953,"id":"5","progress":0.48987858514573024,"total":1153,"current":807}
+{"_e":"metro:bundling:progress","_t":1786818550053,"id":"5","progress":0.5566860855324975,"total":1544,"current":1152}
+{"_e":"metro:bundling:progress","_t":1786818550153,"id":"5","progress":0.7189102909161859,"total":1821,"current":1544}
+{"_e":"metro:bundling:progress","_t":1786818550253,"id":"5","progress":0.8546240262273879,"total":2171,"current":2007}
+{"_e":"metro:bundling:failed","_t":1786818550322,"id":"5","message":"Unable to resolve \"../.././../../assets/img/brand.svg\" from \"src/screens/add_work.js\"\n  16 | import { AuthContext } from '../contexts/AuthContext';\n  17 | import { API, PADDING } from '../tools/constants';\n> 18 | import LogoText from '../.././../../assets/img/brand.svg';\n     |                       ^\n  19 | import useColors from '../hooks/useColors';\n  20 | import homeStyles from './style';\n  21 |","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/add_work.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../.././../../assets/img/brand.svg\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/HomeStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/add_work\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/DrawerNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./HomeStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/DrawerNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"../.././../../assets/img/brand.svg","originModulePath":"src/screens/add_work.js"}
+{"_e":"metro:bundling:started","_t":1786818569602,"id":"6","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818569604,"id":"6","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818569617,"id":"6","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818569718,"id":"6","progress":0.08912833443302855,"total":412,"current":123}
+{"_e":"metro:bundling:progress","_t":1786818569818,"id":"6","progress":0.16331333304869136,"total":631,"current":255}
+{"_e":"metro:bundling:progress","_t":1786818569918,"id":"6","progress":0.31520204081632647,"total":700,"current":393}
+{"_e":"metro:bundling:progress","_t":1786818570018,"id":"6","progress":0.4459321235531793,"total":897,"current":599}
+{"_e":"metro:bundling:progress","_t":1786818570118,"id":"6","progress":0.48987858514573024,"total":1153,"current":807}
+{"_e":"metro:bundling:progress","_t":1786818570218,"id":"6","progress":0.5566860855324975,"total":1544,"current":1152}
+{"_e":"metro:bundling:progress","_t":1786818570318,"id":"6","progress":0.7198418234273943,"total":1821,"current":1545}
+{"_e":"metro:bundling:progress","_t":1786818570418,"id":"6","progress":0.8543016432074987,"total":2166,"current":2002}
+{"_e":"metro:bundling:failed","_t":1786818570498,"id":"6","message":"Unable to resolve \"../assets/img/operator-m-pesa.png\" from \"src/screens/subscribe_mobile.js\"\n  40 |   const [channelOpen, setChannelOpen] = useState(false);\n  41 |   const [channelItems, setChannelItems] = useState([\n> 42 |     { operatorImage: require('../assets/img/operator-m-pesa.png'), label: 'M-PESA', value: 'M-Pesa' },\n     |                               ^\n  43 |     { operatorImage: require('../assets/img/operator-airtel-money.png'), label: 'Airtel money', value: 'Airtel money' },\n  44 |     { operatorImage: require('../assets/img/operator-orange-money.png'), label: 'Orange money', value: 'Orange money' },\n  45 |     { operatorImage: require('../assets/img/operator-afrimoney.png'), label: 'Afrimoney', value: 'Afrimoney' }","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/subscribe_mobile.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../assets/img/operator-m-pesa.png\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/HomeStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/subscribe_mobile\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/DrawerNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./HomeStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/DrawerNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"../assets/img/operator-m-pesa.png","originModulePath":"src/screens/subscribe_mobile.js"}
+{"_e":"metro:bundling:started","_t":1786818644813,"id":"7","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818644814,"id":"7","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818644824,"id":"7","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818644926,"id":"7","progress":0.03543252595155709,"total":170,"current":32}
+{"_e":"metro:bundling:progress","_t":1786818645026,"id":"7","progress":0.10065966677956807,"total":498,"current":158}
+{"_e":"metro:bundling:progress","_t":1786818645127,"id":"7","progress":0.24109050770093104,"total":723,"current":355}
+{"_e":"metro:bundling:progress","_t":1786818645227,"id":"7","progress":0.2907114349154951,"total":753,"current":406}
+{"_e":"metro:bundling:progress","_t":1786818645327,"id":"7","progress":0.4704962699627995,"total":1073,"current":736}
+{"_e":"metro:bundling:progress","_t":1786818645428,"id":"7","progress":0.597056423903648,"total":1377,"current":1064}
+{"_e":"metro:bundling:progress","_t":1786818645528,"id":"7","progress":0.7077822156089835,"total":1695,"current":1426}
+{"_e":"metro:bundling:progress","_t":1786818645628,"id":"7","progress":0.8227934842195943,"total":2034,"current":1845}
+{"_e":"metro:bundling:failed","_t":1786818645719,"id":"7","message":"Unable to resolve \"./../assets/img/brand.svg\" from \"src/screens/AccountGuard.js\"\n  11 | import { PADDING, TEXT_SIZE } from './../tools/constants';\n  12 | import { Divider } from 'react-native-paper';\n> 13 | import LogoText from './../assets/img/brand.svg';\n     |                       ^\n  14 | import FooterComponent from './../screens/footer';\n  15 |\n  16 | const AccountGuard = ({ userInfo, changeStatus, logout, children }) => {","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/AccountGuard.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./../assets/img/brand.svg\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/screens/AccountGuard\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"./../assets/img/brand.svg","originModulePath":"src/screens/AccountGuard.js"}
+{"_e":"metro:bundling:started","_t":1786818679068,"id":"8","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818679069,"id":"8","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818679076,"id":"8","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818679176,"id":"8","progress":0.08097032189834093,"total":369,"current":105}
+{"_e":"metro:bundling:progress","_t":1786818679276,"id":"8","progress":0.1764526685075815,"total":638,"current":268}
+{"_e":"metro:bundling:progress","_t":1786818679376,"id":"8","progress":0.31056579086884245,"total":707,"current":394}
+{"_e":"metro:bundling:progress","_t":1786818679477,"id":"8","progress":0.4548404542996214,"total":946,"current":638}
+{"_e":"metro:bundling:progress","_t":1786818679577,"id":"8","progress":0.6136322197090649,"total":1237,"current":969}
+{"_e":"metro:bundling:progress","_t":1786818679677,"id":"8","progress":0.6294168107732738,"total":1626,"current":1290}
+{"_e":"metro:bundling:progress","_t":1786818679777,"id":"8","progress":0.743132412886259,"total":1950,"current":1681}
+{"_e":"metro:bundling:progress","_t":1786818679877,"id":"8","progress":0.927138170000736,"total":2236,"current":2153}
+{"_e":"metro:bundling:failed","_t":1786818679920,"id":"8","message":"Unable to resolve \"./../assets/img/brand.svg\" from \"src/screens/AccountGuard.js\"\n  11 | import { PADDING, TEXT_SIZE } from './../tools/constants';\n  12 | import { Divider } from 'react-native-paper';\n> 13 | import LogoText from './../assets/img/brand.svg';\n     |                       ^\n  14 | import FooterComponent from './../../screens/footer';\n  15 |\n  16 | const AccountGuard = ({ userInfo, changeStatus, logout, children }) => {","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/AccountGuard.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./../assets/img/brand.svg\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/screens/AccountGuard\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"./../assets/img/brand.svg","originModulePath":"src/screens/AccountGuard.js"}
+{"_e":"metro:bundling:started","_t":1786818700736,"id":"9","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818700737,"id":"9","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818700744,"id":"9","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818700844,"id":"9","progress":0.07395934483063023,"total":353,"current":96}
+{"_e":"metro:bundling:progress","_t":1786818700944,"id":"9","progress":0.1947585355639313,"total":639,"current":282}
+{"_e":"metro:bundling:progress","_t":1786818701044,"id":"9","progress":0.36098833172450007,"total":729,"current":438}
+{"_e":"metro:bundling:progress","_t":1786818701144,"id":"9","progress":0.516836290698576,"total":957,"current":688}
+{"_e":"metro:bundling:progress","_t":1786818701244,"id":"9","progress":0.6108093019484148,"total":1387,"current":1084}
+{"_e":"metro:bundling:progress","_t":1786818701347,"id":"9","progress":0.6567826608522082,"total":1804,"current":1462}
+{"_e":"metro:bundling:progress","_t":1786818701447,"id":"9","progress":0.8402045748787357,"total":2087,"current":1913}
+{"_e":"metro:bundling:failed","_t":1786818701536,"id":"9","message":"Unable to resolve \"./../assets/img/brand.svg\" from \"src/screens/add_work.js\"\n  16 | import { AuthContext } from '../contexts/AuthContext';\n  17 | import { API, PADDING } from '../tools/constants';\n> 18 | import LogoText from './../assets/img/brand.svg';\n     |                       ^\n  19 | import useColors from '../hooks/useColors';\n  20 | import homeStyles from './style';\n  21 |","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/add_work.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./../assets/img/brand.svg\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/HomeStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/add_work\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/DrawerNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./HomeStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/DrawerNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"./../assets/img/brand.svg","originModulePath":"src/screens/add_work.js"}
+{"_e":"metro:bundling:started","_t":1786818723458,"id":"a","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818723459,"id":"a","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818723466,"id":"a","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818723569,"id":"a","progress":0.06965509559181328,"total":413,"current":109}
+{"_e":"metro:bundling:progress","_t":1786818723686,"id":"a","progress":0.1106766594797048,"total":511,"current":170}
+{"_e":"metro:bundling:progress","_t":1786818723788,"id":"a","progress":0.3882000187924508,"total":772,"current":481}
+{"_e":"metro:bundling:progress","_t":1786818723888,"id":"a","progress":0.4802129833509492,"total":1039,"current":720}
+{"_e":"metro:bundling:progress","_t":1786818723988,"id":"a","progress":0.5794163510804188,"total":1407,"current":1071}
+{"_e":"metro:bundling:progress","_t":1786818724088,"id":"a","progress":0.724773500627477,"total":1796,"current":1529}
+{"_e":"metro:bundling:progress","_t":1786818724188,"id":"a","progress":0.8266909304556227,"total":2027,"current":1843}
+{"_e":"metro:bundling:progress","_t":1786818724288,"id":"a","progress":0.950179749843011,"total":2299,"current":2241}
+{"_e":"metro:bundling:progress","_t":1786818724389,"id":"a","progress":0.9966485151343346,"total":2385,"current":2381}
+{"_e":"metro:bundling:failed","_t":1786818724458,"id":"a","message":"Unable to resolve \"../assets/img/operator-m-pesa.png\" from \"src/screens/subscribe_mobile.js\"\n  40 |   const [channelOpen, setChannelOpen] = useState(false);\n  41 |   const [channelItems, setChannelItems] = useState([\n> 42 |     { operatorImage: require('../assets/img/operator-m-pesa.png'), label: 'M-PESA', value: 'M-Pesa' },\n     |                               ^\n  43 |     { operatorImage: require('../assets/img/operator-airtel-money.png'), label: 'Airtel money', value: 'Airtel money' },\n  44 |     { operatorImage: require('../assets/img/operator-orange-money.png'), label: 'Orange money', value: 'Orange money' },\n  45 |     { operatorImage: require('../assets/img/operator-afrimoney.png'), label: 'Afrimoney', value: 'Afrimoney' }","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/subscribe_mobile.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../assets/img/operator-m-pesa.png\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/HomeStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/subscribe_mobile\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/DrawerNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./HomeStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/DrawerNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"../assets/img/operator-m-pesa.png","originModulePath":"src/screens/subscribe_mobile.js"}
+{"_e":"metro:bundling:started","_t":1786818796976,"id":"b","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818796977,"id":"b","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818796983,"id":"b","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818797083,"id":"b","progress":0.025133848899464604,"total":164,"current":26}
+{"_e":"metro:bundling:progress","_t":1786818797186,"id":"b","progress":0.10504772766329736,"total":506,"current":164}
+{"_e":"metro:bundling:progress","_t":1786818797324,"id":"b","progress":0.19814194152538525,"total":647,"current":288}
+{"_e":"metro:bundling:progress","_t":1786818797424,"id":"b","progress":0.41168343080395065,"total":812,"current":521}
+{"_e":"metro:bundling:progress","_t":1786818797524,"id":"b","progress":0.5166015625,"total":1056,"current":759}
+{"_e":"metro:bundling:progress","_t":1786818797624,"id":"b","progress":0.551322138131587,"total":1402,"current":1041}
+{"_e":"metro:bundling:progress","_t":1786818797725,"id":"b","progress":0.5562272632674298,"total":1550,"current":1156}
+{"_e":"metro:bundling:progress","_t":1786818797825,"id":"b","progress":0.7197576701002328,"total":1827,"current":1550}
+{"_e":"metro:bundling:progress","_t":1786818797925,"id":"b","progress":0.8520043662843049,"total":2131,"current":1967}
+{"_e":"metro:bundling:failed","_t":1786818798004,"id":"b","message":"Unable to resolve \"../assets/img/icon.svg\" from \"src/screens/header.js\"\n  10 | import FaIcon from 'react-native-vector-icons/FontAwesome6';\n  11 | import { PADDING, TEXT_SIZE } from '../tools/constants';\n> 12 | import Logo from '../assets/img/icon.svg';\n     |                   ^\n  13 | import LogoText from './../../assets/img/brand.svg';\n  14 | import homeStyles from './style';\n  15 | import useColors from '../hooks/useColors';","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/header.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../assets/img/icon.svg\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/screens/language.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./header\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/HomeStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/language\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/DrawerNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./HomeStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/DrawerNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"../assets/img/icon.svg","originModulePath":"src/screens/header.js"}
+{"_e":"metro:bundling:started","_t":1786818835842,"id":"c","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818835843,"id":"c","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818835854,"id":"c","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818835953,"id":"c","progress":0.10827314120313769,"total":389,"current":128}
+{"_e":"metro:bundling:progress","_t":1786818836053,"id":"c","progress":0.20061482794734053,"total":643,"current":288}
+{"_e":"metro:bundling:progress","_t":1786818836183,"id":"c","progress":0.20764108753437546,"total":643,"current":293}
+{"_e":"metro:bundling:progress","_t":1786818836285,"id":"c","progress":0.39163371488033305,"total":775,"current":485}
+{"_e":"metro:bundling:progress","_t":1786818836385,"id":"c","progress":0.5255125447952013,"total":967,"current":701}
+{"_e":"metro:bundling:progress","_t":1786818836485,"id":"c","progress":0.5792152870232594,"total":1243,"current":946}
+{"_e":"metro:bundling:progress","_t":1786818836585,"id":"c","progress":0.5792152870232594,"total":1629,"current":1239}
+{"_e":"metro:bundling:progress","_t":1786818836685,"id":"c","progress":0.720967188911053,"total":1829,"current":1553}
+{"_e":"metro:bundling:progress","_t":1786818836787,"id":"c","progress":0.807533711740041,"total":2042,"current":1835}
+{"_e":"metro:bundling:progress","_t":1786818836886,"id":"c","progress":0.8786402975845466,"total":2203,"current":2065}
+{"_e":"metro:bundling:failed","_t":1786818836959,"id":"c","message":"Unable to resolve \"../assets/img/bank_card_payment.png\" from \"src/screens/subscribe_bank_card.js\"\n  138 |         <SafeAreaView style={{ height: 'auto', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: PADDING.p01 }}>\n  139 |           {/* Image */}\n> 140 |           <Image style={{ width: 100, height: 100, borderRadius: 100 / 2, marginBottom: PADDING.p07 }} source={require('../assets/img/bank_card_payment.png')} />\n      |                                                                                                                         ^\n  141 |\n  142 |           {/* Title / Description */}\n  143 |           <Text style={[homeStyles.cardEmptyTitle, { color: COLORS.black, textAlign: 'center', marginBottom: PADDING.p02, paddingHorizontal: PADDING.p02 }]}>{t('payment_method.bank_card.title')}</Text>","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/subscribe_bank_card.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../assets/img/bank_card_payment.png\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/HomeStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/subscribe_bank_card\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/DrawerNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./HomeStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/DrawerNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"../assets/img/bank_card_payment.png","originModulePath":"src/screens/subscribe_bank_card.js"}
+{"_e":"metro:bundling:started","_t":1786818890904,"id":"d","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818890905,"id":"d","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818890917,"id":"d","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818891018,"id":"d","progress":0.06551162131519274,"total":336,"current":86}
+{"_e":"metro:bundling:progress","_t":1786818891118,"id":"d","progress":0.12737514863258026,"total":580,"current":207}
+{"_e":"metro:bundling:progress","_t":1786818891218,"id":"d","progress":0.22731934553192307,"total":646,"current":308}
+{"_e":"metro:bundling:progress","_t":1786818891320,"id":"d","progress":0.40100788493612544,"total":818,"current":518}
+{"_e":"metro:bundling:progress","_t":1786818891420,"id":"d","progress":0.47330696792365673,"total":1189,"current":818}
+{"_e":"metro:bundling:progress","_t":1786818891520,"id":"d","progress":0.5399054820415878,"total":1610,"current":1183}
+{"_e":"metro:bundling:progress","_t":1786818891624,"id":"d","progress":0.7213868919356993,"total":1832,"current":1556}
+{"_e":"metro:bundling:progress","_t":1786818891724,"id":"d","progress":0.8431199126601345,"total":2152,"current":1976}
+{"_e":"metro:bundling:failed","_t":1786818891801,"id":"d","message":"Unable to resolve \"../assets/img/human-hand-holding-smartphone.png\" from \"src/screens/subscribe_mobile.js\"\n  146 |           {formSubmitted ? (\n  147 |             <>\n> 148 |               <Image style={{ width: 150, height: 200, marginBottom: PADDING.p07 }} source={require('../assets/img/human-hand-holding-smartphone.png')} />\n      |                                                                                                      ^\n  149 |               <Text style={[homeStyles.cardEmptyTitle, { color: COLORS.black, textAlign: 'center', marginBottom: PADDING.p02, paddingHorizontal: PADDING.p02 }]}>{t('payment_method.mobile_money.submitted')}</Text>\n  150 |               <Button style={[homeStyles.authButton, { width: 100, backgroundColor: COLORS.primary }]} onPress={() => { navigation.navigate('HomeStack'); }}>\n  151 |                 <Text style={[homeStyles.authButtonText, { color: 'white' }]}>OK</Text>","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/screens/subscribe_mobile.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../assets/img/human-hand-holding-smartphone.png\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/HomeStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/subscribe_mobile\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/DrawerNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./HomeStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mApp.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/DrawerNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39mindex.js\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./App\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./index\"\u001b[39m\n","filename":null,"targetModuleName":"../assets/img/human-hand-holding-smartphone.png","originModulePath":"src/screens/subscribe_mobile.js"}
+{"_e":"metro:bundling:started","_t":1786818921904,"id":"e","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786818921905,"id":"e","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818921930,"id":"e","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786818922030,"id":"e","progress":0.07547397657287769,"total":364,"current":100}
+{"_e":"metro:bundling:progress","_t":1786818922130,"id":"e","progress":0.1794556389112778,"total":635,"current":269}
+{"_e":"metro:bundling:progress","_t":1786818922230,"id":"e","progress":0.23850730124391561,"total":645,"current":315}
+{"_e":"metro:bundling:progress","_t":1786818922330,"id":"e","progress":0.41851819790704825,"total":912,"current":590}
+{"_e":"metro:bundling:progress","_t":1786818922430,"id":"e","progress":0.5483805085642789,"total":1214,"current":899}
+{"_e":"metro:bundling:progress","_t":1786818922531,"id":"e","progress":0.5760137196330175,"total":1647,"current":1250}
+{"_e":"metro:bundling:progress","_t":1786818922630,"id":"e","progress":0.7307193439828906,"total":1846,"current":1578}
+{"_e":"metro:bundling:progress","_t":1786818922730,"id":"e","progress":0.8391853020721974,"total":2097,"current":1921}
+{"_e":"metro:bundling:progress","_t":1786818922849,"id":"e","progress":0.999,"total":2398,"current":2398}
+{"_e":"metro:bundling:done","_t":1786818922913,"id":"e","total":2398,"ms":1007.975709}
+{"_e":"metro:client_log","_t":1786818929658,"level":"error","data":["[ReferenceError: Property 'DrawerContent' doesn't exist]"]}
+{"_e":"metro:client_log","_t":1786818970534,"level":"error","data":["[ReferenceError: Property 'AboutBottomTabNavigation' doesn't exist]"]}
+{"_e":"metro:client_log","_t":1786819025435,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:bundling:started","_t":1786819042927,"id":"o","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786819042927,"id":"o","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786819043019,"id":"o","total":1,"ms":91.474042}
+{"_e":"metro:client_log","_t":1786819048557,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:bundling:started","_t":1786819142759,"id":"s","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786819142759,"id":"s","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786819142846,"id":"s","total":1,"ms":86.389375}
+{"_e":"metro:client_log","_t":1786819148654,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:bundling:failed","_t":1786819233075,"id":"d","message":"Unable to resolve \"../screens/Home\" from \"src/navigations/HomeStackNavigation.jsx\"\n  2 | import { createNativeStackNavigator } from \"@react-navigation/native-stack\";\n  3 |\n> 4 | import HomeScreen from '../screens/Home';\n    |                         ^\n  5 | import LanguageScreen from '../screens/language';\n  6 | import DictionaryScreen from '../screens/dictionary';\n  7 | import SettingsScreen from '../screens/Account/settings';","importStack":"\u001b[1mImport stack:\u001b[22m\n\n\u001b[90m \u001b[39msrc/navigations/HomeStackNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"../screens/Home\"\u001b[39m\n\n\u001b[90m \u001b[39msrc/navigations/DrawerNavigation.jsx\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./HomeStackNavigation\"\u001b[39m\n\n\u001b[90m \u001b[39m\n\u001b[90m |\u001b[39m \u001b[36mimport\u001b[39m \u001b[32m\"./src/navigations/DrawerNavigation\"\u001b[39m\n","filename":null,"targetModuleName":"../screens/Home","originModulePath":"src/navigations/HomeStackNavigation.jsx"}
+{"_e":"metro:bundling:started","_t":1786819374320,"id":"x","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786819374320,"id":"x","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786819374396,"id":"x","total":1,"ms":76.48825}
+{"_e":"metro:client_log","_t":1786819390028,"level":"error","data":["[Error: Got an invalid value for 'component' prop for the screen 'HomeStack'. It must be a valid React Component.]"]}
+{"_e":"metro:client_log","_t":1786819695667,"level":"error","data":["Erreur fetchWorks News:","[AxiosError: Network Error]"]}
+{"_e":"metro:client_log","_t":1786819713814,"level":"error","data":["Erreur fetchBooks","[AxiosError: Network Error]"]}
+{"_e":"metro:bundling:started","_t":1786819725714,"id":"15","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786819725715,"id":"15","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786819725800,"id":"15","total":1,"ms":85.836417}
+{"_e":"metro:bundling:started","_t":1786819827082,"id":"17","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786819827082,"id":"17","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786819827163,"id":"17","total":1,"ms":81.42375}
+{"_e":"root:init","_t":1786820017355,"format":"v0-jsonl","version":"57.0.13"}
+{"_e":"env:mode","_t":1786820017356,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1786820017358,"mode":"development","files":["../../../.env.local"],"env":{"EXPO_PUBLIC_REST_COUNTRIES_API_KEY":"rc_live_f08c44d2057c44a0917ad1e01bbb6b62"}}
+{"_e":"devserver:start","_t":1786820017751,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1786820018063,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1786820018332,"plugins":[{"packageName":"expo-sqlite","bannerTitle":"expo-sqlite","cliBanner":false,"webpageEndpoint":"/_expo/plugins/expo-sqlite"}]}
+{"_e":"metro:instantiate","_t":1786820019337,"atlas":false,"workers":6,"host":"::","port":8081}
+{"_e":"metro:bundling:started","_t":1786820028131,"id":"1","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786820028131,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786820028137,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1786820028237,"id":"1","progress":0.05908639053254438,"total":325,"current":79}
+{"_e":"metro:bundling:progress","_t":1786820028337,"id":"1","progress":0.10739735443055733,"total":534,"current":175}
+{"_e":"metro:bundling:progress","_t":1786820028437,"id":"1","progress":0.20481607163156762,"total":643,"current":291}
+{"_e":"metro:bundling:progress","_t":1786820028537,"id":"1","progress":0.3822081532294795,"total":757,"current":468}
+{"_e":"metro:bundling:progress","_t":1786820028637,"id":"1","progress":0.4592582473874735,"total":968,"current":656}
+{"_e":"metro:bundling:progress","_t":1786820028737,"id":"1","progress":0.5466240876502947,"total":1243,"current":919}
+{"_e":"metro:bundling:progress","_t":1786820028837,"id":"1","progress":0.5520221169835566,"total":1603,"current":1191}
+{"_e":"metro:bundling:progress","_t":1786820028937,"id":"1","progress":0.7507407863978377,"total":1872,"current":1622}
+{"_e":"metro:bundling:progress","_t":1786820029037,"id":"1","progress":0.8520710059171599,"total":2210,"current":2040}
+{"_e":"metro:bundling:done","_t":1786820029190,"id":"1","total":2210,"ms":1058.999458}
+{"_e":"metro:bundling:started","_t":1786820033007,"id":"3","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786820033007,"id":"3","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786820033082,"id":"3","total":1,"ms":75.046083}
+{"_e":"metro:client_log","_t":1786820131679,"level":"log","data":["[TypeError: Cannot read property 'type' of null]"]}
+{"_e":"metro:client_log","_t":1786820132350,"level":"log","data":["[TypeError: Cannot read property 'type' of null]"]}
+{"_e":"metro:client_log","_t":1786820133128,"level":"log","data":["[TypeError: Cannot read property 'type' of null]"]}
+{"_e":"metro:client_log","_t":1786820133635,"level":"log","data":["[TypeError: Cannot read property 'type' of null]"]}
+{"_e":"metro:bundling:started","_t":1786820150945,"id":"5","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786820150946,"id":"5","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786820151048,"id":"5","total":1,"ms":102.519333}
+{"_e":"metro:bundling:started","_t":1786820307566,"id":"8","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786820307569,"id":"8","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786820307872,"id":"8","total":1,"ms":303.964417}
+{"_e":"metro:bundling:started","_t":1786820318880,"id":"c","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786820318880,"id":"c","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786820319020,"id":"c","total":1,"ms":140.07625}
+{"_e":"metro:bundling:started","_t":1786820401687,"id":"s","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786820401688,"id":"s","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786820401877,"id":"s","total":1,"ms":188.824666}
+{"_e":"metro:client_log","_t":1786820407788,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:bundling:started","_t":1786820445058,"id":"z","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786820445058,"id":"z","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786820445170,"id":"z","total":1,"ms":111.47725}
+{"_e":"metro:client_log","_t":1786820451231,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:bundling:started","_t":1786820501966,"id":"16","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786820501967,"id":"16","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786820502118,"id":"16","total":1,"ms":151.848958}
+{"_e":"metro:client_log","_t":1786820508143,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:client_log","_t":1786820680353,"level":"log","data":["Vous êtes connecté(e)"]}
+{"_e":"metro:bundling:started","_t":1786820715822,"id":"1p","platform":"ios","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1786820715824,"id":"1p","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1786820715943,"id":"1p","total":1,"ms":119.727416}
+{"_e":"metro:client_log","_t":1786820733246,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:client_log","_t":1786820747675,"level":"log","data":["Phone number: +243974944879"]}
+{"_e":"metro:client_log","_t":1786820753751,"level":"log","data":["API response: Réinitialisation de mot de passe trouvée"]}
+{"_e":"metro:client_log","_t":1786820776074,"level":"log","data":["Former password CheckOTP: 11111111"]}
+{"_e":"metro:client_log","_t":1786820776108,"level":"log","data":["User data"]}
+{"_e":"metro:client_log","_t":1786820776108,"level":"log","data":["================"]}
+{"_e":"metro:client_log","_t":1786820776108,"level":"log","data":["ID: 54"]}
+{"_e":"metro:client_log","_t":1786820776108,"level":"log","data":["API token: 630|abkcSswWmrVBPoyhTma83NUux1wgc23djvGW9LNKdcda3438"]}
+{"_e":"metro:client_log","_t":1786820776109,"level":"log","data":["former password updatePW: 11111111"]}
+{"_e":"metro:client_log","_t":1786820776110,"level":"log","data":["new password: null"]}
+{"_e":"metro:client_log","_t":1786820776110,"level":"log","data":["confirm new password: null"]}
+{"_e":"metro:client_log","_t":1786820781885,"level":"log","data":["User data"]}
+{"_e":"metro:client_log","_t":1786820781886,"level":"log","data":["================"]}
+{"_e":"metro:client_log","_t":1786820781889,"level":"log","data":["ID: 54"]}
+{"_e":"metro:client_log","_t":1786820781890,"level":"log","data":["API token: 630|abkcSswWmrVBPoyhTma83NUux1wgc23djvGW9LNKdcda3438"]}
+{"_e":"metro:client_log","_t":1786820781890,"level":"log","data":["former password updatePW: 11111111"]}
+{"_e":"metro:client_log","_t":1786820781890,"level":"log","data":["new password: null"]}
+{"_e":"metro:client_log","_t":1786820781890,"level":"log","data":["confirm new password: null"]}
+{"_e":"metro:client_log","_t":1786820785789,"level":"log","data":["Le code OTP ne correspond pas"]}
+{"_e":"metro:client_log","_t":1786820789622,"level":"log","data":["Phone number: +243974944879"]}
+{"_e":"metro:client_log","_t":1786820793305,"level":"log","data":["API response: Réinitialisation de mot de passe trouvée"]}
+{"_e":"metro:client_log","_t":1786820812775,"level":"log","data":["Former password CheckOTP: 11111111"]}
+{"_e":"metro:client_log","_t":1786820812807,"level":"log","data":["User data"]}
+{"_e":"metro:client_log","_t":1786820812807,"level":"log","data":["================"]}
+{"_e":"metro:client_log","_t":1786820812807,"level":"log","data":["ID: 54"]}
+{"_e":"metro:client_log","_t":1786820812807,"level":"log","data":["API token: 630|abkcSswWmrVBPoyhTma83NUux1wgc23djvGW9LNKdcda3438"]}
+{"_e":"metro:client_log","_t":1786820812807,"level":"log","data":["former password updatePW: 11111111"]}
+{"_e":"metro:client_log","_t":1786820812807,"level":"log","data":["new password: null"]}
+{"_e":"metro:client_log","_t":1786820812807,"level":"log","data":["confirm new password: null"]}
+{"_e":"metro:client_log","_t":1786820846125,"level":"log","data":["Vous êtes connecté(e)"]}

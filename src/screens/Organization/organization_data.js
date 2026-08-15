@@ -19,7 +19,7 @@ import { API, IMAGE_SIZE, PADDING, TEXT_SIZE, WEB } from '../../tools/constants'
 import { AuthContext } from '../../contexts/AuthContext';
 import EmptyListComponent from '../../components/empty_list';
 import WorkItemComponent from '../../components/work_item';
-import LogoText from '../.././../../assets/img/brand.svg';
+import LogoText from '../../../assets/img/brand.svg';
 import useColors from '../../hooks/useColors';
 import homeStyles from '../style';
 

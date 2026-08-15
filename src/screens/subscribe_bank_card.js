@@ -66,7 +66,7 @@ const BankCardSubscribeScreen = ({ route }) => {
         </SafeAreaView>
       );
 
-    // Otherwise, show bank card form
+      // Otherwise, show bank card form
     } else {
       // =============== Get data ===============
       const [cardNumber, setCardNumber] = useState(null);
@@ -82,10 +82,10 @@ const BankCardSubscribeScreen = ({ route }) => {
       const [channel, setChannel] = useState(null);
       const [channelOpen, setChannelOpen] = useState(false);
       const [channelItems, setChannelItems] = useState([
-        { operatorImage: require('../assets/img/operator-flexpay.png'), label: 'FlexPaie', value: 'FlexPaie' },
-        { operatorImage: require('../assets/img/operator-multipay.png'), label: 'Multipay', value: 'Multipay' },
-        { operatorImage: require('../assets/img/operator-paypal.png'), label: 'PayPal', value: 'PayPal' },
-        { operatorImage: require('../assets/img/operator-visa-mastercard.png'), label: t('payment_method.bank_card.use_card'), value: t('payment_method.bank_card.use_card') }
+        { operatorImage: require('../../assets/img/operator-flexpay.png'), label: 'FlexPaie', value: 'FlexPaie' },
+        { operatorImage: require('../../assets/img/operator-multipay.png'), label: 'Multipay', value: 'Multipay' },
+        { operatorImage: require('../../assets/img/operator-paypal.png'), label: 'PayPal', value: 'PayPal' },
+        { operatorImage: require('../../assets/img/operator-visa-mastercard.png'), label: t('payment_method.bank_card.use_card'), value: t('payment_method.bank_card.use_card') }
       ]);
 
       const handlePay = (user_id, transaction_type_id, channel, app_url) => {
@@ -137,7 +137,7 @@ const BankCardSubscribeScreen = ({ route }) => {
       return (
         <SafeAreaView style={{ height: 'auto', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: PADDING.p01 }}>
           {/* Image */}
-          <Image style={{ width: 100, height: 100, borderRadius: 100 / 2, marginBottom: PADDING.p07 }} source={require('../assets/img/bank_card_payment.png')} />
+          <Image style={{ width: 100, height: 100, borderRadius: 100 / 2, marginBottom: PADDING.p07 }} source={require('../../assets/img/bank_card_payment.png')} />
 
           {/* Title / Description */}
           <Text style={[homeStyles.cardEmptyTitle, { color: COLORS.black, textAlign: 'center', marginBottom: PADDING.p02, paddingHorizontal: PADDING.p02 }]}>{t('payment_method.bank_card.title')}</Text>

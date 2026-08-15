@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { API, PADDING, WEB } from '../../../tools/constants';
-import LogoText from '../../.././../../assets/img/brand.svg';
+import LogoText from '../../../../assets/img/brand.svg';
 import useColors from '../../../hooks/useColors';
 import homeStyles from '../../style';
 

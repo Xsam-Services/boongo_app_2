@@ -18,15 +18,17 @@ const AccountGuard = ({ userInfo, changeStatus, logout, children }) => {
     const COLORS = useColors();
     // =============== Language ===============
     const { t } = useTranslation();
-    // =============== Get data ===============
-    const isRestricted = [4, 5, 29].includes(userInfo?.status?.id);
+
+    // Sécurité : si userInfo ou son status n'est pas encore chargé, on ne bloque pas (ou on peut afficher un loader)
+    const statusId = userInfo?.status?.id;
+    const isRestricted = [4, 5, 29].includes(statusId);
 
     if (!isRestricted) {
         return children;
     }
 
     const getContent = () => {
-        switch (userInfo.status.id) {
+        switch (statusId) {
             case 4:
                 return {
                     title: t('auth.status.disabled.title'),
@@ -52,7 +54,12 @@ const AccountGuard = ({ userInfo, changeStatus, logout, children }) => {
                 };
 
             default:
-                return null;
+                return {
+                    title: t('error', { defaultValue: 'Erreur' }),
+                    message: t('auth.status.unknown.description', { defaultValue: 'Statut de compte inconnu.' }),
+                    button: false,
+                    icon: 'help-circle-outline'
+                };
         }
     };
 
@@ -68,7 +75,7 @@ const AccountGuard = ({ userInfo, changeStatus, logout, children }) => {
             {/* Message Content */}
             <Icon name={content.icon} color={COLORS.danger} size={100} style={{ alignSelf: 'center', marginBottom: PADDING.p02 }} />
 
-            <Text style={{ fontSize: TEXT_SIZE.header, fontWeight: 'bold', color: COLORS.danger, marginBottom: PADDING.p02 }}>
+            <Text style={{ fontSize: TEXT_SIZE.header, fontWeight: 'bold', color: COLORS.danger, marginBottom: PADDING.p02, textAlign: 'center' }}>
                 {content.title}
             </Text>
 

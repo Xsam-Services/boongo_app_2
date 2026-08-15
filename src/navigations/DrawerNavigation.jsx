@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { HomeStackNavigation } from "./HomeStackNavigation";
 import { AuthContext } from "../contexts/AuthContext";
+import DrawerContent from "./DrawerContent";
 
 const Drawer = createDrawerNavigator();
 

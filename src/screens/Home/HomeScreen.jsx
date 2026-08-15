@@ -2,8 +2,8 @@
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { View, TouchableOpacity, Animated, SafeAreaView, Dimensions, RefreshControl, TouchableHighlight, FlatList, Text } from 'react-native'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { View, TouchableOpacity, Animated, Dimensions, RefreshControl, TouchableHighlight, FlatList, Text } from 'react-native';
 import { TabBar, TabView } from 'react-native-tab-view';
 import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -17,16 +17,16 @@ import WorkItemComponent from '../../components/work_item';
 import FloatingActionsButton from '../../components/floating_actions_button';
 import homeStyles from '../style';
 import useColors from '../../hooks/useColors';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+const screenWidth = Dimensions.get('window').width;
 
 // News frame
-const News = ({ handleScroll, showBackToTop, listRef }) => {
-  // =============== Colors ===============
+const News = ({ handleScroll, listRef }) => {
   const COLORS = useColors();
-  // =============== Language ===============
   const { t } = useTranslation();
-  // =============== Get contexts ===============
   const { userInfo } = useContext(AuthContext);
-  // =============== Get data ===============
+
   const [news, setNews] = useState([]);
   const [ad, setAd] = useState(null);
   const [page, setPage] = useState(1);
@@ -36,11 +36,10 @@ const News = ({ handleScroll, showBackToTop, listRef }) => {
   const [refreshing, setRefreshing] = useState(false);
   const flatListRef = listRef || useRef(null);
 
-  const fetchWorks = async (pageToFetch = 1) => {
-    if (isLoading || pageToFetch > lastPage) return;
+  const fetchWorks = useCallback(async (pageToFetch = 1) => {
+    if (!userInfo?.api_token || isLoading || (pageToFetch > lastPage && pageToFetch !== 1)) return;
 
     setIsLoading(true);
-
     const qs = require('qs');
     const url = `${API.boongo_url}/work/filter_by_categories?page=${pageToFetch}`;
     const mParams = { type_id: 33, status_id: 17 };
@@ -51,36 +50,37 @@ const News = ({ handleScroll, showBackToTop, listRef }) => {
 
     try {
       const response = await axios.post(url, qs.stringify(mParams), { headers: mHeaders });
+      const responseData = response.data?.data || [];
 
       if (pageToFetch === 1) {
-        setNews(response.data.data);
+        setNews(responseData);
       } else {
-        setNews(prev => [...prev, ...response.data.data]);
+        setNews(prev => [...prev, ...responseData]);
       }
 
-      setAd(response.data.ad);
-      setLastPage(response.data.lastPage);
-      setCount(response.data.count);
+      setAd(response.data?.ad || null);
+      setLastPage(response.data?.lastPage || 1);
+      setCount(response.data?.count || 0);
     } catch (error) {
       if (error.response?.status === 429) {
         console.warn("Trop de requêtes envoyées. Attendez avant de réessayer.");
       } else {
-        console.error(error);
+        console.error("Erreur fetchWorks News:", error);
       }
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userInfo?.api_token, lastPage, isLoading]);
 
   useEffect(() => {
-    fetchWorks(1); // Initial loading
-  }, []);
+    fetchWorks(1);
+  }, [fetchWorks]);
 
   useEffect(() => {
     if (page > 1) {
       fetchWorks(page);
     }
-  }, [page]);
+  }, [page, fetchWorks]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -96,19 +96,17 @@ const News = ({ handleScroll, showBackToTop, listRef }) => {
   };
 
   const combinedData = [...news];
-
   if (ad) {
     combinedData.push({ ...ad, realId: ad.id, id: 'ad' });
   }
 
   return (
-
-    <SafeAreaView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1, backgroundColor: COLORS.light_secondary }} edges={['top']}>
-      <View style={[homeStyles.cardEmpty, { height: Dimensions.get('window').height, marginLeft: 0, paddingHorizontal: 2 }]}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.light_secondary }} edges={['top']}>
+      <View style={[homeStyles.cardEmpty, { flex: 1, marginLeft: 0, paddingHorizontal: 2 }]}>
         <Animated.FlatList
           ref={flatListRef}
           data={combinedData}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
           renderItem={({ item }) => <NewsItemComponent item={item} />}
           showsVerticalScrollIndicator={false}
           alwaysBounceVertical={false}
@@ -125,8 +123,6 @@ const News = ({ handleScroll, showBackToTop, listRef }) => {
               progressViewOffset={105}
             />
           }
-          // contentInset={{ top: 105 }}
-          // contentOffset={{ y: -105 }}
           ListEmptyComponent={
             <EmptyListComponent
               iconName='script-text-outline'
@@ -146,14 +142,11 @@ const News = ({ handleScroll, showBackToTop, listRef }) => {
 };
 
 // Books frame
-const Books = ({ handleScroll, showBackToTop, listRef }) => {
-  // =============== Colors ===============
+const Books = ({ handleScroll, listRef }) => {
   const COLORS = useColors();
-  // =============== Language ===============
   const { t } = useTranslation();
-  // =============== Get contexts ===============
   const { userInfo } = useContext(AuthContext);
-  // =============== Get data ===============
+
   const [categories, setCategories] = useState([]);
   const [idCat, setIdCat] = useState(0);
   const [books, setBooks] = useState([]);
@@ -165,12 +158,8 @@ const Books = ({ handleScroll, showBackToTop, listRef }) => {
   const [refreshing, setRefreshing] = useState(false);
   const flatListRef = listRef || useRef(null);
 
-  // ================= Get categories =================
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
+    if (!userInfo?.api_token) return;
     const headers = {
       'X-localization': 'fr',
       Authorization: `Bearer ${userInfo.api_token}`,
@@ -178,38 +167,28 @@ const Books = ({ handleScroll, showBackToTop, listRef }) => {
 
     try {
       const group = encodeURIComponent('Catégorie pour œuvre');
-
       const res = await axios.get(`${API.boongo_url}/category/find_by_group/${group}`, { headers });
-      const data = res.data.data;
-      const itemAll = { id: 0, category_name: t('all_f'), category_name_fr: "Toutes", category_name_en: "All", category_name_ln: "Nioso", category_description: null, };
+      const data = res.data?.data || [];
+      const itemAll = { id: 0, category_name: t('all_f'), category_name_fr: "Toutes", category_name_en: "All", category_name_ln: "Nioso", category_description: null };
 
       data.unshift(itemAll);
       setCategories(data);
       setIdCat(itemAll.id);
-
     } catch (error) {
       console.error('Erreur fetchCategories index', error);
     }
-  };
+  }, [userInfo?.api_token, t]);
 
-  // ================= Fetch books when idCat or page changes =================
-  // useEffect(() => {
-  //   fetchBooks();
-  // }, [page, idCat]);
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      fetchBooks();
-    }, 5000);
+    fetchCategories();
+  }, [fetchCategories]);
 
-    return () => clearInterval(intervalId);
-  }, [page, idCat]);
-
-  const fetchBooks = async () => {
-    if (isLoading || page > lastPage) return;
+  const fetchBooks = useCallback(async (pageToFetch = 1) => {
+    if (!userInfo?.api_token || isLoading || (pageToFetch > lastPage && pageToFetch !== 1)) return;
     setIsLoading(true);
 
     const qs = require('qs');
-    const url = `${API.boongo_url}/work/filter_by_categories?page=${page}`;
+    const url = `${API.boongo_url}/work/filter_by_categories?page=${pageToFetch}`;
     const params = {
       'categories_ids[0]': idCat,
       type_id: 29,
@@ -223,34 +202,33 @@ const Books = ({ handleScroll, showBackToTop, listRef }) => {
 
     try {
       const response = await axios.post(url, qs.stringify(params), { headers });
-      const data = response.data.data || [];
+      const data = response.data?.data || [];
 
-      setBooks(prev => (page === 1 ? data : [...prev, ...data]));
-      setAd(response.data.ad || null);
-      setLastPage(response.data.lastPage || page);
-      setCount(response.data.count || 0);
-
-      // console.log(response.data);
-
+      setBooks(prev => (pageToFetch === 1 ? data : [...prev, ...data]));
+      setAd(response.data?.ad || null);
+      setLastPage(response.data?.lastPage || pageToFetch);
+      setCount(response.data?.count || 0);
     } catch (error) {
       console.error('Erreur fetchBooks', error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userInfo?.api_token, idCat, lastPage, isLoading]);
 
-  // ================= Combined data =================
+  useEffect(() => {
+    fetchBooks(page);
+  }, [page, idCat, fetchBooks]);
+
   const combinedData = [...books];
   if (ad) {
     combinedData.push({ ...ad, id: 'ad', realId: ad.id });
   }
 
-  // ================= Handlers =================
   const onRefresh = async () => {
     setRefreshing(true);
     setPage(1);
     setBooks([]);
-    await fetchBooks();
+    await fetchBooks(1);
     setRefreshing(false);
   };
 
@@ -258,10 +236,6 @@ const Books = ({ handleScroll, showBackToTop, listRef }) => {
     if (!isLoading && page < lastPage) {
       setPage(prev => prev + 1);
     }
-  };
-
-  const scrollToTop = () => {
-    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
   };
 
   const handleBadgePress = useCallback((id) => {
@@ -277,7 +251,6 @@ const Books = ({ handleScroll, showBackToTop, listRef }) => {
 
     return (
       <Container
-        key={item.id}
         onPress={() => handleBadgePress(item.id)}
         style={
           isSelected
@@ -301,14 +274,12 @@ const Books = ({ handleScroll, showBackToTop, listRef }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
-      <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
-        {/* <View style={[homeStyles.cardEmpty, { height: Dimensions.get('window').height, marginLeft: 0, paddingHorizontal: 2 }]}> */}
-        {/* Books List */}
+      <SafeAreaView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
         <Animated.FlatList
           ref={flatListRef}
           data={combinedData}
           extraData={combinedData}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
           renderItem={({ item }) => <WorkItemComponent item={item} />}
           horizontal={false}
           showsVerticalScrollIndicator={false}
@@ -318,46 +289,36 @@ const Books = ({ handleScroll, showBackToTop, listRef }) => {
           onEndReachedThreshold={0.1}
           scrollEventThrottle={16}
           windowSize={10}
-          contentContainerStyle={{
-            paddingTop: 110,
-          }}
+          contentContainerStyle={{ paddingTop: 110 }}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={105} />}
           ListEmptyComponent={<EmptyListComponent iconName="book-open-page-variant-outline" title={t('empty_list.title')} description={t('empty_list.description_books')} />}
           ListHeaderComponent={
-            <>
-              <FlatList
-                data={categories}
-                keyExtractor={item => item.id.toString()}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={{ height: 40, flexGrow: 0 }}
-                contentContainerStyle={{
-                  alignItems: 'center',
-                  paddingHorizontal: PADDING.p00,
-                }}
-                renderItem={({ item }) => <CategoryItem item={item} />}
-              />
-            </>
+            <FlatList
+              data={categories}
+              keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={{ height: 40, flexGrow: 0 }}
+              contentContainerStyle={{
+                alignItems: 'center',
+                paddingHorizontal: PADDING.p00,
+              }}
+              renderItem={({ item }) => <CategoryItem item={item} />}
+            />
           }
-          ListFooterComponent={() => isLoading ? (<Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01, }} >{t('loading')}</Text>) : null}
+          ListFooterComponent={() => isLoading ? (<Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text>) : null}
         />
-        {/* </View> */}
       </SafeAreaView>
     </View>
   );
 };
 
 const HomeScreen = () => {
-  // =============== Colors ===============
   const COLORS = useColors();
-  // =============== Language ===============
   const { t } = useTranslation();
-  // =============== Get contexts ===============
-  const { userInfo } = useContext(AuthContext);
-  // =============== Get data ===============
   const newsListRef = useRef(null);
   const booksListRef = useRef(null);
-  const [index, setIndex] = useState(0); // Active tab
+  const [index, setIndex] = useState(0);
   const [showBackToTopByTab, setShowBackToTopByTab] = useState({ news: false, books: false });
   const scrollY = useRef(new Animated.Value(0)).current;
   const savedScrollOffsets = useRef({ news: 0, books: 0 });
@@ -373,7 +334,7 @@ const HomeScreen = () => {
     { key: 'books', title: t('navigation.home.books') },
   ]);
 
-  const renderScene = ({ route }) => {
+  const renderScene = useCallback(({ route }) => {
     switch (route.key) {
       case 'news':
         return <News handleScroll={handleScroll} listRef={newsListRef} />;
@@ -382,9 +343,8 @@ const HomeScreen = () => {
       default:
         return null;
     }
-  };
+  }, []);
 
-  // Handle scrolling
   const handleScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
     {
@@ -403,16 +363,9 @@ const HomeScreen = () => {
     }
   );
 
-  // On Tab change
   const handleIndexChange = (newIndex) => {
     const newTabKey = newIndex === 0 ? 'news' : 'books';
     const offset = savedScrollOffsets.current[newTabKey] || 0;
-
-    Animated.timing(scrollY, {
-      toValue: offset,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
 
     if (newIndex === 0 && newsListRef.current) {
       newsListRef.current.scrollToOffset({ offset, animated: true });
@@ -423,38 +376,34 @@ const HomeScreen = () => {
     setIndex(newIndex);
   };
 
-  // Custom TabBar
   const renderTabBar = (props) => (
-    <>
-      <Animated.View
+    <Animated.View
+      style={{
+        transform: [{ translateY: headerTranslateY }],
+        zIndex: 1000,
+        position: 'absolute',
+        top: 0,
+        width: '100%',
+        backgroundColor: COLORS.white,
+        paddingTop: 20,
+      }}
+    >
+      <HeaderComponent />
+      <TabBar
+        {...props}
         style={{
-          transform: [{ translateY: headerTranslateY }],
-          zIndex: 1000,
-          position: 'absolute',
-          top: 0,
-          width: '100%',
           backgroundColor: COLORS.white,
-          paddingTop: 20,
+          borderBottomWidth: 0,
+          elevation: 0,
+          shadowOpacity: 0,
         }}
-      >
-        <HeaderComponent />
-        <TabBar
-          {...props}
-          style={{
-            backgroundColor: COLORS.white,
-            borderBottomWidth: 0,
-            elevation: 0,
-            shadowOpacity: 0,
-          }}
-          indicatorStyle={{ backgroundColor: COLORS.black }}
-          activeColor={COLORS.black}
-          inactiveColor={COLORS.dark_secondary}
-        />
-      </Animated.View>
-    </>
+        indicatorStyle={{ backgroundColor: COLORS.black }}
+        activeColor={COLORS.black}
+        inactiveColor={COLORS.dark_secondary}
+      />
+    </Animated.View>
   );
 
-  // Back to top handler
   const handleBackToTop = () => {
     if (index === 0 && newsListRef.current) {
       newsListRef.current.scrollToOffset({ offset: 0, animated: true });
@@ -464,16 +413,15 @@ const HomeScreen = () => {
   };
 
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}
         onIndexChange={handleIndexChange}
-        initialLayout={{ width: 100 }}
+        initialLayout={{ width: screenWidth }}
         renderTabBar={renderTabBar}
       />
 
-      {/* === Bouton global BackToTop === */}
       {showBackToTopByTab[index === 0 ? 'news' : 'books'] && (
         <TouchableOpacity
           onPress={handleBackToTop}
@@ -483,9 +431,8 @@ const HomeScreen = () => {
         </TouchableOpacity>
       )}
 
-      {/* === Floating Button === */}
       <FloatingActionsButton />
-    </>
+    </View>
   );
 };
 

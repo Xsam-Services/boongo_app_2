@@ -8,7 +8,6 @@ import { AuthContext } from '../../contexts/AuthContext';
 import useColors from '../../hooks/useColors';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 import Octicons from '@expo/vector-icons/Octicons';
 
 const LoginScreen = ({ route }) => {
