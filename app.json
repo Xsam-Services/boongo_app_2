@@ -29,6 +29,14 @@
         {
           "enableBackgroundPlayback": true
         }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#242400",
+          "image": "./assets/img/brand-with-name.png",
+          "imageWidth": 200
+        }
       ]
     ]
   }
