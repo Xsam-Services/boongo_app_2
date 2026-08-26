@@ -1,167 +1,73 @@
-/**
- * @author Xanders
- * @see https://team.xsamtech.com/xanderssamoth
- */
 import React, { useContext } from 'react';
-import { View, Text, TouchableOpacity, StatusBar, Image, Dimensions } from 'react-native';
-import { t } from 'i18next';
+import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { DrawerActions, useNavigation, useRoute } from '@react-navigation/native';
-import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import FaIcon from '@expo/vector-icons/FontAwesome6';
-import { PADDING, TEXT_SIZE } from '../tools/constants';
-import Logo from './../../assets/img/icon.svg';
-import LogoText from './../../assets/img/brand.svg';
-import homeStyles from './style';
-import useColors from '../hooks/useColors';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
+
+import LogoText from '../../assets/img/brand.svg';
 import { AuthContext } from '../contexts/AuthContext';
+import useColors from '../hooks/useColors';
+
+const rootRoutes = new Set(['HomeStack', 'Media']);
+
+const HeaderButton = ({ accessibilityLabel, children, onPress, COLORS }) => (
+  <TouchableOpacity
+    accessibilityLabel={accessibilityLabel}
+    style={[styles.iconButton, { backgroundColor: COLORS.light_secondary }]}
+    onPress={onPress}
+    activeOpacity={0.7}
+  >
+    {children}
+  </TouchableOpacity>
+);
 
 const HeaderComponent = ({ title }) => {
-  // =============== Colors ===============
   const COLORS = useColors();
-  // =============== Navigation ===============
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
+  const { userInfo } = useContext(AuthContext);
+  const isRoot = rootRoutes.has(route.name);
+  const isAccount = route.name === 'Account';
+  const displayName = [userInfo?.firstname, userInfo?.lastname].filter(Boolean).join(' ') || userInfo?.username;
 
-  if (route.name === 'HomeStack' || route.name === 'Media') {
+  if (isAccount) {
     return (
       <>
-        {/* Status bar */}
-        <StatusBar barStyle='light-content' backgroundColor={COLORS.danger} />
-
-        {/* Content */}
-        <View style={[homeStyles.headerBanner, { backgroundColor: COLORS.white }]}>
-          {/* Brand */}
-          <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-              <Icon name='menu' size={28} color={COLORS.black} />
-            </TouchableOpacity>
-            <LogoText width={120} height={32} style={{ marginLeft: PADDING.p01 }} />
-            {title ?
-              <Text style={{ fontSize: 20, fontWeight: '500', color: COLORS.black }}>{title}</Text>
-              : ''}
-          </View>
-
-          {/* Right links */}
-          <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-              <Icon name='magnify' size={28} color={COLORS.black} />
-            </TouchableOpacity>
-            <TouchableOpacity style={{ marginLeft: PADDING.p03 }} onPress={() => navigation.navigate('Dictionary')}>
-              <Icon name='book-open-blank-variant' size={28} color={COLORS.black} />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </>
-    );
-  }
-
-  if (route.name === 'Establishment' || route.name === 'Government') {
-    return (
-      <>
-        {/* Status bar */}
-        <StatusBar barStyle='light-content' backgroundColor={COLORS.danger} />
-
-        {/* Content */}
-        <View style={[homeStyles.headerBanner, { backgroundColor: COLORS.white }]}>
-          {/* Brand */}
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon name='chevron-left' size={37} color={COLORS.black} />
-            </TouchableOpacity>
-            <Logo width={30} height={30} style={{ marginRight: PADDING.p01 }} />
-            {title ?
-              <Text style={{ fontSize: 20, fontWeight: '500', color: COLORS.black }}>{title}</Text>
-              : ''}
-          </View>
-
-          {/* Right links */}
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity style={{ marginLeft: PADDING.p03 }} onPress={() => navigation.navigate('Dictionary')}>
-              <Icon name='book-open-blank-variant' size={28} color={COLORS.black} />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </>
-    );
-  }
-
-  if (route.name === 'Account') {
-    const { userInfo } = useContext(AuthContext);
-
-    // Adjust icon name
-    const cleanIconName = (icon) => {
-      // Separates the string by space and takes the last part, without the prefix
-      const iconParts = icon.split(' ');  // Separates the prefix and the icon name
-      return iconParts[iconParts.length - 1].replace(/^fa-/, '');  // Remove "fa-" if necessary
-    };
-
-    return (
-      <>
-        {/* Status bar */}
-        <StatusBar barStyle='light-content' backgroundColor={COLORS.danger} />
-
-        {/* Content */}
-        <View style={{ backgroundColor: COLORS.white }}>
-          {/* Username */}
-          <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity style={{ position: 'absolute', left: 7, top: -7, zIndex: 10 }} onPress={() => navigation.goBack()}>
-              <Icon name='chevron-left' size={37} color={COLORS.black} />
-            </TouchableOpacity>
-            <Text style={{ width: '100%', fontSize: 16, fontWeight: '400', textAlign: 'center', color: COLORS.danger }}>{`@${userInfo.username}`}</Text>
-            <View style={{ flexDirection: 'row', position: 'absolute', right: 10, top: 3, zIndex: 10 }}>
-              <TouchableOpacity style={{ marginRight: PADDING.p01 }} onPress={() => navigation.navigate('Notifications')}>
-                <Icon name='bell-outline' size={23} color={COLORS.black} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-                <Icon name='cog-outline' size={23} color={COLORS.black} />
-              </TouchableOpacity>
+        <StatusBar barStyle={COLORS.bar_style} backgroundColor={COLORS.white} />
+        <View style={[styles.accountHeader, { backgroundColor: COLORS.white }]}>
+          <View style={styles.accountActions}>
+            <HeaderButton accessibilityLabel="Retour" onPress={() => navigation.goBack()} COLORS={COLORS}>
+              <MaterialCommunityIcons name="chevron-left" size={24} color={COLORS.black} />
+            </HeaderButton>
+            <Text style={[styles.handle, { color: COLORS.dark }]}>@{userInfo?.username}</Text>
+            <View style={styles.rightActions}>
+              <HeaderButton accessibilityLabel="Notifications" onPress={() => navigation.navigate('Notifications')} COLORS={COLORS}>
+                <MaterialCommunityIcons name="bell-outline" size={20} color={COLORS.black} />
+              </HeaderButton>
+              <HeaderButton accessibilityLabel="Paramètres" onPress={() => navigation.navigate('Settings')} COLORS={COLORS}>
+                <MaterialCommunityIcons name="cog-outline" size={20} color={COLORS.black} />
+              </HeaderButton>
             </View>
           </View>
-
-          {/* Profile */}
-          <View style={{ flexDirection: 'row', width: Dimensions.get('window').width, justifyContent: 'flex-start', alignItems: 'flex-start', paddingTop: PADDING.p02, paddingHorizontal: PADDING.p02 }}>
-            <Image style={{ width: 100, height: 100, borderRadius: 50, marginRight: PADDING.p02 }} source={{ uri: userInfo.avatar_url }} />
-            <View style={{ flexDirection: 'column', paddingTop: PADDING.p02 }}>
-              <Text style={{ fontSize: 20, fontWeight: '500', color: COLORS.black, maxWidth: '90%' }}>{`${userInfo.firstname} ${userInfo.lastname}`}</Text>
-              {userInfo.email &&
-                <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 8 }}>
-                  <Icon name='email' size={16} color={COLORS.black} style={{ marginTop: 1, marginRight: PADDING.p00 }} />
-                  <Text style={{ fontSize: 13, fontWeight: '400', color: COLORS.black, maxWidth: '75%' }}>
-                    {userInfo.email}
-                  </Text>
-                </View>
-              }
-              {userInfo.phone &&
-                <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 8 }}>
-                  <Icon name='phone' size={16} color={COLORS.black} style={{ marginTop: 1, marginRight: PADDING.p00 }} />
-                  <Text style={{ fontSize: 13, fontWeight: '400', color: COLORS.black, maxWidth: '75%' }}>
-                    {userInfo.phone}
-                  </Text>
-                </View>
-              }
-              {userInfo.address_1 &&
-                <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 8 }}>
-                  <Icon name='map-marker' size={16} color={COLORS.black} style={{ marginTop: 1, marginRight: PADDING.p00 }} />
-                  <Text style={{ fontSize: 13, fontWeight: '400', color: COLORS.black, maxWidth: '75%' }}>
-                    {userInfo.address_1}
-                  </Text>
-                </View>
-              }
-              {userInfo.last_organization ?
-                <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 8 }}>
-                  {userInfo.last_organization.type && (
-                    <FaIcon name={cleanIconName(userInfo.last_organization.type.icon)} size={16} color={COLORS.black} style={{ marginTop: 1, marginRight: PADDING.p00 }} />
-                  )}
-                  <Text style={{ fontSize: 13, fontWeight: '400', color: COLORS.black, maxWidth: '75%' }}>
-                    {userInfo.last_organization.org_name}
-                  </Text>
-                </View> :
-                <TouchableOpacity style={[homeStyles.authButton, { width: 210, backgroundColor: COLORS.danger, marginTop: 8, paddingHorizontal: PADDING.p02 }]} onPress={() => navigation.navigate('Settings')}>
-                  <Text style={{ fontSize: TEXT_SIZE.label, fontWeight: '400', color: 'white', textAlign: 'center' }}>
-                    {t('auth.organization.new')}
-                  </Text>
+          <View style={[styles.accountCard, { backgroundColor: COLORS.light_primary }]}>
+            {userInfo?.avatar_url ? <Image source={{ uri: userInfo.avatar_url }} style={styles.accountAvatar} /> : (
+              <View style={[styles.accountAvatar, styles.avatarFallback, { backgroundColor: COLORS.primary }]}>
+                <MaterialCommunityIcons name="account" size={36} color="#ffffff" />
+              </View>
+            )}
+            <View style={styles.accountIdentity}>
+              <Text style={[styles.accountName, { color: COLORS.black }]} numberOfLines={1}>{displayName}</Text>
+              {userInfo?.email ? <Text style={[styles.accountDetail, { color: COLORS.dark }]} numberOfLines={1}>{userInfo.email}</Text> : null}
+              {userInfo?.phone ? <Text style={[styles.accountDetail, { color: COLORS.dark }]} numberOfLines={1}>{userInfo.phone}</Text> : null}
+              {userInfo?.address_1 ? <Text style={[styles.accountDetail, { color: COLORS.dark }]} numberOfLines={1}>{userInfo.address_1}</Text> : null}
+              {userInfo?.last_organization ? (
+                <Text style={[styles.accountOrganization, { color: COLORS.primary }]} numberOfLines={1}>{userInfo.last_organization.org_name}</Text>
+              ) : (
+                <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+                  <Text style={[styles.accountOrganization, { color: COLORS.primary }]}>{t('auth.organization.new')}</Text>
                 </TouchableOpacity>
-              }
+              )}
             </View>
           </View>
         </View>
@@ -169,94 +75,55 @@ const HeaderComponent = ({ title }) => {
     );
   }
 
-  if (route.name === 'WorkData' ||
-    route.name === 'NewsData' ||
-    route.name === 'VideoPlayer' ||
-    route.name === 'Audio' ||
-    route.name === 'PDFViewerContent' ||
-    route.name === 'Summary' ||
-    route.name === 'Subscription' ||
-    route.name === 'MobileSubscribe' ||
-    route.name === 'BankCardSubscribe' ||
-    route.name === 'Language' ||
-    route.name === 'Chats') {
-    return (
-      <>
-        {/* Status bar */}
-        <StatusBar barStyle='light-content' backgroundColor={COLORS.danger} />
+  const leadingAction = isRoot
+    ? () => navigation.dispatch(DrawerActions.openDrawer())
+    : () => navigation.goBack();
 
-        {/* Content */}
-        <View style={[homeStyles.headerBanner, { backgroundColor: COLORS.white }]}>
-          {/* Brand */}
-          <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon name='chevron-left' size={34} color={COLORS.black} style={{ marginTop: -5 }} />
-            </TouchableOpacity>
-            <LogoText width={115} height={31} style={{ marginLeft: PADDING.p01 }} />
-            {title ?
-              <Text style={{ fontSize: 20, fontWeight: '500', color: COLORS.black }}>{title}</Text>
-              : ''}
-          </View>
-
-          {/* Right links */}
-          <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-              <Icon name='magnify' size={28} color={COLORS.black} />
-            </TouchableOpacity>
-          </View>
+  return (
+    <>
+      <StatusBar barStyle={COLORS.bar_style} backgroundColor={COLORS.white} />
+      <View style={[styles.header, { backgroundColor: COLORS.white, borderBottomColor: COLORS.dark_light }]}>
+        <View style={styles.leading}>
+          <HeaderButton accessibilityLabel={isRoot ? 'Ouvrir le menu' : 'Retour'} onPress={leadingAction} COLORS={COLORS}>
+            <MaterialCommunityIcons name={isRoot ? 'menu' : 'chevron-left'} size={24} color={COLORS.black} />
+          </HeaderButton>
+          <LogoText width={isRoot ? 104 : 88} height={28} style={styles.logo} />
+          {title ? <Text style={[styles.title, { color: COLORS.black }]} numberOfLines={1}>{title}</Text> : null}
         </View>
-      </>
-    );
-  }
-
-  if (route.name === 'OrganizationSettings') {
-    return (
-      <>
-        {/* Status bar */}
-        <StatusBar barStyle='dark-content' backgroundColor={COLORS.warning} />
-
-        {/* Content */}
-        <View style={[homeStyles.headerBanner, { backgroundColor: COLORS.white }]}>
-          {/* Brand */}
-          <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon name='chevron-left' size={34} color={COLORS.black} style={{ marginTop: -5 }} />
-            </TouchableOpacity>
-            <LogoText width={115} height={31} style={{ marginLeft: PADDING.p01 }} />
-            {title ?
-              <Text style={{ fontSize: 20, fontWeight: '500', color: COLORS.black }}>{title}</Text>
-              : ''}
-          </View>
+        <View style={styles.rightActions}>
+          {route.name !== 'OrganizationSettings' && route.name !== 'Notifications' ? (
+            <HeaderButton accessibilityLabel="Recherche" onPress={() => navigation.navigate('Search')} COLORS={COLORS}>
+              <MaterialCommunityIcons name="magnify" size={21} color={COLORS.black} />
+            </HeaderButton>
+          ) : null}
+          {isRoot || route.name === 'Establishment' || route.name === 'Government' ? (
+            <HeaderButton accessibilityLabel="Dictionnaire" onPress={() => navigation.navigate('Dictionary')} COLORS={COLORS}>
+              <MaterialCommunityIcons name="book-open-blank-variant" size={20} color={COLORS.black} />
+            </HeaderButton>
+          ) : null}
         </View>
-      </>
-    );
-  }
-
-  if (route.name === 'Notifications') {
-    return (
-      <>
-        {/* Status bar */}
-        <StatusBar barStyle='dark-content' backgroundColor={COLORS.primary} />
-
-        {/* Content */}
-        <View style={[homeStyles.headerBanner, { backgroundColor: COLORS.white }]}>
-          {/* Brand */}
-          <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon name='chevron-left' size={34} color={COLORS.black} style={{ marginTop: -5 }} />
-            </TouchableOpacity>
-            <Logo width={30} height={30} style={{ marginRight: PADDING.p01 }} />
-            {title ?
-              <Text style={{ fontSize: 20, fontWeight: '500', color: COLORS.black }}>{title}</Text>
-              : ''}
-          </View>
-          <TouchableOpacity style={{ alignSelf: 'flex-end' }}>
-            <Icon name='dots-vertical' size={34} color={COLORS.black} style={{ marginTop: -5, marginRight: -5 }} />
-          </TouchableOpacity>
-        </View>
-      </>
-    );
-  }
+      </View>
+    </>
+  );
 };
+
+const styles = StyleSheet.create({
+  header: { alignItems: 'center', borderBottomWidth: StyleSheet.hairlineWidth, flexDirection: 'row', justifyContent: 'space-between', minHeight: 64, paddingHorizontal: 16 },
+  leading: { alignItems: 'center', flex: 1, flexDirection: 'row', minWidth: 0 },
+  logo: { marginLeft: 10 },
+  title: { flexShrink: 1, fontSize: 17, fontWeight: '700', marginLeft: 10 },
+  iconButton: { alignItems: 'center', borderRadius: 18, height: 36, justifyContent: 'center', width: 36 },
+  rightActions: { flexDirection: 'row', gap: 8 },
+  accountHeader: { paddingHorizontal: 16, paddingVertical: 12 },
+  accountActions: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+  handle: { fontSize: 14, fontWeight: '600' },
+  accountCard: { alignItems: 'center', borderRadius: 20, flexDirection: 'row', marginTop: 16, padding: 14 },
+  accountAvatar: { borderRadius: 34, height: 68, width: 68 },
+  avatarFallback: { alignItems: 'center', justifyContent: 'center' },
+  accountIdentity: { flex: 1, marginLeft: 13 },
+  accountName: { fontSize: 19, fontWeight: '700' },
+  accountDetail: { fontSize: 13, marginTop: 3 },
+  accountOrganization: { fontSize: 13, fontWeight: '700', marginTop: 7 },
+});
 
 export default HeaderComponent;
