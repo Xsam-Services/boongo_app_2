@@ -3,12 +3,12 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { View, TouchableOpacity, Animated, Dimensions, RefreshControl, TouchableHighlight, FlatList, Text } from 'react-native';
+import { View, TouchableOpacity, Animated, Dimensions, RefreshControl, FlatList, Text, StyleSheet } from 'react-native';
 import { TabBar, TabView } from 'react-native-tab-view';
 import { useTranslation } from 'react-i18next';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
-import { API, IMAGE_SIZE, PADDING } from '../../tools/constants';
+import { API, PADDING } from '../../tools/constants';
 import { AuthContext } from '../../contexts/AuthContext';
 import HeaderComponent from '../header';
 import EmptyListComponent from '../../components/empty_list';
@@ -34,7 +34,8 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
   const [count, setCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const flatListRef = listRef || useRef(null);
+  const fallbackListRef = useRef(null);
+  const flatListRef = listRef || fallbackListRef;
 
   const fetchWorks = useCallback(async (pageToFetch = 1) => {
     if (!userInfo?.api_token || isLoading || (pageToFetch > lastPage && pageToFetch !== 1)) return;
@@ -101,8 +102,8 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.light_secondary }} edges={[]}>
-      <View style={[homeStyles.cardEmpty, { flex: 1, marginLeft: 0, paddingHorizontal: 2 }]}>
+    <SafeAreaView style={[styles.scene, { backgroundColor: COLORS.light }]} edges={[]}>
+      <View style={styles.listShell}>
         <Animated.FlatList
           ref={flatListRef}
           data={combinedData}
@@ -114,7 +115,7 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
           onEndReached={onEndReached}
           onEndReachedThreshold={0.1}
           scrollEventThrottle={16}
-          contentContainerStyle={[homeStyles.scrollableList, { paddingTop: contentTopInset }]}
+          contentContainerStyle={[homeStyles.scrollableList, styles.listContent, { paddingTop: contentTopInset }]}
           windowSize={10}
           refreshControl={
             <RefreshControl
@@ -156,7 +157,8 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
   const [count, setCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const flatListRef = listRef || useRef(null);
+  const fallbackListRef = useRef(null);
+  const flatListRef = listRef || fallbackListRef;
 
   const fetchCategories = useCallback(async () => {
     if (!userInfo?.api_token) return;
@@ -247,33 +249,19 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
 
   const CategoryItem = ({ item }) => {
     const isSelected = idCat === item.id;
-    const Container = isSelected ? TouchableHighlight : TouchableOpacity;
-
     return (
-      <Container
+      <TouchableOpacity
         onPress={() => handleBadgePress(item.id)}
-        style={
-          isSelected
-            ? [homeStyles.categoryBadgeSelected, { backgroundColor: COLORS.white }]
-            : [homeStyles.categoryBadge, { backgroundColor: COLORS.warning }]
-        }
-        underlayColor={COLORS.light_secondary}
+        activeOpacity={0.78}
+        style={[styles.categoryChip, { backgroundColor: isSelected ? COLORS.primary : COLORS.white, borderColor: isSelected ? COLORS.primary : COLORS.light_secondary }]}
       >
-        <Text
-          style={
-            isSelected
-              ? [homeStyles.categoryBadgeTextSelected, { color: COLORS.black }]
-              : [homeStyles.categoryBadgeText, { color: 'black' }]
-          }
-        >
-          {item.category_name}
-        </Text>
-      </Container>
+        <Text style={[styles.categoryChipText, { color: isSelected ? '#ffffff' : COLORS.black }]}>{item.category_name}</Text>
+      </TouchableOpacity>
     );
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
+    <View style={[styles.scene, { backgroundColor: COLORS.light }]}>
       <SafeAreaView style={{ flex: 1 }} edges={[]}>
         <Animated.FlatList
           ref={flatListRef}
@@ -289,7 +277,7 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
           onEndReachedThreshold={0.1}
           scrollEventThrottle={16}
           windowSize={10}
-          contentContainerStyle={{ paddingTop: contentTopInset }}
+          contentContainerStyle={[styles.listContent, { paddingTop: contentTopInset }]}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={105} />}
           ListEmptyComponent={<EmptyListComponent iconName="book-open-page-variant-outline" title={t('empty_list.title')} description={t('empty_list.description_books')} />}
           ListHeaderComponent={
@@ -298,10 +286,10 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
               keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
               horizontal
               showsHorizontalScrollIndicator={false}
-              style={{ height: 40, flexGrow: 0 }}
+              style={styles.categoriesList}
               contentContainerStyle={{
                 alignItems: 'center',
-                paddingHorizontal: PADDING.p00,
+                paddingHorizontal: 16,
               }}
               renderItem={({ item }) => <CategoryItem item={item} />}
             />
@@ -374,29 +362,16 @@ const HomeScreen = () => {
   };
 
   const renderTabBar = (props) => (
-    <View
-      style={{
-        zIndex: 1000,
-        elevation: 8,
-        position: 'absolute',
-        top: 0,
-        width: '100%',
-        backgroundColor: COLORS.white,
-        paddingTop: insets.top,
-      }}
-    >
+    <View style={[styles.homeHeader, { backgroundColor: COLORS.white, paddingTop: insets.top }]}>
       <HeaderComponent />
       <TabBar
         {...props}
-        style={{
-          backgroundColor: COLORS.white,
-          borderBottomWidth: 0,
-          elevation: 0,
-          shadowOpacity: 0,
-        }}
-        indicatorStyle={{ backgroundColor: COLORS.black }}
-        activeColor={COLORS.black}
-        inactiveColor={COLORS.dark_secondary}
+        style={[styles.tabBar, { backgroundColor: COLORS.white }]}
+        indicatorStyle={[styles.tabIndicator, { backgroundColor: COLORS.primary }]}
+        activeColor={COLORS.primary}
+        inactiveColor={COLORS.dark}
+        tabStyle={styles.tab}
+        renderLabel={({ route, focused, color }) => <Text style={[styles.tabLabel, { color, fontWeight: focused ? '700' : '600' }]}>{route.title}</Text>}
       />
     </View>
   );
@@ -410,7 +385,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
+    <View style={[styles.container, { backgroundColor: COLORS.light }]}>
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}
@@ -422,9 +397,9 @@ const HomeScreen = () => {
       {showBackToTopByTab[index === 0 ? 'news' : 'books'] && (
         <TouchableOpacity
           onPress={handleBackToTop}
-          style={[homeStyles.floatingButton, { backgroundColor: COLORS.warning }]}
+          style={[styles.backToTopButton, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}
         >
-          <Icon name='chevron-double-up' size={IMAGE_SIZE.s09} style={{ color: 'black' }} />
+          <Icon name='chevron-up' size={24} color={COLORS.black} />
         </TouchableOpacity>
       )}
 
@@ -434,3 +409,19 @@ const HomeScreen = () => {
 };
 
 export default HomeScreen;
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  scene: { flex: 1 },
+  listShell: { flex: 1 },
+  listContent: { paddingBottom: 34 },
+  homeHeader: { elevation: 8, position: 'absolute', shadowColor: '#172033', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.1, shadowRadius: 8, top: 0, width: '100%', zIndex: 1000 },
+  tabBar: { elevation: 0, shadowOpacity: 0 },
+  tab: { minHeight: 48 },
+  tabIndicator: { borderRadius: 3, height: 3 },
+  tabLabel: { fontSize: 13 },
+  categoriesList: { flexGrow: 0, height: 48 },
+  categoryChip: { borderRadius: 16, borderWidth: 1, marginRight: 8, paddingHorizontal: 14, paddingVertical: 8 },
+  categoryChipText: { fontSize: 13, fontWeight: '700' },
+  backToTopButton: { alignItems: 'center', borderRadius: 24, borderWidth: 1, bottom: 24, elevation: 6, height: 48, justifyContent: 'center', position: 'absolute', right: 20, shadowColor: '#172033', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.16, shadowRadius: 6, width: 48, zIndex: 20 },
+});
