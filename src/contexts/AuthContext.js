@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     const [endRegisterInfo, setEndRegisterInfo] = useState({});
     const [registerError, setRegisterError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [splashLoading, setSplashLoading] = useState(false);
+    const [splashLoading, setSplashLoading] = useState(true);
     const [pushToken, setPushToken] = useState(null);
 
     const [isFirstTime, setIsFirstTime] = useState(true);
@@ -1371,13 +1371,12 @@ export const AuthProvider = ({ children }) => {
 
         axios.post(`${API.boongo_url}/user/login`, {
             username, password
-        }).then(res => {
+        }).then(async res => {
             const message = res.data.message;
             const userData = res.data.data;
 
+            await AsyncStorage.setItem('userInfo', JSON.stringify(userData));
             setUserInfo(userData);
-
-            AsyncStorage.setItem('userInfo', JSON.stringify(userData));
             Toast.show({
                 type: 'success',
                 text1: message,
@@ -1441,52 +1440,32 @@ export const AuthProvider = ({ children }) => {
     };
 
     const isLoggedIn = async () => {
-        await AsyncStorage.removeItem('userInfo');
         try {
-            setSplashLoading(true);
-
-            let storedUserInfo = await AsyncStorage.getItem('userInfo');
+            const storedUserInfo = await AsyncStorage.getItem('userInfo');
 
             if (storedUserInfo) {
-                let parsedUserInfo = JSON.parse(storedUserInfo);
-                setUserInfo(parsedUserInfo);
+                const parsedUserInfo = JSON.parse(storedUserInfo);
+
+                if (parsedUserInfo?.id && parsedUserInfo?.api_token) {
+                    setUserInfo(parsedUserInfo);
+                } else {
+                    await AsyncStorage.removeItem('userInfo');
+                    setUserInfo({});
+                }
             }
 
         } catch (error) {
-            if (error.response) {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Erreur',
-                    text2: error.response.data.message || error.response.data,
-                    position: 'top'
-                });
-                console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
-            } else if (error.request) {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Erreur',
-                    text2: t('error') + ' ' + t('error_message.no_server_response'),
-                    position: 'top'
-                });
-            } else {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Erreur',
-                    text2: `${error}`,
-                    position: 'top'
-                });
-            }
+            console.warn('Unable to restore the saved user session:', error);
+            await AsyncStorage.removeItem('userInfo');
+            setUserInfo({});
         } finally {
-            // S'assure que le splash screen s'arrête dans tous les cas (succès ou échec)
             setSplashLoading(false);
         }
     };
 
     useEffect(() => {
         const initializeApp = async () => {
-            await checkFirstTimeUser();
-            isLoggedIn();
-            getPushToken();
+            await Promise.all([checkFirstTimeUser(), isLoggedIn()]);
         };
 
         initializeApp();
