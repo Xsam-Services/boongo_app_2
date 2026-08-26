@@ -19,6 +19,12 @@
       "expo-font",
       "expo-asset",
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "Autorisez Boongo à accéder à vos photos pour mettre à jour votre avatar."
+        }
+      ],
+      [
         "expo-screen-orientation",
         {
           "initialOrientation": "PORTRAIT"
