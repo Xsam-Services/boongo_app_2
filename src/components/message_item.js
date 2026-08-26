@@ -7,7 +7,7 @@ import { View, Text, Image, Pressable, Alert, Modal, TouchableOpacity, TextInput
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import FileViewer from 'react-native-file-viewer';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import Video from 'react-native-video';

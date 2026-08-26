@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../contexts/AuthContext';
 import useColors from '../hooks/useColors';
 import { IMAGE_SIZE, PADDING, TEXT_SIZE } from '../tools/constants';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import homeStyles from '../screens/style';
 
 const EntityItemComponent = ({ item, entity, entity_id, entity_name, entity_profile, doc_title, doc_page, doc_note }) => {

@@ -11,7 +11,7 @@ import { ActivityIndicator, Button, Checkbox, RadioButton } from 'react-native-p
 import { Dropdown } from 'react-native-element-dropdown';
 import { TextInputMask } from 'react-native-masked-text';
 import Spinner from 'react-native-loading-spinner-overlay';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import { API, PADDING } from '../tools/constants';

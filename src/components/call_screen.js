@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { RTCView } from 'react-native-webrtc';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
 const CallScreen = ({ localStream, remoteStream, onHangup }) => {
     const [localSrc, setLocalSrc] = useState(null);

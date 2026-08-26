@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Button, Divider } from 'react-native-paper';
 import Spinner from 'react-native-loading-spinner-overlay';
-import Icon from 'react-native-vector-icons/FontAwesome6';
+import Icon from '@expo/vector-icons/FontAwesome6';
 import { PADDING, TEXT_SIZE } from '../../tools/constants';
 import { AuthContext } from '../../contexts/AuthContext';
 import FooterComponent from '../footer';

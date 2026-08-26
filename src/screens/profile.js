@@ -7,8 +7,8 @@ import { View, TouchableOpacity, Animated, SafeAreaView, Dimensions, RefreshCont
 import { TabBar, TabView } from 'react-native-tab-view';
 import { useTranslation } from 'react-i18next';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import FaIcon from 'react-native-vector-icons/FontAwesome6';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FaIcon from '@expo/vector-icons/FontAwesome6';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { API, IMAGE_SIZE, PADDING, WEB } from '../tools/constants';
 import { AuthContext } from '../contexts/AuthContext';

@@ -6,8 +6,8 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { FlatList, Modal, RefreshControl, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { RadioButton, Checkbox, Button, Portal } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import axios from 'axios';
 import { API, IMAGE_SIZE, PADDING } from '../tools/constants';
 import { AuthContext } from '../contexts/AuthContext';

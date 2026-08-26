@@ -19,7 +19,7 @@ import {
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTranslation } from 'react-i18next';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
 import Pdf from 'react-native-pdf';
 import Spinner from 'react-native-loading-spinner-overlay';

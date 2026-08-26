@@ -5,7 +5,7 @@
 import React from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { useTranslation } from 'react-i18next';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import useColors from './../hooks/useColors';
 import homeStyles from './../screens/style';
 import { PADDING, TEXT_SIZE } from './../tools/constants';

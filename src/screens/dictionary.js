@@ -4,7 +4,7 @@
  */
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, ScrollView, SafeAreaView } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { SearchContext } from '../contexts/SearchContext';
 import useColors from '../hooks/useColors';

@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { Dimensions, Text, View } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { IMAGE_SIZE, PADDING } from '../tools/constants';
 import useColors from '../hooks/useColors';
 import homeStyles from '../screens/style';

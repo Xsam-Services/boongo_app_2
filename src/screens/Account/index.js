@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import * as RNLocalize from 'react-native-localize';
 import Spinner from 'react-native-loading-spinner-overlay';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { API, IMAGE_SIZE, PADDING, TEXT_SIZE } from '../../tools/constants';
 import { AuthContext } from '../../contexts/AuthContext';

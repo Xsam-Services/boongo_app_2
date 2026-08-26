@@ -6,7 +6,7 @@ import React, { useContext, useState } from "react";
 import { View, TouchableOpacity, TextInput, Dimensions } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { useTranslation } from "react-i18next";
 
 import HomeScreen from '../screens/Home/HomeScreen';
