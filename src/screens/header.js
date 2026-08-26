@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { DrawerActions, useNavigation, useRoute } from '@react-navigation/native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -20,6 +20,28 @@ const HeaderButton = ({ accessibilityLabel, children, onPress, COLORS }) => (
     {children}
   </TouchableOpacity>
 );
+
+const AccountAvatar = ({ uri, COLORS }) => {
+  const [hasLoadError, setHasLoadError] = useState(false);
+
+  useEffect(() => {
+    setHasLoadError(false);
+  }, [uri]);
+
+  if (!uri || hasLoadError) {
+    return (
+      <View style={[styles.accountAvatarFrame, { backgroundColor: COLORS.primary }]}>
+        <MaterialCommunityIcons name="account" size={36} color="#ffffff" />
+      </View>
+    );
+  }
+
+  return (
+    <View style={[styles.accountAvatarFrame, { backgroundColor: COLORS.light_secondary }]}>
+      <Image source={{ uri }} style={styles.accountAvatar} resizeMode="cover" onError={() => setHasLoadError(true)} />
+    </View>
+  );
+};
 
 const HeaderComponent = ({ title }) => {
   const COLORS = useColors();
@@ -52,11 +74,7 @@ const HeaderComponent = ({ title }) => {
             </View>
           </View>
           <View style={[styles.accountCard, { backgroundColor: COLORS.light_primary }]}>
-            {userInfo?.avatar_url ? <Image source={{ uri: userInfo.avatar_url }} style={styles.accountAvatar} /> : (
-              <View style={[styles.accountAvatar, styles.avatarFallback, { backgroundColor: COLORS.primary }]}>
-                <MaterialCommunityIcons name="account" size={36} color="#ffffff" />
-              </View>
-            )}
+            <AccountAvatar uri={userInfo?.avatar_url} COLORS={COLORS} />
             <View style={styles.accountIdentity}>
               <Text style={[styles.accountName, { color: COLORS.black }]} numberOfLines={1}>{displayName}</Text>
               {userInfo?.email ? <Text style={[styles.accountDetail, { color: COLORS.dark }]} numberOfLines={1}>{userInfo.email}</Text> : null}
@@ -125,8 +143,8 @@ const styles = StyleSheet.create({
   accountActions: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
   handle: { fontSize: 14, fontWeight: '600' },
   accountCard: { alignItems: 'center', borderRadius: 20, flexDirection: 'row', marginTop: 16, padding: 14 },
-  accountAvatar: { borderRadius: 34, height: 68, width: 68 },
-  avatarFallback: { alignItems: 'center', justifyContent: 'center' },
+  accountAvatarFrame: { alignItems: 'center', borderRadius: 34, height: 68, justifyContent: 'center', overflow: 'hidden', width: 68 },
+  accountAvatar: { height: '100%', width: '100%' },
   accountIdentity: { flex: 1, marginLeft: 13 },
   accountName: { fontSize: 19, fontWeight: '700' },
   accountDetail: { fontSize: 13, marginTop: 3 },
