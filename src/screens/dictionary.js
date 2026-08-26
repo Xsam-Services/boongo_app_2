@@ -3,7 +3,8 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, ActivityIndicator, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { SearchContext } from '../contexts/SearchContext';
@@ -58,9 +59,16 @@ const DictionaryScreen = () => {
           'scorescrabble',
         ];
 
-        const requests = endpoints.map(endpoint =>
-          axios.get(`${API_BASE}/${searchQuery}/${endpoint}?api_key=${API.dicolink_key}&${endpoint === 'scorescrabble' ? '' : (endpoint !== 'definitions' ? 'limit=5' : 'limit=200')}`).catch(() => null)
-        );
+        const requests = endpoints.map(endpoint => {
+          const limit = endpoint === 'definitions' ? 200 : endpoint === 'scorescrabble' ? undefined : 5;
+
+          return axios.get(`${API_BASE}/${encodeURIComponent(query)}/${endpoint}`, {
+            params: {
+              api_key: API.dicolink_key,
+              ...(limit ? { limit } : {}),
+            },
+          }).catch(() => null);
+        });
 
         const [
           defRes,
