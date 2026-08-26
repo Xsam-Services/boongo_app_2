@@ -34,7 +34,7 @@ const SearchScreen = () => {
   useEffect(() => {
     const fetchTypes = async () => {
       try {
-        const response = await axios.get(`${API.boongo_url}/type/find_by_group/Type%20d'œuvre`);
+        const response = await axios.get(`${API.boongo_url}/type/find_by_group/${encodeURIComponent("Type d'œuvre")}`);
         setTypes(response.data.data || []);
       } catch (error) {
         console.error('Erreur lors de la récupération des types:', error);
@@ -47,7 +47,7 @@ const SearchScreen = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${API.boongo_url}/category/find_by_group/Catégorie%20pour%20œuvre`);
+        const response = await axios.get(`${API.boongo_url}/category/find_by_group/${encodeURIComponent('Catégorie pour œuvre')}`);
         setCategories(response.data.data || []);
       } catch (error) {
         console.error('Erreur lors de la récupération des catégories:', error);

@@ -80,7 +80,7 @@ const MappingScreen = () => {
   const getCategories = () => {
     setIsLoading(true);
 
-    const config = { method: 'GET', url: `${API.boongo_url}/category/find_by_group/Catégorie%20pour%20carte`, headers: { 'X-localization': 'fr' } };
+    const config = { method: 'GET', url: `${API.boongo_url}/category/find_by_group/${encodeURIComponent('Catégorie pour carte')}`, headers: { 'X-localization': 'fr' } };
     const item_all = { "id": 0, "category_name": t('all_f'), "category_name_fr": "Toutes", "category_name_en": "All", "category_description": null };
 
     axios(config)
@@ -103,7 +103,7 @@ const MappingScreen = () => {
     setIsLoading(true);
 
     let qs = require('qs');
-    const url = `${API.boongo_url}/work/filter_by_categories_type_status/fr/Carte%20géographique/Pertinente`;
+    const url = `${API.boongo_url}/work/filter_by_categories_type_status/fr/${encodeURIComponent('Carte géographique')}/${encodeURIComponent('Pertinente')}`;
     let mParams = { 'categories_ids[0]': idCat }
     const mHeaders = {
       'X-localization': 'fr'
@@ -138,7 +138,7 @@ const MappingScreen = () => {
     setIsLoading(true);
 
     let qs = require('qs');
-    const url = `${API.boongo_url}/work/filter_by_categories_type_status/fr/Carte%20géographique/Pertinente`;
+    const url = `${API.boongo_url}/work/filter_by_categories_type_status/fr/${encodeURIComponent('Carte géographique')}/${encodeURIComponent('Pertinente')}`;
     let mParams = { 'categories_ids[0]': id }
     const mHeaders = {
       'X-localization': 'fr'

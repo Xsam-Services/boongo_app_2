@@ -55,7 +55,7 @@ const AddWorkScreen = () => {
 
   useEffect(() => {
     // Fetch Types (Radio Buttons)
-    axios.get(`${API.boongo_url}/type/find_by_group/Type d'œuvre`)
+    axios.get(`${API.boongo_url}/type/find_by_group/${encodeURIComponent("Type d'œuvre")}`)
       .then((response) => {
         const typeList = response.data.data.map(item => ({
           value: item.id,
@@ -83,7 +83,7 @@ const AddWorkScreen = () => {
       });
 
     // Fetch Categories (Checkboxes)
-    axios.get(`${API.boongo_url}/category/find_by_group/Catégorie pour œuvre`)
+    axios.get(`${API.boongo_url}/category/find_by_group/${encodeURIComponent('Catégorie pour œuvre')}`)
       .then((response) => {
         const categoryList = response.data.data.map(item => ({
           value: item.id,
@@ -108,7 +108,7 @@ const AddWorkScreen = () => {
         setCategoriesLoading(true);
 
         try {
-          const response = await axios.get(`${API.boongo_url}/category/find_by_group/Catégorie pour carte`);
+          const response = await axios.get(`${API.boongo_url}/category/find_by_group/${encodeURIComponent('Catégorie pour carte')}`);
           const mapCategoryList = response.data.data.map(item => ({
             value: item.id,
             label: item.category_name,
