@@ -3,20 +3,16 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import FaIcon from '@expo/vector-icons/FontAwesome6';
-import { IMAGE_SIZE, PADDING } from './../tools/constants';
 import { getTranslationKeyFromAlias } from './../utils/notificationMapper';
 import useColors from '../hooks/useColors';
 
 const NotificationItemComponent = ({ item, onPress }) => {
     // =============== Colors ===============
     const COLORS = useColors();
-    // =============== Navigation ===============
-    const navigation = useNavigation();
     // =============== Language ===============
     const { t } = useTranslation();
 
@@ -71,29 +67,29 @@ const NotificationItemComponent = ({ item, onPress }) => {
         return iconParts[iconParts.length - 1].replace(/^fa-/, '');  // Remove "fa-" if necessary
     };
 
-    if (item.type) {
-        return (
-            <TouchableOpacity style={{ flex: 1, height: 85, backgroundColor: COLORS.white, marginBottom: 1, paddingVertical: PADDING.p02, paddingHorizontal: PADDING.p01 }} onPress={() => onPress(item)}>
-                <Icon name='circle' size={10} color={COLORS.info} style={{ position: 'absolute', top: PADDING.p02, right: PADDING.p02 }} />
-                <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                    <FaIcon name={cleanIconName(item.type.icon)} size={IMAGE_SIZE.s07} color={COLORS.black} style={{ marginRight: PADDING.p01 }} />
-                    <Text style={{ width: '85%', fontWeight: '500', color: COLORS.black }} numberOfLines={3}>{message}</Text>
-                </View>
-                <Text style={{ fontSize: 12, color: COLORS.dark_secondary, position: 'absolute', bottom: PADDING.p01, right: PADDING.p01 }}>{ucfirst(item.created_at_explicit)}</Text>
-            </TouchableOpacity>
-        );
+    const icon = item.type?.icon || item.icon;
 
-    } else {
-        return (
-            <TouchableOpacity style={{ flex: 1, height: 85, backgroundColor: COLORS.white, marginBottom: 1, paddingVertical: PADDING.p02, paddingHorizontal: PADDING.p01 }} onPress={() => onPress(item)}>
-                <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                    <FaIcon name={cleanIconName(item.icon)} size={IMAGE_SIZE.s07} color={COLORS.black} style={{ marginRight: PADDING.p01 }} />
-                    <Text style={{ width: '85%', fontWeight: '300', color: COLORS.black }} numberOfLines={3}>{message}</Text>
-                </View>
-                <Text style={{ fontSize: 12, color: COLORS.dark_secondary, position: 'absolute', bottom: PADDING.p01, right: PADDING.p01 }}>{ucfirst(item.created_at_explicit)}</Text>
-            </TouchableOpacity>
-        );
-    }
+    return (
+        <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.white }]} onPress={() => onPress(item)} activeOpacity={0.75}>
+            {item.type ? <View style={[styles.unreadDot, { backgroundColor: COLORS.info }]} /> : null}
+            <View style={[styles.iconContainer, { backgroundColor: COLORS.light_primary }]}>
+                <FaIcon name={cleanIconName(icon)} size={20} color={COLORS.primary} />
+            </View>
+            <View style={styles.content}>
+                <Text style={[styles.message, { color: COLORS.black }]} numberOfLines={3}>{message}</Text>
+                <Text style={[styles.date, { color: COLORS.dark_secondary }]}>{ucfirst(item.created_at_explicit)}</Text>
+            </View>
+        </TouchableOpacity>
+    );
 };
+
+const styles = StyleSheet.create({
+    card: { alignItems: 'center', borderRadius: 18, flexDirection: 'row', marginBottom: 10, minHeight: 88, padding: 14 },
+    iconContainer: { alignItems: 'center', borderRadius: 18, height: 36, justifyContent: 'center', marginRight: 12, width: 36 },
+    content: { flex: 1, paddingRight: 8 },
+    message: { fontSize: 14, fontWeight: '600', lineHeight: 19 },
+    date: { fontSize: 12, marginTop: 6 },
+    unreadDot: { borderRadius: 4, height: 8, position: 'absolute', right: 14, top: 14, width: 8 },
+});
 
 export default NotificationItemComponent;
