@@ -48,6 +48,8 @@
 	</dict>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow $(PRODUCT_NAME) to access your microphone</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Autorisez Boongo à accéder à vos photos pour mettre à jour votre avatar.</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIBackgroundModes</key>

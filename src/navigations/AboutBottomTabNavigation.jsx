@@ -1,5 +1,7 @@
 import React from "react";
+import { TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
 import AboutScreen from '../screens/About';
 import TermsScreen from '../screens/About/terms';
@@ -8,6 +10,8 @@ import ContactScreen from '../screens/About/contact';
 import useColors from "../hooks/useColors";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import Logo from '../../assets/img/icon.svg';
+import { PADDING } from '../tools/constants';
 
 const BottomTab = createBottomTabNavigator();
 

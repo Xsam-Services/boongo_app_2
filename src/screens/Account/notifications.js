@@ -3,7 +3,8 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { View, Text, FlatList, RefreshControl, Dimensions, TouchableOpacity, ToastAndroid, SafeAreaView } from 'react-native';
+import { View, Text, FlatList, RefreshControl, TouchableOpacity, ToastAndroid } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
@@ -271,11 +272,8 @@ const NotificationsScreen = () => {
   }, [notifications, readNotifications]);
 
   return (
-    <>
-      {/* Header */}
-      <View style={{ paddingVertical: PADDING.p01, backgroundColor: COLORS.white }}>
-        <HeaderComponent title={t('navigation.notification')} />
-      </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.light_secondary }} edges={['top', 'bottom']}>
+      <HeaderComponent title={t('navigation.notification')} />
 
       {/* Content */}
       <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
@@ -285,9 +283,8 @@ const NotificationsScreen = () => {
           </TouchableOpacity>
         )}
 
-        <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
-          <View style={[homeStyles.cardEmpty, { height: Dimensions.get('window').height - 40, marginLeft: 0, paddingHorizontal: 2 }]}>
-            <FlatList
+        <View style={{ flex: 1 }}>
+          <FlatList
               ref={flatListRef}
               data={combinedNotifications}
               keyExtractor={(item, index) => `${item.id || 'no-id'}-${index}`}
@@ -297,7 +294,7 @@ const NotificationsScreen = () => {
               onEndReached={onEndReached}
               onEndReachedThreshold={0.1}
               scrollEventThrottle={16}
-              contentContainerStyle={{ paddingTop: 0 }}
+              contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
               windowSize={10}
               refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={0} />}
               ListEmptyComponent={<EmptyListComponent iconName='bell-outline' title={t('empty_list.title')} description='' />}
@@ -306,11 +303,10 @@ const NotificationsScreen = () => {
                   <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text>
                 ) : null
               }
-            />
-          </View>
-        </SafeAreaView>
+          />
+        </View>
       </View>
-    </>
+    </SafeAreaView>
   )
 }
 

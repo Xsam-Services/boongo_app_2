@@ -3,7 +3,8 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useContext, useEffect, useState } from 'react'
-import { Text, TouchableOpacity, SafeAreaView, View, TextInput, ScrollView, Platform, Image } from 'react-native';
+import { Text, TouchableOpacity, View, TextInput, ScrollView, Platform, Image, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -12,12 +13,13 @@ import { Dropdown } from 'react-native-element-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import ImagePicker from 'react-native-image-crop-picker';
+import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
 import { API, PADDING } from '../../tools/constants';
 import useColors from '../../hooks/useColors';
 import homeStyles from '../style';
+import HeaderComponent from '../header';
 
 const SettingsScreen = () => {
   // =============== Colors ===============
@@ -44,18 +46,27 @@ const SettingsScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // =============== Image crop picker ===============
-  const imagePick = () => {
-    ImagePicker.openPicker({
-      width: 700,
-      height: 700,
-      cropping: true,
-      includeBase64: true
-    }).then(image => {
-      updateAvatar(userInfo.id, `data:${image.mime};base64,${image.data}`);
-    }).catch(error => {
-      console.log(`${error}`);
+  const imagePick = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permission.granted) {
+      console.warn('Media library permission is required to update the avatar.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      base64: true,
+      mediaTypes: ['images'],
+      quality: 0.8,
     });
+
+    const asset = result.canceled ? null : result.assets?.[0];
+
+    if (asset?.base64) {
+      updateAvatar(userInfo.id, `data:${asset.mimeType || 'image/jpeg'};base64,${asset.base64}`);
+    }
   };
 
   // COUNTRY dropdown
@@ -91,7 +102,7 @@ const SettingsScreen = () => {
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [userInfo.api_token, userInfo.id]);
 
   // ORGANIZATION dropdown
   const [organizationIsFocus, setOrganizationIsFocus] = useState(false);
@@ -126,7 +137,7 @@ const SettingsScreen = () => {
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [userInfo.api_token, userInfo.id]);
 
   // GENDER dropdown
   const [genderOpen, setGenderOpen] = useState(false);
@@ -173,11 +184,7 @@ const SettingsScreen = () => {
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
-
-  const handleCurrencyChange = (item) => {
-    setCurrency(item.value);
-  };
+  }, [userInfo.api_token, userInfo.id]);
 
   // BIRTH DATE date-picker
   const [birthdate, setBirthdate] = useState(userInfo.birthdate);
@@ -226,36 +233,27 @@ const SettingsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.light }}>
       <Spinner visible={isLoading} />
 
-      {/* Custom header */}
-      <View style={{ flexDirection: 'row', paddingVertical: PADDING.p02 }}>
-        <TouchableOpacity style={{ position: 'absolute', left: 7, top: 5, zIndex: 10 }} onPress={() => navigation.goBack()}>
-          <Icon name='chevron-left' size={37} color={COLORS.black} />
-        </TouchableOpacity>
-        <Text style={{ width: '100%', fontSize: 20, fontWeight: '400', textAlign: 'center', color: COLORS.warning }}>{`${userInfo.firstname} ${userInfo.lastname}`}</Text>
-        <TouchableOpacity style={{ position: 'absolute', right: 14, top: 10, zIndex: 10 }} onPress={() => navigation.navigate('Language')}>
-          <Icon name='translate' size={25} color={COLORS.black} />
-        </TouchableOpacity>
-      </View>
+      <HeaderComponent title={t('navigation.settings.title')} />
 
-      <ScrollView style={{ flexGrow: 1, paddingHorizontal: PADDING.p05 }}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Profil photo */}
-        <View style={{ alignItems: 'center', marginVertical: PADDING.p01 }}>
-          <Image style={{ width: 160, height: 160, borderRadius: 160 / 2 }} source={{ uri: userInfo.avatar_url }} />
-          <TouchableOpacity style={{ backgroundColor: COLORS.primary, marginTop: -30, marginLeft: 100, borderRadius: 40 / 2, padding: PADDING.p01 }} onPress={imagePick}>
+        <View style={[styles.avatarSection, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
+          <Image style={styles.avatar} source={{ uri: userInfo.avatar_url }} />
+          <TouchableOpacity style={[styles.avatarEditButton, { backgroundColor: COLORS.primary }]} onPress={imagePick}>
             <Icon name='lead-pencil' size={20} color='white' />
           </TouchableOpacity>
         </View>
 
         {/* Personal infos */}
-        <View style={[homeStyles.cardEmpty, { marginVertical: PADDING.p05, padding: PADDING.p10, marginLeft: 0, borderWidth: 1, borderColor: COLORS.light_secondary, borderRadius: PADDING.p05 }]}>
+        <View style={[styles.formCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
           {/* Organization  */}
           <Text style={{ color: COLORS.dark_secondary, paddingVertical: 5, paddingHorizontal: PADDING.horizontal }}>{t('auth.organization.label')}</Text>
           <Dropdown
-            style={[homeStyles.authInput, { height: 50 }]}
-            borderColor={COLORS.dark_secondary}
+            style={[styles.select, { backgroundColor: COLORS.light_secondary }]}
+            borderColor="transparent"
             textStyle={{ color: COLORS.black }}
             itemContainerStyle={{ backgroundColor: COLORS.dark_secondary }}
             itemTextStyle={{ color: COLORS.white }}
@@ -345,18 +343,18 @@ const SettingsScreen = () => {
               maximumDate={new Date('2018-1-1')} />
           )}
           {showPicker && Platform.OS === 'ios' && (
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-              <TouchableOpacity style={homeStyles.authCancel} onPress={toggleDatePicker}>
+            <View style={styles.dateActions}>
+              <TouchableOpacity style={[styles.dateAction, { backgroundColor: COLORS.light_secondary }]} onPress={toggleDatePicker}>
                 <Text style={{ fontSize: 14, color: COLORS.black, textAlign: 'center' }}>{t('cancel')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={homeStyles.authButton} onPress={confirmIOSDate}>
-                <Text style={homeStyles.authButtonText}>{t('confirm')}</Text>
+              <TouchableOpacity style={[styles.dateAction, { backgroundColor: COLORS.primary }]} onPress={confirmIOSDate}>
+                <Text style={[homeStyles.authButtonText, { color: '#ffffff' }]}>{t('confirm')}</Text>
               </TouchableOpacity>
             </View>
           )}
           {!showPicker && (
             <TextInput
-              style={homeStyles.authInput}
+              style={[styles.select, { backgroundColor: COLORS.light_secondary, color: COLORS.black }]}
               value={birthdate}
               placeholder={t('auth.birthdate')}
               onChangeText={setBirthdate}
@@ -366,8 +364,8 @@ const SettingsScreen = () => {
           {/* Country  */}
           <Text style={{ color: COLORS.dark_secondary, paddingVertical: 5, paddingHorizontal: PADDING.horizontal }}>{t('auth.country.label')}</Text>
           <Dropdown
-            style={[homeStyles.authInput, { height: 50 }]}
-            borderColor={COLORS.dark_secondary}
+            style={[styles.select, { backgroundColor: COLORS.light_secondary }]}
+            borderColor="transparent"
             textStyle={{ color: COLORS.black }}
             itemContainerStyle={{ backgroundColor: COLORS.white }}
             placeholderStyle={{ color: COLORS.black }}
@@ -444,9 +442,16 @@ const SettingsScreen = () => {
           {/* Currency  */}
           <Text style={{ color: COLORS.dark_secondary, paddingVertical: 5, paddingHorizontal: PADDING.horizontal }}>{t('work.currency.title')}</Text>
           <DropDownPicker
-            style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
-            modalContentContainerStyle={{ backgroundColor: COLORS.white, zIndex: 1000 }}
-            searchContainerStyle={{ borderColor: COLORS.dark_secondary, zIndex: 1000 }}
+            style={[styles.select, { backgroundColor: COLORS.light_secondary }]}
+            modalContentContainerStyle={[styles.currencyModal, { backgroundColor: COLORS.white }]}
+            modalTitle={t('work.currency.label')}
+            modalTitleStyle={{ color: COLORS.black, fontSize: 19, fontWeight: '700' }}
+            searchContainerStyle={styles.currencySearchContainer}
+            searchTextInputStyle={[styles.currencySearchInput, { backgroundColor: COLORS.light, color: COLORS.black, borderColor: COLORS.light_secondary }]}
+            listItemContainerStyle={[styles.currencyListItem, { borderBottomColor: COLORS.light_secondary }]}
+            listItemLabelStyle={{ color: COLORS.black, fontSize: 15 }}
+            selectedItemContainerStyle={{ backgroundColor: COLORS.light_primary }}
+            selectedItemLabelStyle={{ color: COLORS.dark_primary, fontWeight: '700' }}
             textStyle={{ color: COLORS.black }}
             closeIconStyle={{ tintColor: COLORS.black }}
             placeholderStyle={{ color: COLORS.black }}
@@ -459,7 +464,10 @@ const SettingsScreen = () => {
             setOpen={setCurrencyOpen}
             setValue={setCurrency}
             setItems={setCurrencyItems}
-            onChangeItem={handleCurrencyChange}
+            onChangeValue={setCurrency}
+            searchable
+            searchPlaceholder={t('search')}
+            searchPlaceholderTextColor={COLORS.dark}
             listMode="MODAL" />
 
           {/* Password */}
@@ -500,7 +508,7 @@ const SettingsScreen = () => {
         </View>
 
         {/* Account management */}
-        <View style={[homeStyles.cardEmpty, { marginVertical: PADDING.p05, padding: PADDING.p10, marginLeft: 0, borderWidth: 1, borderColor: COLORS.light_secondary, borderRadius: PADDING.p05 }]}>
+        <View style={[styles.formCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
           {/* Disable account */}
           <Button style={[homeStyles.authButton, { backgroundColor: COLORS.warning, marginVertical: PADDING.p00 }]} onPress={() => {
             changeStatus(userInfo.id, 4);
@@ -521,3 +529,18 @@ const SettingsScreen = () => {
 }
 
 export default SettingsScreen;
+
+const styles = StyleSheet.create({
+  scrollContent: { padding: 16, paddingBottom: 36 },
+  avatarSection: { alignItems: 'center', borderRadius: 24, borderWidth: 1, marginBottom: 16, paddingVertical: 20 },
+  avatar: { borderRadius: 80, height: 160, width: 160 },
+  avatarEditButton: { alignItems: 'center', borderRadius: 20, justifyContent: 'center', marginLeft: 104, marginTop: -30, height: 40, width: 40 },
+  formCard: { borderRadius: 20, borderWidth: 1, marginBottom: 16, padding: 20 },
+  select: { borderRadius: 12, borderWidth: 0, height: 52, marginBottom: 10, paddingHorizontal: 16 },
+  dateActions: { flexDirection: 'row', gap: 10, marginBottom: 10 },
+  dateAction: { alignItems: 'center', borderRadius: 14, flex: 1, justifyContent: 'center', minHeight: 48 },
+  currencyModal: { borderRadius: 24, margin: 16, overflow: 'hidden', paddingTop: 8 },
+  currencySearchContainer: { borderBottomWidth: 0, paddingHorizontal: 16, paddingVertical: 8 },
+  currencySearchInput: { borderRadius: 12, borderWidth: 1, height: 46, paddingHorizontal: 14 },
+  currencyListItem: { borderBottomWidth: StyleSheet.hairlineWidth, minHeight: 56, paddingHorizontal: 20 },
+});

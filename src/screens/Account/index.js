@@ -3,7 +3,7 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { View, TouchableOpacity, Animated, SafeAreaView, Dimensions, RefreshControl, TouchableHighlight, FlatList, Text, Image, ActivityIndicator } from 'react-native'
+import { View, TouchableOpacity, Animated, Dimensions, RefreshControl, FlatList, Text, ActivityIndicator, StyleSheet } from 'react-native'
 import { TabBar, TabView } from 'react-native-tab-view';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
@@ -11,15 +11,15 @@ import * as RNLocalize from 'react-native-localize';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
-import { API, IMAGE_SIZE, PADDING, TEXT_SIZE } from '../../tools/constants';
+import { API, PADDING, TEXT_SIZE } from '../../tools/constants';
 import { AuthContext } from '../../contexts/AuthContext';
 import HeaderComponent from '../header';
 import EmptyListComponent from '../../components/empty_list';
 import WorkItemComponent from '../../components/work_item';
 import FloatingActionsButton from '../../components/floating_actions_button';
-import homeStyles from '../style';
 import useColors from '../../hooks/useColors';
 import UserItemComponent from '../../components/user_item';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const TAB_BAR_HEIGHT = 48;
 
@@ -41,11 +41,14 @@ const MyWorks = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => 
   const [count, setCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const flatListRef = listRef || useRef(null);
+  const fallbackListRef = useRef(null);
+  const flatListRef = listRef || fallbackListRef;
 
   // ================= Get categories =================
   useEffect(() => {
     fetchCategories();
+    // Categories are intentionally loaded once when this tab mounts.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchCategories = async () => {
@@ -79,6 +82,8 @@ const MyWorks = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => 
     }, 5000);
 
     return () => clearInterval(intervalId);
+    // The polling lifecycle is tied to the active category and page.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, idCat]);
 
   const fetchWorks = async () => {
@@ -149,44 +154,30 @@ const MyWorks = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => 
 
   const CategoryItem = ({ item }) => {
     const isSelected = idCat === item.id;
-    const Container = isSelected ? TouchableHighlight : TouchableOpacity;
-
     return (
-      <Container
+      <TouchableOpacity
         key={item.id}
         onPress={() => handleBadgePress(item.id)}
-        style={
-          isSelected
-            ? [homeStyles.categoryBadgeSelected, { backgroundColor: COLORS.white }]
-            : [homeStyles.categoryBadge, { backgroundColor: COLORS.warning }]
-        }
-        underlayColor={COLORS.light_secondary}
+        activeOpacity={0.78}
+        style={[styles.categoryChip, { backgroundColor: isSelected ? COLORS.primary : COLORS.white, borderColor: isSelected ? COLORS.primary : COLORS.light_secondary }]}
       >
-        <Text
-          style={
-            isSelected
-              ? [homeStyles.categoryBadgeTextSelected, { color: COLORS.black }]
-              : [homeStyles.categoryBadgeText, { color: 'black' }]
-          }
-        >
-          {item.category_name}
-        </Text>
-      </Container>
+        <Text style={[styles.categoryChipText, { color: isSelected ? '#ffffff' : COLORS.black }]}>{item.category_name}</Text>
+      </TouchableOpacity>
     );
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
+    <View style={[styles.scene, { backgroundColor: COLORS.light }]}>
       {showBackToTop && (
         <TouchableOpacity
-          style={[homeStyles.floatingButton, { backgroundColor: COLORS.warning }]}
+          style={[styles.backToTopButton, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}
           onPress={scrollToTop}
         >
-          <Icon name='chevron-double-up' size={IMAGE_SIZE.s09} style={{ color: 'black' }} />
+          <Icon name='chevron-up' size={24} color={COLORS.black} />
         </TouchableOpacity>
       )}
 
-      <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={styles.listShell}>
         {/* Works List */}
         <Animated.FlatList
           ref={flatListRef}
@@ -204,7 +195,8 @@ const MyWorks = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => 
           scrollEventThrottle={16}
           windowSize={10}
           contentContainerStyle={{
-            paddingTop: headerHeight + TAB_BAR_HEIGHT,
+            paddingTop: headerHeight + TAB_BAR_HEIGHT + 12,
+            paddingBottom: 32,
           }}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={headerHeight + TAB_BAR_HEIGHT} />}
           ListEmptyComponent={<EmptyListComponent iconName="book-open-page-variant-outline" title={t('empty_list.title')} description={t('empty_list.description_books')} />}
@@ -215,10 +207,10 @@ const MyWorks = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => 
                 keyExtractor={item => item.id.toString()}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                style={{ height: 40, flexGrow: 0 }}
+                style={styles.categoriesList}
                 contentContainerStyle={{
                   alignItems: 'center',
-                  paddingHorizontal: PADDING.p00,
+                  paddingHorizontal: 16,
                 }}
                 renderItem={({ item }) => <CategoryItem item={item} />}
               />
@@ -226,7 +218,7 @@ const MyWorks = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => 
           }
           ListFooterComponent={() => isLoading ? (<Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01, }} >{t('loading')}</Text>) : null}
         />
-      </SafeAreaView>
+      </View>
     </View>
   );
 };
@@ -240,12 +232,13 @@ const MyCart = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
   // =============== Navigation ===============
   const navigation = useNavigation();
   // =============== Get contexts ===============
-  const { userInfo, addToCart, removeFromCart, isLoading } = useContext(AuthContext);
+  const { userInfo, removeFromCart, isLoading } = useContext(AuthContext);
   const consultations = userInfo.unpaid_consultations;
   const subscriptions = userInfo.unpaid_subscriptions;
   // =============== Get data ===============
   const [loading, setLoading] = useState(false);
-  const flatListRef = listRef || useRef(null);
+  const fallbackListRef = useRef(null);
+  const flatListRef = listRef || fallbackListRef;
 
   // ================= Handlers =================
   const onRefresh = useCallback(() => {
@@ -350,27 +343,27 @@ const MyCart = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
 
         setIsLoadingItem(false);
       }
-    }, [item, userInfo, price]);
+    }, [item, price, typePrice, userLang]);
 
     useEffect(() => {
       fetchPrice();  // On charge le prix lors du montage de l'élément
-    }, [item, userInfo, price]);
+    }, [fetchPrice]);
 
     return (
-      <View style={[homeStyles.workTop, { backgroundColor: COLORS.white, marginBottom: 1, padding: PADDING.p03 }]}>
-        <View style={{ flexDirection: 'column', width: '70%' }}>
-          <Text style={{ flex: 2, color: COLORS.dark_secondary }} numberOfLines={2}>
+      <View style={[styles.cartItem, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
+        <View style={styles.cartItemCopy}>
+          <Text style={{ color: COLORS.dark_secondary, fontSize: 14, fontWeight: '600' }} numberOfLines={2}>
             {item.item_type === 'subscription' ? item.type.type_name : item.work_title}
           </Text>
           {item.item_type === 'subscription' &&
             <Text style={{ fontSize: TEXT_SIZE.label, color: COLORS.link_color, textTransform: 'uppercase' }}>{item.category.category_name}</Text>
           }
-          <Text style={{ fontSize: TEXT_SIZE.paragraph, fontWeight: '500', color: COLORS.black }}>
+          <Text style={{ fontSize: TEXT_SIZE.paragraph, fontWeight: '700', color: COLORS.black, marginTop: 5 }}>
             {isLoadingItem ? <ActivityIndicator size="small" /> : price}  {/* Affiche le loader ou le prix */}
           </Text>
         </View>
         <TouchableOpacity
-          style={[homeStyles.workCmd, { flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.white, paddingVertical: 5, borderWidth: 1, borderColor: COLORS.light_secondary }]}
+          style={[styles.removeButton, { backgroundColor: COLORS.light_danger }]}
           onPress={() => {
             if (item.item_type === 'subscription') {
               removeFromCart(userInfo.unpaid_subscription_cart.id, null, item.id);
@@ -380,9 +373,7 @@ const MyCart = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
           }}
         >
           <Icon name="trash-can-outline" size={20} color={COLORS.danger} />
-          <Text style={{ color: COLORS.danger, fontWeight: '600', marginLeft: PADDING.p00 }}>
-            {t('withdraw')}
-          </Text>
+          <Text style={{ color: COLORS.danger, fontWeight: '700', marginLeft: PADDING.p00 }}>{t('withdraw')}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -394,18 +385,17 @@ const MyCart = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
       <Spinner visible={isLoading} />
 
       {/* Content */}
-      <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
+      <View style={[styles.scene, { backgroundColor: COLORS.light }]}>
         {showBackToTop && (
           <TouchableOpacity
-            style={[homeStyles.floatingButton, { backgroundColor: COLORS.warning }]}
+            style={[styles.backToTopButton, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}
             onPress={scrollToTop}
           >
-            <Icon name='chevron-double-up' size={IMAGE_SIZE.s09} style={{ color: 'black' }} />
+            <Icon name='chevron-up' size={24} color={COLORS.black} />
           </TouchableOpacity>
         )}
 
-        <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
-          <View style={[homeStyles.cardEmpty, { height: Dimensions.get('window').height, marginLeft: 0, paddingHorizontal: 2 }]}>
+        <View style={styles.listShell}>
             <Animated.FlatList
               ref={flatListRef}
               data={combinedData}
@@ -433,26 +423,27 @@ const MyCart = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
               scrollEventThrottle={16}
               windowSize={10}
               contentContainerStyle={{
-                paddingTop: headerHeight + TAB_BAR_HEIGHT,
+                paddingTop: headerHeight + TAB_BAR_HEIGHT + 12,
+                paddingBottom: 32,
               }}
               refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} progressViewOffset={headerHeight + TAB_BAR_HEIGHT} />}
               ListEmptyComponent={<EmptyListComponent iconName="cart-outline" title={t('empty_list.title')} description={t('empty_list.description_cart')} />}
               ListHeaderComponent={() => {
                 return (
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: PADDING.p01 }}>
-                    <Text style={{ fontSize: TEXT_SIZE.label, color: COLORS.black }}>
-                      <Text style={{ textDecorationLine: 'underline' }}>{t('total_price')}</Text>{` : `}<Text style={{ fontWeight: 'bold' }}>{`${getFormattedPrice(userInfo.totals_unpaid.grand_totals, userInfo.currency.currency_acronym, 'fr')}`}</Text>
-                    </Text>
-                    <TouchableOpacity style={[homeStyles.authButton, { width: 'auto', backgroundColor: COLORS.warning, marginVertical: PADDING.p00, paddingHorizontal: PADDING.p05 }]} onPress={() => navigation.navigate('MobileSubscribe', { amount: userInfo.totals_unpaid.grand_totals, currency: userInfo.currency.currency_acronym })}>
-                      <Text style={[homeStyles.authButtonText, { fontSize: TEXT_SIZE.label, color: 'black' }]}>{t('pay')}</Text>
+                  <View style={[styles.cartSummary, { backgroundColor: COLORS.light_primary }]}>
+                    <View>
+                      <Text style={{ color: COLORS.dark, fontSize: 12, fontWeight: '600' }}>{t('total_price')}</Text>
+                      <Text style={{ color: COLORS.black, fontSize: 17, fontWeight: '800', marginTop: 3 }}>{getFormattedPrice(userInfo.totals_unpaid.grand_totals, userInfo.currency.currency_acronym, 'fr')}</Text>
+                    </View>
+                    <TouchableOpacity style={[styles.payButton, { backgroundColor: COLORS.primary }]} onPress={() => navigation.navigate('MobileSubscribe', { amount: userInfo.totals_unpaid.grand_totals, currency: userInfo.currency.currency_acronym })}>
+                      <Text style={styles.payButtonText}>{t('pay')}</Text>
                     </TouchableOpacity>
                   </View>
                 );
               }}
             // ListFooterComponent={() => loading ? (<Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01, }} >{t('loading')}</Text>) : null}
             />
-          </View>
-        </SafeAreaView>
+        </View>
       </View>
     </>
   );
@@ -474,11 +465,14 @@ const MySubscribers = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 
   const [count, setCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const flatListRef = listRef || useRef(null);
+  const fallbackListRef = useRef(null);
+  const flatListRef = listRef || fallbackListRef;
 
   // ================= Fetch works when idCat or page changes =================
   useEffect(() => {
     fetchSubscribers();
+    // Subscribers are refreshed when their pagination changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   const fetchSubscribers = async () => {
@@ -537,18 +531,17 @@ const MySubscribers = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
+    <View style={[styles.scene, { backgroundColor: COLORS.light }]}>
       {showBackToTop && (
         <TouchableOpacity
-          style={[homeStyles.floatingButton, { backgroundColor: COLORS.warning }]}
+          style={[styles.backToTopButton, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}
           onPress={scrollToTop}
         >
-          <Icon name='chevron-double-up' size={IMAGE_SIZE.s09} style={{ color: 'black' }} />
+          <Icon name='chevron-up' size={24} color={COLORS.black} />
         </TouchableOpacity>
       )}
 
-      <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={[homeStyles.cardEmpty, { height: Dimensions.get('window').height, marginLeft: 0, paddingHorizontal: 2 }]}>
+      <View style={styles.listShell}>
           <Animated.FlatList
             ref={flatListRef}
             data={combinedData}
@@ -565,14 +558,14 @@ const MySubscribers = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 
             scrollEventThrottle={16}
             windowSize={10}
             contentContainerStyle={{
-              paddingTop: headerHeight + TAB_BAR_HEIGHT,
+              paddingTop: headerHeight + TAB_BAR_HEIGHT + 12,
+              paddingBottom: 32,
             }}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={headerHeight + TAB_BAR_HEIGHT} />}
             ListEmptyComponent={<EmptyListComponent iconName="book-search-outline" title={t('empty_list.title')} description={t('empty_list.description_subscribers')} />}
             ListFooterComponent={() => isLoading ? (<Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01, }} >{t('loading')}</Text>) : null}
           />
-        </View>
-      </SafeAreaView>
+      </View>
     </View>
   );
 };
@@ -582,6 +575,7 @@ const AccountScreen = ({ route }) => {
   const COLORS = useColors();
   // =============== Language ===============
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   // =============== Get data ===============
   const myWorksListRef = useRef(null);
   const myCartListRef = useRef(null);
@@ -599,14 +593,6 @@ const AccountScreen = ({ route }) => {
   useEffect(() => {
     setIndex(initialIndex);
   }, [initialIndex]);
-
-  // const headerTranslateY = scrollY.interpolate({
-  const clampedScrollY = Animated.diffClamp(scrollY, 0, headerHeight);
-  const headerTranslateY = clampedScrollY.interpolate({
-    inputRange: [0, headerHeight],
-    outputRange: [0, -headerHeight],
-    extrapolate: 'clamp',
-  });
 
   const [routes] = useState([
     { key: 'my_works', title: t('navigation.account.my_works') },
@@ -626,7 +612,7 @@ const AccountScreen = ({ route }) => {
       case 'my_cart':
         return <MyCart {...sceneProps} handleScroll={handleScroll} showBackToTop={showBackToTopByTab.my_cart} listRef={myCartListRef} />;
       case 'my_subscribers':
-        return <MySubscribers {...sceneProps} handleScroll={handleScroll} showBackToTop={showBackToTopByTab.my_subscribers} listRef={myCartListRef} />;
+        return <MySubscribers {...sceneProps} handleScroll={handleScroll} showBackToTop={showBackToTopByTab.my_subscribers} listRef={mySubscribersListRef} />;
       default:
         return null;
     }
@@ -671,7 +657,7 @@ const AccountScreen = ({ route }) => {
     } else if (newIndex === 1 && myCartListRef.current) {
       myCartListRef.current.scrollToOffset({ offset, animated: true });
 
-    } else if (newIndex === 1 && mySubscribersListRef.current) {
+    } else if (newIndex === 2 && mySubscribersListRef.current) {
       mySubscribersListRef.current.scrollToOffset({ offset, animated: true });
     }
 
@@ -681,40 +667,58 @@ const AccountScreen = ({ route }) => {
   // Custom "TabBar"
   const renderTabBar = (props) => (
     <>
-      <Animated.View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)} style={{ transform: [{ translateY: headerTranslateY }], zIndex: 1000, position: 'absolute', top: 0, width: '100%', backgroundColor: COLORS.white, paddingTop: 20 }}>
+      <View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)} style={[styles.accountHeader, { backgroundColor: COLORS.white, paddingTop: insets.top }]}>
         <HeaderComponent />
-      </Animated.View>
-      <Animated.View
-        style={{
-          transform: [{ translateY: headerTranslateY }],
-          position: 'absolute',
-          top: headerHeight, // Positionnée juste en dessous du header
-          zIndex: 999,
-          width: '100%',
-          height: TAB_BAR_HEIGHT,
-          backgroundColor: COLORS.white,
-        }}>
+      </View>
+      <View
+        style={[styles.tabBarContainer, { backgroundColor: COLORS.white, top: headerHeight }]}>
         <TabBar
           {...props}
-          style={{ backgroundColor: COLORS.white, borderBottomWidth: 0, elevation: 0, shadowOpacity: 0 }}
-          indicatorStyle={{ backgroundColor: COLORS.black }}
-          activeColor={COLORS.black}
-          inactiveColor={COLORS.dark_secondary}
+          style={[styles.tabBar, { backgroundColor: COLORS.white }]}
+          indicatorStyle={[styles.tabIndicator, { backgroundColor: COLORS.primary }]}
+          activeColor={COLORS.primary}
+          inactiveColor={COLORS.dark}
+          tabStyle={styles.tab}
+          renderLabel={({ route: tabRoute, focused, color }) => <Text style={[styles.tabLabel, { color, fontWeight: focused ? '700' : '600' }]} numberOfLines={1}>{tabRoute.title}</Text>}
         />
-      </Animated.View>
+      </View>
       <FloatingActionsButton />
     </>
   );
 
   return (
-    <TabView
-      navigationState={{ index, routes }}
-      renderScene={renderScene}
-      onIndexChange={handleIndexChange}
-      initialLayout={{ width: 100 }}
-      renderTabBar={renderTabBar} // Using the Custom TabBar
-    />
+    <View style={[styles.accountContainer, { backgroundColor: COLORS.light }]}>
+      <TabView
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={handleIndexChange}
+        initialLayout={{ width: Dimensions.get('window').width }}
+        renderTabBar={renderTabBar}
+      />
+    </View>
   );
 };
 
 export default AccountScreen
+
+const styles = StyleSheet.create({
+  accountContainer: { flex: 1 },
+  scene: { flex: 1 },
+  listShell: { flex: 1 },
+  accountHeader: { elevation: 8, position: 'absolute', shadowColor: '#172033', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.1, shadowRadius: 8, top: 0, width: '100%', zIndex: 1000 },
+  tabBarContainer: { elevation: 7, height: TAB_BAR_HEIGHT, position: 'absolute', shadowColor: '#172033', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.08, shadowRadius: 6, width: '100%', zIndex: 999 },
+  tabBar: { elevation: 0, shadowOpacity: 0 },
+  tab: { minHeight: TAB_BAR_HEIGHT, paddingHorizontal: 4 },
+  tabIndicator: { borderRadius: 3, height: 3 },
+  tabLabel: { fontSize: 12, textAlign: 'center' },
+  categoriesList: { flexGrow: 0, height: 48 },
+  categoryChip: { borderRadius: 16, borderWidth: 1, marginRight: 8, paddingHorizontal: 14, paddingVertical: 8 },
+  categoryChipText: { fontSize: 13, fontWeight: '700' },
+  backToTopButton: { alignItems: 'center', borderRadius: 24, borderWidth: 1, bottom: 24, elevation: 6, height: 48, justifyContent: 'center', position: 'absolute', right: 20, shadowColor: '#172033', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.16, shadowRadius: 6, width: 48, zIndex: 20 },
+  cartItem: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8, marginHorizontal: 16, padding: 14 },
+  cartItemCopy: { flex: 1, marginRight: 12 },
+  removeButton: { alignItems: 'center', borderRadius: 12, flexDirection: 'row', minHeight: 40, paddingHorizontal: 11 },
+  cartSummary: { alignItems: 'center', borderRadius: 18, flexDirection: 'row', justifyContent: 'space-between', marginBottom: 14, marginHorizontal: 16, padding: 14 },
+  payButton: { alignItems: 'center', borderRadius: 12, justifyContent: 'center', minHeight: 42, paddingHorizontal: 18 },
+  payButtonText: { color: '#ffffff', fontSize: 14, fontWeight: '800' },
+});

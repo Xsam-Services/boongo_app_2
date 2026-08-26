@@ -50,7 +50,7 @@ const MobileSubscribeScreen = ({ route }) => {
   };
 
   useEffect(() => {
-    axios({ method: 'GET', url: `${API.boongo_url}/type/search/fr/Mobile%20money` })
+    axios({ method: 'GET', url: `${API.boongo_url}/type/search/fr/${encodeURIComponent('Mobile money')}` })
       .then(function (res) {
         let typeData = res.data.data;
 

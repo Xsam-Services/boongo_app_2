@@ -230,6 +230,11 @@
     "i_login": "Namimonisa",
     "logout": "Na bima",
     "personal_infos": "Ba sango ya moto ye moko",
+    "language": {
+        "title": "Lokota",
+        "headline": "Pona lokota",
+        "description": "Lokota ya application ekobongwana mbala moko."
+    },
     "change_password": "Kobongola mot de passe",
     "activation": {
         "link": "S’abonner na nzela ya code",

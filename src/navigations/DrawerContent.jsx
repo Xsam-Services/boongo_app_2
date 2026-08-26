@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
-import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -24,14 +23,13 @@ const drawerItems = [
 const DrawerContent = props => {
   const COLORS = useColors();
   const { t } = useTranslation();
-  const navigation = useNavigation();
   const { userInfo, logout } = useContext(AuthContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
   const displayName = [userInfo?.firstname, userInfo?.lastname].filter(Boolean).join(' ') || userInfo?.username;
 
   const navigate = route => {
-    navigation.navigate(route);
-    navigation.closeDrawer();
+    props.navigation.navigate('Home', { screen: route });
+    props.navigation.closeDrawer();
   };
 
   return (

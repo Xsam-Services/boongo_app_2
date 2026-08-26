@@ -122,7 +122,7 @@ const BankCardSubscribeScreen = ({ route }) => {
       };
 
       useEffect(() => {
-        axios({ method: 'GET', url: `${API.boongo_url}/type/search/fr/Carte%20bancaire` })
+        axios({ method: 'GET', url: `${API.boongo_url}/type/search/fr/${encodeURIComponent('Carte bancaire')}` })
           .then(function (res) {
             let typeData = res.data.data;
 

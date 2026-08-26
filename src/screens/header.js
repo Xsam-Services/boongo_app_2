@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { DrawerActions, useNavigation, useRoute } from '@react-navigation/native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -21,6 +21,28 @@ const HeaderButton = ({ accessibilityLabel, children, onPress, COLORS }) => (
   </TouchableOpacity>
 );
 
+const AccountAvatar = ({ uri, COLORS }) => {
+  const [hasLoadError, setHasLoadError] = useState(false);
+
+  useEffect(() => {
+    setHasLoadError(false);
+  }, [uri]);
+
+  if (!uri || hasLoadError) {
+    return (
+      <View style={[styles.accountAvatarFrame, { backgroundColor: COLORS.primary }]}>
+        <MaterialCommunityIcons name="account" size={36} color="#ffffff" />
+      </View>
+    );
+  }
+
+  return (
+    <View style={[styles.accountAvatarFrame, { backgroundColor: COLORS.light_secondary }]}>
+      <Image source={{ uri }} style={styles.accountAvatar} resizeMode="cover" onError={() => setHasLoadError(true)} />
+    </View>
+  );
+};
+
 const HeaderComponent = ({ title }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
@@ -28,6 +50,7 @@ const HeaderComponent = ({ title }) => {
   const route = useRoute();
   const { userInfo } = useContext(AuthContext);
   const isRoot = rootRoutes.has(route.name);
+  const isHome = route.name === 'HomeStack';
   const isAccount = route.name === 'Account';
   const displayName = [userInfo?.firstname, userInfo?.lastname].filter(Boolean).join(' ') || userInfo?.username;
 
@@ -51,11 +74,7 @@ const HeaderComponent = ({ title }) => {
             </View>
           </View>
           <View style={[styles.accountCard, { backgroundColor: COLORS.light_primary }]}>
-            {userInfo?.avatar_url ? <Image source={{ uri: userInfo.avatar_url }} style={styles.accountAvatar} /> : (
-              <View style={[styles.accountAvatar, styles.avatarFallback, { backgroundColor: COLORS.primary }]}>
-                <MaterialCommunityIcons name="account" size={36} color="#ffffff" />
-              </View>
-            )}
+            <AccountAvatar uri={userInfo?.avatar_url} COLORS={COLORS} />
             <View style={styles.accountIdentity}>
               <Text style={[styles.accountName, { color: COLORS.black }]} numberOfLines={1}>{displayName}</Text>
               {userInfo?.email ? <Text style={[styles.accountDetail, { color: COLORS.dark }]} numberOfLines={1}>{userInfo.email}</Text> : null}
@@ -87,14 +106,20 @@ const HeaderComponent = ({ title }) => {
           <HeaderButton accessibilityLabel={isRoot ? 'Ouvrir le menu' : 'Retour'} onPress={leadingAction} COLORS={COLORS}>
             <MaterialCommunityIcons name={isRoot ? 'menu' : 'chevron-left'} size={24} color={COLORS.black} />
           </HeaderButton>
-          <LogoText width={isRoot ? 104 : 88} height={28} style={styles.logo} />
+          {isHome ? <LogoText width={104} height={28} style={styles.logo} /> : null}
           {title ? <Text style={[styles.title, { color: COLORS.black }]} numberOfLines={1}>{title}</Text> : null}
         </View>
         <View style={styles.rightActions}>
-          {route.name !== 'OrganizationSettings' && route.name !== 'Notifications' ? (
-            <HeaderButton accessibilityLabel="Recherche" onPress={() => navigation.navigate('Search')} COLORS={COLORS}>
-              <MaterialCommunityIcons name="magnify" size={21} color={COLORS.black} />
-            </HeaderButton>
+          {route.name !== 'OrganizationSettings' && route.name !== 'Notifications' && route.name !== 'Language' && route.name !== 'Search' ? (
+            route.name === 'Settings' ? (
+              <HeaderButton accessibilityLabel="Langue" onPress={() => navigation.navigate('Language')} COLORS={COLORS}>
+                <MaterialCommunityIcons name="translate" size={20} color={COLORS.black} />
+              </HeaderButton>
+            ) : (
+              <HeaderButton accessibilityLabel="Recherche" onPress={() => navigation.navigate('Search')} COLORS={COLORS}>
+                <MaterialCommunityIcons name="magnify" size={21} color={COLORS.black} />
+              </HeaderButton>
+            )
           ) : null}
           {isRoot || route.name === 'Establishment' || route.name === 'Government' ? (
             <HeaderButton accessibilityLabel="Dictionnaire" onPress={() => navigation.navigate('Dictionary')} COLORS={COLORS}>
@@ -118,8 +143,8 @@ const styles = StyleSheet.create({
   accountActions: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
   handle: { fontSize: 14, fontWeight: '600' },
   accountCard: { alignItems: 'center', borderRadius: 20, flexDirection: 'row', marginTop: 16, padding: 14 },
-  accountAvatar: { borderRadius: 34, height: 68, width: 68 },
-  avatarFallback: { alignItems: 'center', justifyContent: 'center' },
+  accountAvatarFrame: { alignItems: 'center', borderRadius: 34, height: 68, justifyContent: 'center', overflow: 'hidden', width: 68 },
+  accountAvatar: { height: '100%', width: '100%' },
   accountIdentity: { flex: 1, marginLeft: 13 },
   accountName: { fontSize: 19, fontWeight: '700' },
   accountDetail: { fontSize: 13, marginTop: 3 },

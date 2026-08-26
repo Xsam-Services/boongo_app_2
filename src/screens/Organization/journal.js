@@ -81,7 +81,7 @@ const JournalScreen = () => {
   const getCategories = () => {
     setIsLoading(true);
 
-    const config = { method: 'GET', url: `${API.boongo_url}/category/find_by_group/Catégorie%20pour%20œuvre`, headers: { 'X-localization': 'fr' } };
+    const config = { method: 'GET', url: `${API.boongo_url}/category/find_by_group/${encodeURIComponent('Catégorie pour œuvre')}`, headers: { 'X-localization': 'fr' } };
     const item_all = { "id": 0, "category_name": t('all_f'), "category_name_fr": "Toutes", "category_name_en": "All", "category_description": null };
 
     axios(config)

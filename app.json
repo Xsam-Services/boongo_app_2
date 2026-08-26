@@ -7,7 +7,10 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.reborn.boongo"
+      "bundleIdentifier": "com.reborn.boongo",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Autorisez Boongo à accéder à vos photos pour mettre à jour votre avatar."
+      }
     },
     "android": {
       "package": "com.boongo_app_2"
@@ -18,6 +21,12 @@
       "expo-sharing",
       "expo-font",
       "expo-asset",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Autorisez Boongo à accéder à vos photos pour mettre à jour votre avatar."
+        }
+      ],
       [
         "expo-screen-orientation",
         {

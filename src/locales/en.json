@@ -230,6 +230,11 @@
     "i_login": "Sign in",
     "logout": "Log out",
     "personal_infos": "Personal infos",
+    "language": {
+        "title": "Language",
+        "headline": "Choose a language",
+        "description": "The app language will be applied immediately."
+    },
     "change_password": "Change password",
     "activation": {
         "link": "Subscribe with a code",
