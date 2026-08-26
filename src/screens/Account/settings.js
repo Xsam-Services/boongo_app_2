@@ -3,7 +3,7 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useContext, useEffect, useState } from 'react'
-import { Text, TouchableOpacity, SafeAreaView, View, TextInput, ScrollView, Platform, Image } from 'react-native';
+import { Text, TouchableOpacity, SafeAreaView, View, TextInput, ScrollView, Platform, Image, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -227,22 +227,22 @@ const SettingsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.light }}>
       <Spinner visible={isLoading} />
 
       <HeaderComponent title={t('navigation.settings.title')} />
 
-      <ScrollView style={{ flexGrow: 1, paddingHorizontal: PADDING.p05 }}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Profil photo */}
-        <View style={{ alignItems: 'center', marginVertical: PADDING.p01 }}>
-          <Image style={{ width: 160, height: 160, borderRadius: 160 / 2 }} source={{ uri: userInfo.avatar_url }} />
-          <TouchableOpacity style={{ backgroundColor: COLORS.primary, marginTop: -30, marginLeft: 100, borderRadius: 40 / 2, padding: PADDING.p01 }} onPress={imagePick}>
+        <View style={[styles.avatarSection, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
+          <Image style={styles.avatar} source={{ uri: userInfo.avatar_url }} />
+          <TouchableOpacity style={[styles.avatarEditButton, { backgroundColor: COLORS.primary }]} onPress={imagePick}>
             <Icon name='lead-pencil' size={20} color='white' />
           </TouchableOpacity>
         </View>
 
         {/* Personal infos */}
-        <View style={[homeStyles.cardEmpty, { marginVertical: PADDING.p05, padding: PADDING.p10, marginLeft: 0, borderWidth: 1, borderColor: COLORS.light_secondary, borderRadius: PADDING.p05 }]}>
+        <View style={[styles.formCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
           {/* Organization  */}
           <Text style={{ color: COLORS.dark_secondary, paddingVertical: 5, paddingHorizontal: PADDING.horizontal }}>{t('auth.organization.label')}</Text>
           <Dropdown
@@ -492,7 +492,7 @@ const SettingsScreen = () => {
         </View>
 
         {/* Account management */}
-        <View style={[homeStyles.cardEmpty, { marginVertical: PADDING.p05, padding: PADDING.p10, marginLeft: 0, borderWidth: 1, borderColor: COLORS.light_secondary, borderRadius: PADDING.p05 }]}>
+        <View style={[styles.formCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
           {/* Disable account */}
           <Button style={[homeStyles.authButton, { backgroundColor: COLORS.warning, marginVertical: PADDING.p00 }]} onPress={() => {
             changeStatus(userInfo.id, 4);
@@ -513,3 +513,11 @@ const SettingsScreen = () => {
 }
 
 export default SettingsScreen;
+
+const styles = StyleSheet.create({
+  scrollContent: { padding: 16, paddingBottom: 36 },
+  avatarSection: { alignItems: 'center', borderRadius: 24, borderWidth: 1, marginBottom: 16, paddingVertical: 20 },
+  avatar: { borderRadius: 80, height: 160, width: 160 },
+  avatarEditButton: { alignItems: 'center', borderRadius: 20, justifyContent: 'center', marginLeft: 104, marginTop: -30, height: 40, width: 40 },
+  formCard: { borderRadius: 20, borderWidth: 1, marginBottom: 16, padding: 20 },
+});
