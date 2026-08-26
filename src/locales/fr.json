@@ -230,6 +230,11 @@
     "i_login": "S’identifier",
     "logout": "Déconnexion",
     "personal_infos": "Infos personnelles",
+    "language": {
+        "title": "Langue",
+        "headline": "Choisir la langue",
+        "description": "La langue de l’application sera appliquée immédiatement."
+    },
     "change_password": "Modifier mot de passe",
     "activation": {
         "link": "S’abonner avec un code",

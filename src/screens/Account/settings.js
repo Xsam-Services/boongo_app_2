@@ -101,7 +101,7 @@ const SettingsScreen = () => {
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [userInfo.api_token, userInfo.id]);
 
   // ORGANIZATION dropdown
   const [organizationIsFocus, setOrganizationIsFocus] = useState(false);
@@ -136,7 +136,7 @@ const SettingsScreen = () => {
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [userInfo.api_token, userInfo.id]);
 
   // GENDER dropdown
   const [genderOpen, setGenderOpen] = useState(false);
@@ -183,11 +183,7 @@ const SettingsScreen = () => {
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
-
-  const handleCurrencyChange = (item) => {
-    setCurrency(item.value);
-  };
+  }, [userInfo.api_token, userInfo.id]);
 
   // BIRTH DATE date-picker
   const [birthdate, setBirthdate] = useState(userInfo.birthdate);
@@ -445,9 +441,16 @@ const SettingsScreen = () => {
           {/* Currency  */}
           <Text style={{ color: COLORS.dark_secondary, paddingVertical: 5, paddingHorizontal: PADDING.horizontal }}>{t('work.currency.title')}</Text>
           <DropDownPicker
-            style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
-            modalContentContainerStyle={{ backgroundColor: COLORS.white, zIndex: 1000 }}
-            searchContainerStyle={{ borderColor: COLORS.dark_secondary, zIndex: 1000 }}
+            style={[styles.select, { backgroundColor: COLORS.light_secondary }]}
+            modalContentContainerStyle={[styles.currencyModal, { backgroundColor: COLORS.white }]}
+            modalTitle={t('work.currency.label')}
+            modalTitleStyle={{ color: COLORS.black, fontSize: 19, fontWeight: '700' }}
+            searchContainerStyle={styles.currencySearchContainer}
+            searchTextInputStyle={[styles.currencySearchInput, { backgroundColor: COLORS.light, color: COLORS.black, borderColor: COLORS.light_secondary }]}
+            listItemContainerStyle={[styles.currencyListItem, { borderBottomColor: COLORS.light_secondary }]}
+            listItemLabelStyle={{ color: COLORS.black, fontSize: 15 }}
+            selectedItemContainerStyle={{ backgroundColor: COLORS.light_primary }}
+            selectedItemLabelStyle={{ color: COLORS.dark_primary, fontWeight: '700' }}
             textStyle={{ color: COLORS.black }}
             closeIconStyle={{ tintColor: COLORS.black }}
             placeholderStyle={{ color: COLORS.black }}
@@ -460,7 +463,10 @@ const SettingsScreen = () => {
             setOpen={setCurrencyOpen}
             setValue={setCurrency}
             setItems={setCurrencyItems}
-            onChangeItem={handleCurrencyChange}
+            onChangeValue={setCurrency}
+            searchable
+            searchPlaceholder={t('search')}
+            searchPlaceholderTextColor={COLORS.dark}
             listMode="MODAL" />
 
           {/* Password */}
@@ -532,4 +538,8 @@ const styles = StyleSheet.create({
   select: { borderRadius: 12, borderWidth: 0, height: 52, marginBottom: 10, paddingHorizontal: 16 },
   dateActions: { flexDirection: 'row', gap: 10, marginBottom: 10 },
   dateAction: { alignItems: 'center', borderRadius: 14, flex: 1, justifyContent: 'center', minHeight: 48 },
+  currencyModal: { borderRadius: 24, margin: 16, overflow: 'hidden', paddingTop: 8 },
+  currencySearchContainer: { borderBottomWidth: 0, paddingHorizontal: 16, paddingVertical: 8 },
+  currencySearchInput: { borderRadius: 12, borderWidth: 1, height: 46, paddingHorizontal: 14 },
+  currencyListItem: { borderBottomWidth: StyleSheet.hairlineWidth, minHeight: 56, paddingHorizontal: 20 },
 });
