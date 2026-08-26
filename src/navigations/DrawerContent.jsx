@@ -39,7 +39,7 @@ const DrawerContent = props => {
       <DrawerContentScrollView {...props} contentContainerStyle={styles.scrollContent}>
         <View style={styles.brandHeader}>
           <LogoText width={118} height={34} />
-          <Text style={[styles.byReborn, { color: COLORS.dark }]}>By Reborn</Text>
+          <Text style={[styles.byReborn, { color: COLORS.dark }]}>by Reborn</Text>
         </View>
 
         <TouchableOpacity style={[styles.profileCard, { backgroundColor: COLORS.light_primary }]} onPress={() => navigate('Account')} activeOpacity={0.8}>
@@ -91,8 +91,8 @@ const DrawerContent = props => {
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingBottom: 16 },
-  brandHeader: { alignItems: 'flex-start', marginBottom: 24 },
-  byReborn: { fontSize: 12, fontWeight: '600', letterSpacing: 0.3, marginLeft: 3, marginTop: 2 },
+  brandHeader: { alignItems: 'center', marginBottom: 24 },
+  byReborn: { fontSize: 12, fontWeight: '600', letterSpacing: 0.3, marginTop: 2 },
   profileCard: { alignItems: 'center', borderRadius: 18, flexDirection: 'row', padding: 12 },
   avatar: { borderRadius: 24, height: 48, width: 48 },
   avatarFallback: { alignItems: 'center', justifyContent: 'center' },
