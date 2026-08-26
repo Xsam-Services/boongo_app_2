@@ -3,7 +3,8 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { View, Text, FlatList, RefreshControl, TouchableOpacity, ToastAndroid, SafeAreaView } from 'react-native';
+import { View, Text, FlatList, RefreshControl, TouchableOpacity, ToastAndroid } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
@@ -271,7 +272,7 @@ const NotificationsScreen = () => {
   }, [notifications, readNotifications]);
 
   return (
-    <>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.light_secondary }} edges={['top', 'bottom']}>
       <HeaderComponent title={t('navigation.notification')} />
 
       {/* Content */}
@@ -282,9 +283,8 @@ const NotificationsScreen = () => {
           </TouchableOpacity>
         )}
 
-        <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
-          <View style={{ flex: 1 }}>
-            <FlatList
+        <View style={{ flex: 1 }}>
+          <FlatList
               ref={flatListRef}
               data={combinedNotifications}
               keyExtractor={(item, index) => `${item.id || 'no-id'}-${index}`}
@@ -303,11 +303,10 @@ const NotificationsScreen = () => {
                   <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text>
                 ) : null
               }
-            />
-          </View>
-        </SafeAreaView>
+          />
+        </View>
       </View>
-    </>
+    </SafeAreaView>
   )
 }
 

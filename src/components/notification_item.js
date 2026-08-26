@@ -25,6 +25,8 @@ const NotificationItemComponent = ({ item, onPress }) => {
     // =============== Message ===============
     let message = '';
 
+    const typeAlias = item.type?.alias;
+
     if (item.text_content) {
         // ✅ Notification already read: use text_content
         message = t(item.text_content, {
@@ -38,7 +40,7 @@ const NotificationItemComponent = ({ item, onPress }) => {
         // 🔁 Unread notification: dynamically rebuild
         let entity = null;
 
-        if (['subscription_notif', 'work_consultation_notif', 'liked_work_notif', 'liked_message_notif'].includes(item.type.alias)) {
+        if (['subscription_notif', 'work_consultation_notif', 'liked_work_notif', 'liked_message_notif'].includes(typeAlias)) {
             entity = item.group_entity || 'one';
 
         } else if (item.circle_id) {
@@ -48,7 +50,7 @@ const NotificationItemComponent = ({ item, onPress }) => {
             entity = 'event';
         }
 
-        const translationKey = getTranslationKeyFromAlias(item.type.alias, entity);
+        const translationKey = typeAlias ? getTranslationKeyFromAlias(typeAlias, entity) : 'notifications.unknown';
 
         message = t(translationKey, {
             username: `${item.from?.firstname} ${item.from?.lastname}`,
@@ -61,12 +63,14 @@ const NotificationItemComponent = ({ item, onPress }) => {
 
     // Adjust icon name
     const cleanIconName = (icon) => {
+        if (!icon) return 'bell';
+
         // Separates the string by space and takes the last part, without the prefix
         const iconParts = icon.split(' ');  // Separates the prefix and the icon name
         return iconParts[iconParts.length - 1].replace(/^fa-/, '');  // Remove "fa-" if necessary
     };
 
-    const icon = item.type?.icon || item.icon;
+    const icon = item.type?.icon || item.icon || 'bell';
 
     return (
         <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.white }]} onPress={() => onPress(item)} activeOpacity={0.75}>
