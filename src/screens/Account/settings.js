@@ -12,7 +12,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import ImagePicker from 'react-native-image-crop-picker';
+import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
 import { API, PADDING } from '../../tools/constants';
@@ -45,18 +45,27 @@ const SettingsScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // =============== Image crop picker ===============
-  const imagePick = () => {
-    ImagePicker.openPicker({
-      width: 700,
-      height: 700,
-      cropping: true,
-      includeBase64: true
-    }).then(image => {
-      updateAvatar(userInfo.id, `data:${image.mime};base64,${image.data}`);
-    }).catch(error => {
-      console.log(`${error}`);
+  const imagePick = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permission.granted) {
+      console.warn('Media library permission is required to update the avatar.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      base64: true,
+      mediaTypes: ['images'],
+      quality: 0.8,
     });
+
+    const asset = result.canceled ? null : result.assets?.[0];
+
+    if (asset?.base64) {
+      updateAvatar(userInfo.id, `data:${asset.mimeType || 'image/jpeg'};base64,${asset.base64}`);
+    }
   };
 
   // COUNTRY dropdown
@@ -246,8 +255,8 @@ const SettingsScreen = () => {
           {/* Organization  */}
           <Text style={{ color: COLORS.dark_secondary, paddingVertical: 5, paddingHorizontal: PADDING.horizontal }}>{t('auth.organization.label')}</Text>
           <Dropdown
-            style={[homeStyles.authInput, { height: 50 }]}
-            borderColor={COLORS.dark_secondary}
+            style={[styles.select, { backgroundColor: COLORS.light_secondary }]}
+            borderColor="transparent"
             textStyle={{ color: COLORS.black }}
             itemContainerStyle={{ backgroundColor: COLORS.dark_secondary }}
             itemTextStyle={{ color: COLORS.white }}
@@ -337,18 +346,18 @@ const SettingsScreen = () => {
               maximumDate={new Date('2018-1-1')} />
           )}
           {showPicker && Platform.OS === 'ios' && (
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-              <TouchableOpacity style={homeStyles.authCancel} onPress={toggleDatePicker}>
+            <View style={styles.dateActions}>
+              <TouchableOpacity style={[styles.dateAction, { backgroundColor: COLORS.light_secondary }]} onPress={toggleDatePicker}>
                 <Text style={{ fontSize: 14, color: COLORS.black, textAlign: 'center' }}>{t('cancel')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={homeStyles.authButton} onPress={confirmIOSDate}>
-                <Text style={homeStyles.authButtonText}>{t('confirm')}</Text>
+              <TouchableOpacity style={[styles.dateAction, { backgroundColor: COLORS.primary }]} onPress={confirmIOSDate}>
+                <Text style={[homeStyles.authButtonText, { color: '#ffffff' }]}>{t('confirm')}</Text>
               </TouchableOpacity>
             </View>
           )}
           {!showPicker && (
             <TextInput
-              style={homeStyles.authInput}
+              style={[styles.select, { backgroundColor: COLORS.light_secondary, color: COLORS.black }]}
               value={birthdate}
               placeholder={t('auth.birthdate')}
               onChangeText={setBirthdate}
@@ -358,8 +367,8 @@ const SettingsScreen = () => {
           {/* Country  */}
           <Text style={{ color: COLORS.dark_secondary, paddingVertical: 5, paddingHorizontal: PADDING.horizontal }}>{t('auth.country.label')}</Text>
           <Dropdown
-            style={[homeStyles.authInput, { height: 50 }]}
-            borderColor={COLORS.dark_secondary}
+            style={[styles.select, { backgroundColor: COLORS.light_secondary }]}
+            borderColor="transparent"
             textStyle={{ color: COLORS.black }}
             itemContainerStyle={{ backgroundColor: COLORS.white }}
             placeholderStyle={{ color: COLORS.black }}
@@ -520,4 +529,7 @@ const styles = StyleSheet.create({
   avatar: { borderRadius: 80, height: 160, width: 160 },
   avatarEditButton: { alignItems: 'center', borderRadius: 20, justifyContent: 'center', marginLeft: 104, marginTop: -30, height: 40, width: 40 },
   formCard: { borderRadius: 20, borderWidth: 1, marginBottom: 16, padding: 20 },
+  select: { borderRadius: 12, borderWidth: 0, height: 52, marginBottom: 10, paddingHorizontal: 16 },
+  dateActions: { flexDirection: 'row', gap: 10, marginBottom: 10 },
+  dateAction: { alignItems: 'center', borderRadius: 14, flex: 1, justifyContent: 'center', minHeight: 48 },
 });
