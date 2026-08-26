@@ -6,7 +6,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { View, Text, FlatList, RefreshControl, Dimensions, TouchableOpacity, ToastAndroid, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { API, IMAGE_SIZE, PADDING, WEB } from '../../tools/constants';
 import { AuthContext } from '../../contexts/AuthContext';

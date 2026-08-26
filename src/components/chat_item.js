@@ -7,7 +7,7 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import useColors from '../hooks/useColors';
 import { IMAGE_SIZE, PADDING, TEXT_SIZE } from '../tools/constants';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
 const ChatItemComponent = ({ item }) => {
     // =============== Colors ===============

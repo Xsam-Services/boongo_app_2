@@ -7,7 +7,7 @@ import { Text, View, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Spinner from 'react-native-loading-spinner-overlay';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import Toast from 'react-native-toast-message';
 import { PADDING } from '../../tools/constants';

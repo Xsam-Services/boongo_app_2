@@ -11,7 +11,7 @@ import {
     useAudioPlayerStatus,
     setAudioModeAsync,
 } from 'expo-audio';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { PADDING, TEXT_SIZE } from '../tools/constants';
 import useColors from '../hooks/useColors';
 

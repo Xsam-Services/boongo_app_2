@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import NetInfo from '@react-native-community/netinfo';
 import Constants from 'expo-constants';
 import * as RNLocalize from 'react-native-localize';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import UserAgent from 'react-native-user-agent';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';

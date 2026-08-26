@@ -8,7 +8,7 @@ import { TabBar, TabView } from 'react-native-tab-view';
 import { useTranslation } from 'react-i18next';
 import Video from 'react-native-video';
 import Sound from 'react-native-sound';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import { API, IMAGE_SIZE, PADDING, TEXT_SIZE } from '../tools/constants';

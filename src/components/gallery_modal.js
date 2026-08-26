@@ -4,7 +4,7 @@
  */
 import React, { useEffect, useState, useRef } from 'react';
 import { Modal, View, TouchableOpacity, StyleSheet, Image, Dimensions, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import Video from 'react-native-video';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Slider from '@react-native-community/slider';

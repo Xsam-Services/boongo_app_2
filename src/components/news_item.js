@@ -6,7 +6,7 @@ import React from 'react';
 import { Image, Linking, Pressable, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import Icon from 'react-native-vector-icons/FontAwesome6';
+import Icon from '@expo/vector-icons/FontAwesome6';
 import { IMAGE_SIZE, PADDING } from '../tools/constants';
 import useColors from '../hooks/useColors';
 import homeStyles from '../screens/style';

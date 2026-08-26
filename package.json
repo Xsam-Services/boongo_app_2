@@ -7,9 +7,11 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "lint": "eslint .",
-    "start": "react-native start",
+    "start": "expo start",
+    "start:dev-client": "expo start --dev-client",
+    "web": "expo start --web",
     "test": "jest",
-    "build:ios": "./node_modules/.bin/react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios --reset-cache"
+    "build:ios": "expo export --platform ios"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

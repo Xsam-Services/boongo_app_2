@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import useColors from '../hooks/useColors';
 
 const FileThumbnail = ({ uri, type, title, onPress }) => {
