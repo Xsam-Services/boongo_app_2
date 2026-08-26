@@ -2,14 +2,14 @@ import React, { useContext } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import { AuthContext } from '../contexts/AuthContext';
+import ThemeContext from '../contexts/ThemeContext';
 import useColors from '../hooks/useColors';
-import FooterComponent from '../screens/footer';
+import LogoText from '../../assets/img/brand.svg';
 
 const drawerItems = [
   { icon: 'home-variant-outline', label: 'navigation.home.title', route: 'HomeStack' },
@@ -26,6 +26,7 @@ const DrawerContent = props => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { userInfo, logout } = useContext(AuthContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const displayName = [userInfo?.firstname, userInfo?.lastname].filter(Boolean).join(' ') || userInfo?.username;
 
   const navigate = route => {
@@ -34,13 +35,11 @@ const DrawerContent = props => {
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: COLORS.white }]} edges={['top', 'bottom', 'left']}>
+    <View style={[styles.safeArea, { backgroundColor: COLORS.white }]}>
       <DrawerContentScrollView {...props} contentContainerStyle={styles.scrollContent}>
-        <View style={styles.brandRow}>
-          <View style={[styles.brandMark, { backgroundColor: COLORS.primary_transparent }]}>
-            <MaterialCommunityIcons name="book-open-page-variant" size={21} color={COLORS.primary} />
-          </View>
-          <Text style={[styles.brandName, { color: COLORS.black }]}>Boongo</Text>
+        <View style={styles.brandHeader}>
+          <LogoText width={118} height={34} />
+          <Text style={[styles.byReborn, { color: COLORS.dark }]}>By Reborn</Text>
         </View>
 
         <TouchableOpacity style={[styles.profileCard, { backgroundColor: COLORS.light_primary }]} onPress={() => navigate('Account')} activeOpacity={0.8}>
@@ -70,22 +69,30 @@ const DrawerContent = props => {
       </DrawerContentScrollView>
 
       <View style={styles.bottomArea}>
-        <TouchableOpacity style={[styles.logoutButton, { borderColor: COLORS.danger_transparent }]} onPress={logout} activeOpacity={0.8}>
-          <FontAwesome6 name="power-off" size={16} color={COLORS.danger} />
-          <Text style={[styles.logoutText, { color: COLORS.danger }]}>{t('logout')}</Text>
-        </TouchableOpacity>
-        <FooterComponent />
+        <View style={styles.bottomActions}>
+          <TouchableOpacity style={[styles.logoutButton, { borderColor: COLORS.danger_transparent }]} onPress={logout} activeOpacity={0.8}>
+            <FontAwesome6 name="power-off" size={16} color={COLORS.danger} />
+            <Text style={[styles.logoutText, { color: COLORS.danger }]}>{t('logout')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            accessibilityLabel={t('dark_theme')}
+            style={[styles.themeButton, { backgroundColor: COLORS.light_secondary }]}
+            onPress={toggleTheme}
+            activeOpacity={0.7}
+          >
+            <MaterialCommunityIcons name={theme === 'dark' ? 'weather-night' : 'white-balance-sunny'} size={21} color={COLORS.primary} />
+          </TouchableOpacity>
+        </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingBottom: 16 },
-  brandRow: { alignItems: 'center', flexDirection: 'row', gap: 10, marginBottom: 28, marginTop: 8 },
-  brandMark: { alignItems: 'center', borderRadius: 12, height: 42, justifyContent: 'center', width: 42 },
-  brandName: { fontSize: 22, fontWeight: '700', letterSpacing: -0.4 },
+  brandHeader: { alignItems: 'flex-start', marginBottom: 24 },
+  byReborn: { fontSize: 12, fontWeight: '600', letterSpacing: 0.3, marginLeft: 3, marginTop: 2 },
   profileCard: { alignItems: 'center', borderRadius: 18, flexDirection: 'row', padding: 12 },
   avatar: { borderRadius: 24, height: 48, width: 48 },
   avatarFallback: { alignItems: 'center', justifyContent: 'center' },
@@ -97,7 +104,9 @@ const styles = StyleSheet.create({
   iconBubble: { alignItems: 'center', borderRadius: 11, height: 38, justifyContent: 'center', width: 38 },
   menuLabel: { flex: 1, fontSize: 15, fontWeight: '500', marginLeft: 12 },
   bottomArea: { padding: 16 },
-  logoutButton: { alignItems: 'center', borderRadius: 14, borderWidth: 1, flexDirection: 'row', gap: 10, justifyContent: 'center', minHeight: 48 },
+  bottomActions: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  logoutButton: { alignItems: 'center', borderRadius: 14, borderWidth: 1, flex: 1, flexDirection: 'row', gap: 10, justifyContent: 'center', minHeight: 48 },
+  themeButton: { alignItems: 'center', borderRadius: 24, height: 48, justifyContent: 'center', width: 48 },
   logoutText: { fontSize: 15, fontWeight: '700' },
 });
 
