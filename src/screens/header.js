@@ -92,9 +92,15 @@ const HeaderComponent = ({ title }) => {
         </View>
         <View style={styles.rightActions}>
           {route.name !== 'OrganizationSettings' && route.name !== 'Notifications' ? (
-            <HeaderButton accessibilityLabel="Recherche" onPress={() => navigation.navigate('Search')} COLORS={COLORS}>
-              <MaterialCommunityIcons name="magnify" size={21} color={COLORS.black} />
-            </HeaderButton>
+            route.name === 'Settings' ? (
+              <HeaderButton accessibilityLabel="Langue" onPress={() => navigation.navigate('Language')} COLORS={COLORS}>
+                <MaterialCommunityIcons name="translate" size={20} color={COLORS.black} />
+              </HeaderButton>
+            ) : (
+              <HeaderButton accessibilityLabel="Recherche" onPress={() => navigation.navigate('Search')} COLORS={COLORS}>
+                <MaterialCommunityIcons name="magnify" size={21} color={COLORS.black} />
+              </HeaderButton>
+            )
           ) : null}
           {isRoot || route.name === 'Establishment' || route.name === 'Government' ? (
             <HeaderButton accessibilityLabel="Dictionnaire" onPress={() => navigation.navigate('Dictionary')} COLORS={COLORS}>

@@ -18,6 +18,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { API, PADDING } from '../../tools/constants';
 import useColors from '../../hooks/useColors';
 import homeStyles from '../style';
+import HeaderComponent from '../header';
 
 const SettingsScreen = () => {
   // =============== Colors ===============
@@ -229,16 +230,7 @@ const SettingsScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <Spinner visible={isLoading} />
 
-      {/* Custom header */}
-      <View style={{ flexDirection: 'row', paddingVertical: PADDING.p02 }}>
-        <TouchableOpacity style={{ position: 'absolute', left: 7, top: 5, zIndex: 10 }} onPress={() => navigation.goBack()}>
-          <Icon name='chevron-left' size={37} color={COLORS.black} />
-        </TouchableOpacity>
-        <Text style={{ width: '100%', fontSize: 20, fontWeight: '400', textAlign: 'center', color: COLORS.warning }}>{`${userInfo.firstname} ${userInfo.lastname}`}</Text>
-        <TouchableOpacity style={{ position: 'absolute', right: 14, top: 10, zIndex: 10 }} onPress={() => navigation.navigate('Language')}>
-          <Icon name='translate' size={25} color={COLORS.black} />
-        </TouchableOpacity>
-      </View>
+      <HeaderComponent title={t('navigation.settings.title')} />
 
       <ScrollView style={{ flexGrow: 1, paddingHorizontal: PADDING.p05 }}>
         {/* Profil photo */}

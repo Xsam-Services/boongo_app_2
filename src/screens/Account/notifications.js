@@ -272,10 +272,7 @@ const NotificationsScreen = () => {
 
   return (
     <>
-      {/* Header */}
-      <View style={{ paddingVertical: PADDING.p01, backgroundColor: COLORS.white }}>
-        <HeaderComponent title={t('navigation.notification')} />
-      </View>
+      <HeaderComponent title={t('navigation.notification')} />
 
       {/* Content */}
       <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
