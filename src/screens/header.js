@@ -4,6 +4,7 @@ import { DrawerActions, useNavigation, useRoute } from '@react-navigation/native
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
 
+import LogoText from '../../assets/img/brand.svg';
 import { AuthContext } from '../contexts/AuthContext';
 import useColors from '../hooks/useColors';
 
@@ -27,6 +28,7 @@ const HeaderComponent = ({ title }) => {
   const route = useRoute();
   const { userInfo } = useContext(AuthContext);
   const isRoot = rootRoutes.has(route.name);
+  const isHome = route.name === 'HomeStack';
   const isAccount = route.name === 'Account';
   const displayName = [userInfo?.firstname, userInfo?.lastname].filter(Boolean).join(' ') || userInfo?.username;
 
@@ -86,6 +88,7 @@ const HeaderComponent = ({ title }) => {
           <HeaderButton accessibilityLabel={isRoot ? 'Ouvrir le menu' : 'Retour'} onPress={leadingAction} COLORS={COLORS}>
             <MaterialCommunityIcons name={isRoot ? 'menu' : 'chevron-left'} size={24} color={COLORS.black} />
           </HeaderButton>
+          {isHome ? <LogoText width={104} height={28} style={styles.logo} /> : null}
           {title ? <Text style={[styles.title, { color: COLORS.black }]} numberOfLines={1}>{title}</Text> : null}
         </View>
         <View style={styles.rightActions}>
@@ -114,6 +117,7 @@ const HeaderComponent = ({ title }) => {
 const styles = StyleSheet.create({
   header: { alignItems: 'center', borderBottomWidth: StyleSheet.hairlineWidth, flexDirection: 'row', justifyContent: 'space-between', minHeight: 64, paddingHorizontal: 16 },
   leading: { alignItems: 'center', flex: 1, flexDirection: 'row', minWidth: 0 },
+  logo: { marginLeft: 10 },
   title: { flexShrink: 1, fontSize: 17, fontWeight: '700', marginLeft: 10 },
   iconButton: { alignItems: 'center', borderRadius: 18, height: 36, justifyContent: 'center', width: 36 },
   rightActions: { flexDirection: 'row', gap: 8 },
