@@ -30,7 +30,6 @@ const MyWorks = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => 
   const COLORS = useColors();
   // =============== Language ===============
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   // =============== Get contexts ===============
   const { userInfo } = useContext(AuthContext);
   // =============== Get data ===============
@@ -584,6 +583,7 @@ const AccountScreen = ({ route }) => {
   const COLORS = useColors();
   // =============== Language ===============
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   // =============== Get data ===============
   const myWorksListRef = useRef(null);
   const myCartListRef = useRef(null);
