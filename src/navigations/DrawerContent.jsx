@@ -28,7 +28,7 @@ const DrawerContent = props => {
   const displayName = [userInfo?.firstname, userInfo?.lastname].filter(Boolean).join(' ') || userInfo?.username;
 
   const navigate = route => {
-    props.navigation.navigate(route);
+    props.navigation.navigate('Home', { screen: route });
     props.navigation.closeDrawer();
   };
 
