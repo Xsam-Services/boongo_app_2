@@ -2,12 +2,8 @@
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-import React, { useContext, useState } from "react";
-import { View, TouchableOpacity, TextInput, Dimensions } from "react-native";
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
-import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import { useTranslation } from "react-i18next";
 
 import HomeScreen from '../screens/Home/HomeScreen';
 import LanguageScreen from '../screens/language';
@@ -40,36 +36,13 @@ import MobileSubscribeScreen from '../screens/subscribe_mobile';
 import BankCardSubscribeScreen from '../screens/subscribe_bank_card';
 
 import useColors from "../hooks/useColors";
-import { AuthContext } from "../contexts/AuthContext";
-import { SearchContext } from "../contexts/SearchContext";
 import { AboutBottomTabNavigation } from "./AboutBottomTabNavigation";
-import { PADDING } from "../tools/constants"; // Assurez-vous que le chemin vers constants est correct
-import homeStyles from "../screens/style"; // Assurez-vous que le chemin vers le style est correct
 
 const Stack = createNativeStackNavigator();
 
 export const HomeStackNavigation = () => {
     // =============== Colors ===============
     const COLORS = useColors();
-    // =============== Navigation ===============
-    const navigation = useNavigation();
-    // =============== Language ===============
-    const { t } = useTranslation();
-    // =============== Authentication context ===============
-    const { userInfo, invalidateConsultations } = useContext(AuthContext);
-    // =============== Get data ===============
-    const [isSearchActive, setIsSearchActive] = useState(false);
-    const { searchQuery, setSearchQuery } = useContext(SearchContext);
-
-    const handleSearchPress = () => {
-        setIsSearchActive(true);
-    };
-
-    const handleCloseSearch = () => {
-        setIsSearchActive(false);
-        setSearchQuery('');
-    };
-
     return (
         <Stack.Navigator
             initialRouteName='HomeStack'
@@ -81,41 +54,7 @@ export const HomeStackNavigation = () => {
             <Stack.Screen name="HomeStack" component={HomeScreen} />
             <Stack.Screen name="Language" component={LanguageScreen} />
             <Stack.Screen name="About" component={AboutBottomTabNavigation} />
-            <Stack.Screen name="Dictionary" component={DictionaryScreen}
-                options={{
-                    headerShown: true,
-                    headerTitle: isSearchActive ? '' : t('navigation.dictionary'),
-                    headerTintColor: COLORS.black,
-                    headerStyle: {
-                        backgroundColor: COLORS.white
-                    },
-                    headerTitleStyle: {
-                        color: COLORS.black
-                    },
-                    headerLeft: () => (
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <TouchableOpacity onPress={() => navigation.navigate('HomeStack')}>
-                                <Icon name='chevron-left' size={37} color={COLORS.black} />
-                            </TouchableOpacity>
-                            {isSearchActive ? (
-                                <TextInput
-                                    value={searchQuery}
-                                    onChangeText={setSearchQuery}
-                                    style={[homeStyles.searchInputText, { fontSize: 18, width: Dimensions.get('window').width - 120, height: 37, color: COLORS.black, marginVertical: 0, paddingVertical: 5, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: COLORS.black }]}
-                                    placeholder={t('search')}
-                                    placeholderTextColor={COLORS.secondary}
-                                />
-                            ) : (
-                                <Icon name='book-open-blank-variant' color={COLORS.black} style={{ fontSize: 28, marginHorizontal: PADDING.p01 }} />
-                            )}
-                        </View>
-                    ),
-                    headerRight: () => (
-                        <TouchableOpacity onPress={isSearchActive ? handleCloseSearch : handleSearchPress}>
-                            <Icon name={isSearchActive ? 'close' : 'magnify'} color={COLORS.black} style={{ fontSize: 24 }} />
-                        </TouchableOpacity>
-                    )
-                }} />
+            <Stack.Screen name="Dictionary" component={DictionaryScreen} />
             <Stack.Screen name='Settings' component={SettingsScreen} />
             <Stack.Screen name='Profile' component={ProfileScreen} />
             <Stack.Screen name='Account' component={AccountScreen} />
