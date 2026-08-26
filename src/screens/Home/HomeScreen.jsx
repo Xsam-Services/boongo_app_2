@@ -17,12 +17,12 @@ import WorkItemComponent from '../../components/work_item';
 import FloatingActionsButton from '../../components/floating_actions_button';
 import homeStyles from '../style';
 import useColors from '../../hooks/useColors';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const screenWidth = Dimensions.get('window').width;
 
 // News frame
-const News = ({ handleScroll, listRef }) => {
+const News = ({ handleScroll, listRef, contentTopInset }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const { userInfo } = useContext(AuthContext);
@@ -101,7 +101,7 @@ const News = ({ handleScroll, listRef }) => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.light_secondary }} edges={['top']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.light_secondary }} edges={[]}>
       <View style={[homeStyles.cardEmpty, { flex: 1, marginLeft: 0, paddingHorizontal: 2 }]}>
         <Animated.FlatList
           ref={flatListRef}
@@ -114,7 +114,7 @@ const News = ({ handleScroll, listRef }) => {
           onEndReached={onEndReached}
           onEndReachedThreshold={0.1}
           scrollEventThrottle={16}
-          contentContainerStyle={homeStyles.scrollableList}
+          contentContainerStyle={[homeStyles.scrollableList, { paddingTop: contentTopInset }]}
           windowSize={10}
           refreshControl={
             <RefreshControl
@@ -142,7 +142,7 @@ const News = ({ handleScroll, listRef }) => {
 };
 
 // Books frame
-const Books = ({ handleScroll, listRef }) => {
+const Books = ({ handleScroll, listRef, contentTopInset }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const { userInfo } = useContext(AuthContext);
@@ -274,7 +274,7 @@ const Books = ({ handleScroll, listRef }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
-      <SafeAreaView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+      <SafeAreaView style={{ flex: 1 }} edges={[]}>
         <Animated.FlatList
           ref={flatListRef}
           data={combinedData}
@@ -289,7 +289,7 @@ const Books = ({ handleScroll, listRef }) => {
           onEndReachedThreshold={0.1}
           scrollEventThrottle={16}
           windowSize={10}
-          contentContainerStyle={{ paddingTop: 110 }}
+          contentContainerStyle={{ paddingTop: contentTopInset }}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={105} />}
           ListEmptyComponent={<EmptyListComponent iconName="book-open-page-variant-outline" title={t('empty_list.title')} description={t('empty_list.description_books')} />}
           ListHeaderComponent={
@@ -316,6 +316,7 @@ const Books = ({ handleScroll, listRef }) => {
 const HomeScreen = () => {
   const COLORS = useColors();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const newsListRef = useRef(null);
   const booksListRef = useRef(null);
   const [index, setIndex] = useState(0);
@@ -323,27 +324,23 @@ const HomeScreen = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
   const savedScrollOffsets = useRef({ news: 0, books: 0 });
 
-  const headerTranslateY = scrollY.interpolate({
-    inputRange: [0, 50],
-    outputRange: [0, -60],
-    extrapolate: 'clamp',
-  });
+  const contentTopInset = insets.top + 112;
 
   const [routes] = useState([
     { key: 'news', title: t('navigation.home.news') },
     { key: 'books', title: t('navigation.home.books') },
   ]);
 
-  const renderScene = useCallback(({ route }) => {
+  const renderScene = ({ route }) => {
     switch (route.key) {
       case 'news':
-        return <News handleScroll={handleScroll} listRef={newsListRef} />;
+        return <News handleScroll={handleScroll} listRef={newsListRef} contentTopInset={contentTopInset} />;
       case 'books':
-        return <Books handleScroll={handleScroll} listRef={booksListRef} />;
+        return <Books handleScroll={handleScroll} listRef={booksListRef} contentTopInset={contentTopInset} />;
       default:
         return null;
     }
-  }, []);
+  };
 
   const handleScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -377,15 +374,15 @@ const HomeScreen = () => {
   };
 
   const renderTabBar = (props) => (
-    <Animated.View
+    <View
       style={{
-        transform: [{ translateY: headerTranslateY }],
         zIndex: 1000,
+        elevation: 8,
         position: 'absolute',
         top: 0,
         width: '100%',
         backgroundColor: COLORS.white,
-        paddingTop: 20,
+        paddingTop: insets.top,
       }}
     >
       <HeaderComponent />
@@ -401,7 +398,7 @@ const HomeScreen = () => {
         activeColor={COLORS.black}
         inactiveColor={COLORS.dark_secondary}
       />
-    </Animated.View>
+    </View>
   );
 
   const handleBackToTop = () => {

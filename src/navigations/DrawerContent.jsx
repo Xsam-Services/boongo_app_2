@@ -1,101 +1,113 @@
-/**
- * @author Xanders
- * @see https://team.xsamtech.com/xanderssamoth
- */
 import React, { useContext } from 'react';
-import { View, Text, Image } from 'react-native';
-import { Title } from 'react-native-paper';
-import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
-import { useTranslation } from 'react-i18next';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { DrawerContentScrollView } from '@react-navigation/drawer';
 import { useNavigation } from '@react-navigation/native';
-import FaIcon from '@expo/vector-icons/FontAwesome6';
-import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import { PADDING, TEXT_SIZE } from './../tools/constants';
-import { AuthContext } from './../contexts/AuthContext';
-import FooterComponent from './../screens/footer';
-import homeStyles from './../screens/style';
-import useColors from './../hooks/useColors';
+import { useTranslation } from 'react-i18next';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-const DrawerList = [
-    { icon: 'home-outline', label: 'navigation.home.title', navigateTo: 'HomeStack', toScreen: null },
-    { icon: 'account-outline', label: 'navigation.account.title', navigateTo: 'Account', toScreen: null },
-    { icon: 'bank-outline', label: 'navigation.establishment.title', navigateTo: 'Establishment', toScreen: null },
-    { icon: 'city-variant-outline', label: 'navigation.government.title', navigateTo: 'Government', toScreen: null },
-    { icon: 'image-multiple-outline', label: 'navigation.media.title', navigateTo: 'Media', toScreen: null },
-    { icon: 'cog-outline', label: 'navigation.settings.title', navigateTo: 'Settings', toScreen: null },
-    { icon: 'help-circle-outline', label: 'navigation.about', navigateTo: 'About', toScreen: 'Contact' }
+import { AuthContext } from '../contexts/AuthContext';
+import ThemeContext from '../contexts/ThemeContext';
+import useColors from '../hooks/useColors';
+import LogoText from '../../assets/img/brand.svg';
+
+const drawerItems = [
+  { icon: 'home-variant-outline', label: 'navigation.home.title', route: 'HomeStack' },
+  { icon: 'account-circle-outline', label: 'navigation.account.title', route: 'Account' },
+  { icon: 'bank-outline', label: 'navigation.establishment.title', route: 'Establishment' },
+  { icon: 'city-variant-outline', label: 'navigation.government.title', route: 'Government' },
+  { icon: 'image-multiple-outline', label: 'navigation.media.title', route: 'Media' },
+  { icon: 'cog-outline', label: 'navigation.settings.title', route: 'Settings' },
+  { icon: 'help-circle-outline', label: 'navigation.about', route: 'About' },
 ];
 
-const DrawerLayout = ({ icon, label, navigateTo, toScreen }) => {
-    // =============== Colors ===============
-    const COLORS = useColors();
-    // =============== Navigation ===============
-    const navigation = useNavigation();
-    // =============== Language ===============
-    const { t } = useTranslation();
+const DrawerContent = props => {
+  const COLORS = useColors();
+  const { t } = useTranslation();
+  const navigation = useNavigation();
+  const { userInfo, logout } = useContext(AuthContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
+  const displayName = [userInfo?.firstname, userInfo?.lastname].filter(Boolean).join(' ') || userInfo?.username;
 
-    return (
-        <DrawerItem
-            label={t(label)}
-            icon={({ color, size }) => <Icon name={icon} color={COLORS.black} size={size} />}
-            labelStyle={{ fontSize: TEXT_SIZE.paragraph, color: COLORS.black }}
-            onPress={() => {
-                if (toScreen != null) {
-                    navigation.navigate(navigateTo, { screen: toScreen });
+  const navigate = route => {
+    navigation.navigate(route);
+    navigation.closeDrawer();
+  };
 
-                } else {
-                    navigation.navigate(navigateTo);
-                }
-            }}
-        />
-    );
-};
-
-const DrawerItems = props => {
-    return DrawerList.map((el, i) => {
-        return (
-            <DrawerLayout key={i}
-                icon={el.icon}
-                label={el.label}
-                navigateTo={el.navigateTo} />
-        );
-    });
-};
-
-const DrawerContent = (props) => {
-    // =============== Colors ===============
-    const COLORS = useColors();
-    // =============== Language ===============
-    const { t } = useTranslation();
-    // =============== Get data ===============
-    const { userInfo, logout } = useContext(AuthContext);
-
-    return (
-        <View style={{ flex: 1, backgroundColor: COLORS.white, borderTopRightRadius: 15, borderBottomRightRadius: 15 }}>
-            <DrawerContentScrollView {...props}>
-                <View style={homeStyles.drawerCurrentUser}>
-                    <View style={{ marginTop: 5 }}>
-                        <Image style={{ width: 60, height: 60, borderRadius: 30 }} source={{ uri: userInfo.avatar_url }} />
-                    </View>
-                    <View style={{ marginLeft: PADDING.p01, flexDirection: 'column' }}>
-                        <Title style={[homeStyles.drawerTitle, { color: COLORS.black }]}>{userInfo.firstname + ' ' + userInfo.lastname}</Title>
-                        <Text style={{ fontSize: TEXT_SIZE.label, color: COLORS.warning }}>@{userInfo.username}</Text>
-                    </View>
-                </View>
-                <View style={homeStyles.drawerSection}>
-                    <DrawerItems />
-                    <View style={homeStyles.drawerFooter}>
-                        <DrawerItem
-                            icon={() => <FaIcon name='power-off' color='white' size={18} />}
-                            label={t('logout')} labelStyle={{ fontSize: TEXT_SIZE.paragraph, color: 'white' }}
-                            style={{ backgroundColor: COLORS.primary, marginBottom: PADDING.p05 }}
-                            onPress={logout} />
-                        <FooterComponent />
-                    </View>
-                </View>
-            </DrawerContentScrollView>
+  return (
+    <View style={[styles.safeArea, { backgroundColor: COLORS.white }]}>
+      <DrawerContentScrollView {...props} contentContainerStyle={styles.scrollContent}>
+        <View style={styles.brandHeader}>
+          <LogoText width={118} height={34} />
+          <Text style={[styles.byReborn, { color: COLORS.dark }]}>by Reborn</Text>
         </View>
-    );
+
+        <TouchableOpacity style={[styles.profileCard, { backgroundColor: COLORS.light_primary }]} onPress={() => navigate('Account')} activeOpacity={0.8}>
+          {userInfo?.avatar_url ? <Image source={{ uri: userInfo.avatar_url }} style={styles.avatar} /> : (
+            <View style={[styles.avatar, styles.avatarFallback, { backgroundColor: COLORS.primary }]}>
+              <MaterialCommunityIcons name="account" size={28} color="#ffffff" />
+            </View>
+          )}
+          <View style={styles.profileText}>
+            <Text style={[styles.profileName, { color: COLORS.black }]} numberOfLines={1}>{displayName}</Text>
+            <Text style={[styles.profileHandle, { color: COLORS.dark }]} numberOfLines={1}>@{userInfo?.username}</Text>
+          </View>
+          <MaterialCommunityIcons name="chevron-right" size={22} color={COLORS.dark_secondary} />
+        </TouchableOpacity>
+
+        <View style={styles.menu}>
+          {drawerItems.map(item => (
+            <TouchableOpacity key={item.route} style={styles.menuItem} onPress={() => navigate(item.route)} activeOpacity={0.7}>
+              <View style={[styles.iconBubble, { backgroundColor: COLORS.light_secondary }]}>
+                <MaterialCommunityIcons name={item.icon} size={21} color={COLORS.dark_secondary} />
+              </View>
+              <Text style={[styles.menuLabel, { color: COLORS.black }]}>{t(item.label)}</Text>
+              <MaterialCommunityIcons name="chevron-right" size={19} color={COLORS.dark} />
+            </TouchableOpacity>
+          ))}
+        </View>
+      </DrawerContentScrollView>
+
+      <View style={styles.bottomArea}>
+        <View style={styles.bottomActions}>
+          <TouchableOpacity style={[styles.logoutButton, { borderColor: COLORS.danger_transparent }]} onPress={logout} activeOpacity={0.8}>
+            <FontAwesome6 name="power-off" size={16} color={COLORS.danger} />
+            <Text style={[styles.logoutText, { color: COLORS.danger }]}>{t('logout')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            accessibilityLabel={t('dark_theme')}
+            style={[styles.themeButton, { backgroundColor: COLORS.light_secondary }]}
+            onPress={toggleTheme}
+            activeOpacity={0.7}
+          >
+            <MaterialCommunityIcons name={theme === 'dark' ? 'weather-night' : 'white-balance-sunny'} size={21} color={COLORS.primary} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  safeArea: { flex: 1 },
+  scrollContent: { paddingHorizontal: 16, paddingBottom: 16 },
+  brandHeader: { alignItems: 'center', marginBottom: 24 },
+  byReborn: { fontSize: 12, fontWeight: '600', letterSpacing: 0.3, marginTop: 2 },
+  profileCard: { alignItems: 'center', borderRadius: 18, flexDirection: 'row', padding: 12 },
+  avatar: { borderRadius: 24, height: 48, width: 48 },
+  avatarFallback: { alignItems: 'center', justifyContent: 'center' },
+  profileText: { flex: 1, marginHorizontal: 11 },
+  profileName: { fontSize: 15, fontWeight: '700' },
+  profileHandle: { fontSize: 13, marginTop: 2 },
+  menu: { marginTop: 24 },
+  menuItem: { alignItems: 'center', flexDirection: 'row', minHeight: 56 },
+  iconBubble: { alignItems: 'center', borderRadius: 11, height: 38, justifyContent: 'center', width: 38 },
+  menuLabel: { flex: 1, fontSize: 15, fontWeight: '500', marginLeft: 12 },
+  bottomArea: { padding: 16 },
+  bottomActions: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  logoutButton: { alignItems: 'center', borderRadius: 14, borderWidth: 1, flex: 1, flexDirection: 'row', gap: 10, justifyContent: 'center', minHeight: 48 },
+  themeButton: { alignItems: 'center', borderRadius: 24, height: 48, justifyContent: 'center', width: 48 },
+  logoutText: { fontSize: 15, fontWeight: '700' },
+});
 
 export default DrawerContent;
