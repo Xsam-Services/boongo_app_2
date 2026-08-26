@@ -20,6 +20,7 @@ import FloatingActionsButton from '../../components/floating_actions_button';
 import homeStyles from '../style';
 import useColors from '../../hooks/useColors';
 import UserItemComponent from '../../components/user_item';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const TAB_BAR_HEIGHT = 48;
 
@@ -29,6 +30,7 @@ const MyWorks = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => 
   const COLORS = useColors();
   // =============== Language ===============
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   // =============== Get contexts ===============
   const { userInfo } = useContext(AuthContext);
   // =============== Get data ===============
@@ -600,14 +602,6 @@ const AccountScreen = ({ route }) => {
     setIndex(initialIndex);
   }, [initialIndex]);
 
-  // const headerTranslateY = scrollY.interpolate({
-  const clampedScrollY = Animated.diffClamp(scrollY, 0, headerHeight);
-  const headerTranslateY = clampedScrollY.interpolate({
-    inputRange: [0, headerHeight],
-    outputRange: [0, -headerHeight],
-    extrapolate: 'clamp',
-  });
-
   const [routes] = useState([
     { key: 'my_works', title: t('navigation.account.my_works') },
     { key: 'my_cart', title: t('navigation.account.my_cart') },
@@ -681,15 +675,15 @@ const AccountScreen = ({ route }) => {
   // Custom "TabBar"
   const renderTabBar = (props) => (
     <>
-      <Animated.View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)} style={{ transform: [{ translateY: headerTranslateY }], zIndex: 1000, position: 'absolute', top: 0, width: '100%', backgroundColor: COLORS.white, paddingTop: 20 }}>
+      <View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)} style={{ zIndex: 1000, elevation: 8, position: 'absolute', top: 0, width: '100%', backgroundColor: COLORS.white, paddingTop: insets.top }}>
         <HeaderComponent />
-      </Animated.View>
-      <Animated.View
+      </View>
+      <View
         style={{
-          transform: [{ translateY: headerTranslateY }],
           position: 'absolute',
           top: headerHeight, // Positionnée juste en dessous du header
           zIndex: 999,
+          elevation: 7,
           width: '100%',
           height: TAB_BAR_HEIGHT,
           backgroundColor: COLORS.white,
@@ -701,7 +695,7 @@ const AccountScreen = ({ route }) => {
           activeColor={COLORS.black}
           inactiveColor={COLORS.dark_secondary}
         />
-      </Animated.View>
+      </View>
       <FloatingActionsButton />
     </>
   );
