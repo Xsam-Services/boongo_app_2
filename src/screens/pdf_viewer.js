@@ -15,7 +15,7 @@ import {
   Modal,
   Alert,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTranslation } from 'react-i18next';
@@ -35,12 +35,14 @@ const ReaderHeader = ({ navigation, title }) => {
   const COLORS = useColors();
 
   return (
-    <View style={{ alignItems: 'center', backgroundColor: COLORS.white, borderBottomColor: COLORS.light_secondary, borderBottomWidth: 1, flexDirection: 'row', minHeight: 64, paddingHorizontal: 16 }}>
-      <TouchableOpacity style={{ alignItems: 'center', backgroundColor: COLORS.light_secondary, borderRadius: 18, height: 36, justifyContent: 'center', width: 36 }} onPress={() => navigation.getParent()?.goBack()} accessibilityLabel="Retour">
-        <Icon name="chevron-left" size={24} color={COLORS.black} />
-      </TouchableOpacity>
-      <Text style={{ color: COLORS.black, flex: 1, fontSize: 16, fontWeight: '800', marginLeft: 10 }} numberOfLines={1}>{title}</Text>
-    </View>
+    <SafeAreaView edges={['top']} style={{ backgroundColor: COLORS.white }}>
+      <View style={{ alignItems: 'center', borderBottomColor: COLORS.light_secondary, borderBottomWidth: 1, flexDirection: 'row', minHeight: 64, paddingHorizontal: 16 }}>
+        <TouchableOpacity style={{ alignItems: 'center', backgroundColor: COLORS.light_secondary, borderRadius: 18, height: 36, justifyContent: 'center', width: 36 }} onPress={() => navigation.getParent()?.goBack()} accessibilityLabel="Retour">
+          <Icon name="chevron-left" size={24} color={COLORS.black} />
+        </TouchableOpacity>
+        <Text style={{ color: COLORS.black, flex: 1, fontSize: 16, fontWeight: '800', marginLeft: 10 }} numberOfLines={1}>{title}</Text>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -713,6 +715,7 @@ const PDFViewerScreenContent = ({
 const PDFViewerScreen = ({ route }) => {
   // =============== Colors ===============
   const COLORS = useColors();
+  const insets = useSafeAreaInsets();
 
   // =============== Get parameters ===============
   const {
@@ -730,8 +733,9 @@ const PDFViewerScreen = ({ route }) => {
         headerShown: false,
         tabBarActiveTintColor: COLORS.black,
         tabBarStyle: {
-          height: 55,
+          height: 58 + insets.bottom,
           backgroundColor: COLORS.white,
+          paddingBottom: insets.bottom,
         },
         tabBarShowLabel: true,
         headerStyle: {
