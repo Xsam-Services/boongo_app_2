@@ -3,7 +3,7 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { View, TouchableOpacity, Animated, Dimensions, RefreshControl, FlatList, Text, StyleSheet } from 'react-native';
+import { ActivityIndicator, View, TouchableOpacity, Animated, Dimensions, RefreshControl, FlatList, Text, StyleSheet } from 'react-native';
 import { TabBar, TabView } from 'react-native-tab-view';
 import { useTranslation } from 'react-i18next';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
@@ -21,6 +21,13 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const screenWidth = Dimensions.get('window').width;
 
+const LoadingList = ({ COLORS, label }) => (
+  <View style={styles.loadingState}>
+    <ActivityIndicator size="large" color={COLORS.primary} />
+    <Text style={[styles.loadingLabel, { color: COLORS.dark }]}>{label}</Text>
+  </View>
+);
+
 // News frame
 const News = ({ handleScroll, listRef, contentTopInset }) => {
   const COLORS = useColors();
@@ -32,7 +39,7 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [count, setCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const fallbackListRef = useRef(null);
   const flatListRef = listRef || fallbackListRef;
@@ -130,13 +137,7 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
               progressViewOffset={105}
             />
           }
-          ListEmptyComponent={
-            <EmptyListComponent
-              iconName='script-text-outline'
-              title={t('empty_list.title')}
-              description={t('empty_list.description_news')}
-            />
-          }
+          ListEmptyComponent={isLoading ? <LoadingList COLORS={COLORS} label={t('loading')} /> : <EmptyListComponent iconName='script-text-outline' title={t('empty_list.title')} description={t('empty_list.description_news')} />}
           ListFooterComponent={() =>
             isLoading ? (
               <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text>
@@ -161,7 +162,7 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [count, setCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const fallbackListRef = useRef(null);
   const flatListRef = listRef || fallbackListRef;
@@ -292,7 +293,7 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
           windowSize={10}
           contentContainerStyle={[styles.listContent, { paddingTop: contentTopInset }]}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={105} />}
-          ListEmptyComponent={<EmptyListComponent iconName="book-open-page-variant-outline" title={t('empty_list.title')} description={t('empty_list.description_books')} />}
+          ListEmptyComponent={isLoading ? <LoadingList COLORS={COLORS} label={t('loading')} /> : <EmptyListComponent iconName="book-open-page-variant-outline" title={t('empty_list.title')} description={t('empty_list.description_books')} />}
           ListHeaderComponent={
             <FlatList
               data={categories}
@@ -323,7 +324,7 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, co
   const [typeId, setTypeId] = useState(null);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const fallbackListRef = useRef(null);
   const flatListRef = listRef || fallbackListRef;
@@ -339,12 +340,14 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, co
     };
 
     const fetchType = async () => {
+      setIsLoading(true);
       try {
         const encodedTypeName = encodeURIComponent(typeName);
         const response = await axios.get(`${API.boongo_url}/type/search/fr/${encodedTypeName}`, { headers });
         setTypeId(response.data?.data?.id || null);
       } catch (error) {
         setTypeId(null);
+        setIsLoading(false);
         console.error(`Erreur lors de la récupération du type ${typeName}:`, error);
       }
     };
@@ -421,7 +424,7 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, co
         windowSize={10}
         contentContainerStyle={[styles.listContent, { paddingTop: contentTopInset }]}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={105} />}
-        ListEmptyComponent={<EmptyListComponent iconName="school-outline" title={t('empty_list.title')} description={t(emptyDescriptionKey)} />}
+        ListEmptyComponent={isLoading ? <LoadingList COLORS={COLORS} label={t('loading')} /> : <EmptyListComponent iconName="school-outline" title={t('empty_list.title')} description={t(emptyDescriptionKey)} />}
         ListFooterComponent={() => isLoading ? <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text> : null}
       />
     </SafeAreaView>
@@ -546,6 +549,8 @@ const styles = StyleSheet.create({
   scene: { flex: 1 },
   listShell: { flex: 1 },
   listContent: { paddingBottom: 34 },
+  loadingState: { alignItems: 'center', justifyContent: 'center', minHeight: 280, paddingHorizontal: 24 },
+  loadingLabel: { fontSize: 14, marginTop: 12 },
   homeHeader: { elevation: 8, position: 'absolute', shadowColor: '#172033', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.1, shadowRadius: 8, top: 0, width: '100%', zIndex: 1000 },
   tabBar: { elevation: 0, shadowOpacity: 0 },
   tab: { minHeight: 48, width: 'auto' },
