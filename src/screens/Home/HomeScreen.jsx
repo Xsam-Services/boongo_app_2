@@ -36,10 +36,13 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
   const [refreshing, setRefreshing] = useState(false);
   const fallbackListRef = useRef(null);
   const flatListRef = listRef || fallbackListRef;
+  const loadingRef = useRef(false);
+  const lastPageRef = useRef(1);
 
   const fetchWorks = useCallback(async (pageToFetch = 1) => {
-    if (!userInfo?.api_token || isLoading || (pageToFetch > lastPage && pageToFetch !== 1)) return;
+    if (!userInfo?.api_token || loadingRef.current || (pageToFetch > lastPageRef.current && pageToFetch !== 1)) return;
 
+    loadingRef.current = true;
     setIsLoading(true);
     const qs = require('qs');
     const url = `${API.boongo_url}/work/filter_by_categories?page=${pageToFetch}`;
@@ -60,7 +63,9 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
       }
 
       setAd(response.data?.ad || null);
-      setLastPage(response.data?.lastPage || 1);
+      const nextLastPage = response.data?.lastPage || 1;
+      lastPageRef.current = nextLastPage;
+      setLastPage(nextLastPage);
       setCount(response.data?.count || 0);
     } catch (error) {
       if (error.response?.status === 429) {
@@ -69,9 +74,10 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
         console.error("Erreur fetchWorks News:", error);
       }
     } finally {
+      loadingRef.current = false;
       setIsLoading(false);
     }
-  }, [userInfo?.api_token, lastPage, isLoading]);
+  }, [userInfo?.api_token]);
 
   useEffect(() => {
     fetchWorks(1);
@@ -159,6 +165,8 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
   const [refreshing, setRefreshing] = useState(false);
   const fallbackListRef = useRef(null);
   const flatListRef = listRef || fallbackListRef;
+  const loadingRef = useRef(false);
+  const lastPageRef = useRef(1);
 
   const fetchCategories = useCallback(async () => {
     if (!userInfo?.api_token) return;
@@ -186,7 +194,8 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
   }, [fetchCategories]);
 
   const fetchBooks = useCallback(async (pageToFetch = 1) => {
-    if (!userInfo?.api_token || isLoading || (pageToFetch > lastPage && pageToFetch !== 1)) return;
+    if (!userInfo?.api_token || loadingRef.current || (pageToFetch > lastPageRef.current && pageToFetch !== 1)) return;
+    loadingRef.current = true;
     setIsLoading(true);
 
     const qs = require('qs');
@@ -208,14 +217,17 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
 
       setBooks(prev => (pageToFetch === 1 ? data : [...prev, ...data]));
       setAd(response.data?.ad || null);
-      setLastPage(response.data?.lastPage || pageToFetch);
+      const nextLastPage = response.data?.lastPage || pageToFetch;
+      lastPageRef.current = nextLastPage;
+      setLastPage(nextLastPage);
       setCount(response.data?.count || 0);
     } catch (error) {
       console.error('Erreur fetchBooks', error);
     } finally {
+      loadingRef.current = false;
       setIsLoading(false);
     }
-  }, [userInfo?.api_token, idCat, lastPage, isLoading]);
+  }, [userInfo?.api_token, idCat]);
 
   useEffect(() => {
     fetchBooks(page);
@@ -245,6 +257,7 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
     setPage(1);
     setBooks([]);
     setLastPage(1);
+    lastPageRef.current = 1;
   }, []);
 
   const CategoryItem = ({ item }) => {

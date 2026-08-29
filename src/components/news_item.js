@@ -24,10 +24,10 @@ const NewsItemComponent = ({ item }) => {
   const organization = item.organization_owner?.org_name || item.organization?.org_name;
 
   const openAd = () => {
-    if (item.website_url) {
-      Linking.openURL(item.website_url);
-    } else if (item.has_promo_code) {
+    if (item.has_promo_code) {
       navigation.navigate('Subscription', { itemId: item.realId });
+    } else if (item.website_url) {
+      Linking.openURL(item.website_url);
     }
   };
 

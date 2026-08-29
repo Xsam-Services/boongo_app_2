@@ -17,10 +17,10 @@ const WorkItemComponent = ({ item }) => {
   const isAd = item.id === 'ad';
 
   const openAd = () => {
-    if (item.website_url) {
-      Linking.openURL(item.website_url);
-    } else if (item.has_promo_code) {
+    if (item.has_promo_code) {
       navigation.navigate('Subscription', { itemId: item.realId });
+    } else if (item.website_url) {
+      Linking.openURL(item.website_url);
     }
   };
 
