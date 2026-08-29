@@ -3,7 +3,7 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Alert, Image, Linking, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Linking, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NetInfo from '@react-native-community/netinfo';
 import Constants from 'expo-constants';
@@ -40,6 +40,7 @@ const WorkDataScreen = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
   const [hasLiked, setHasLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [likeUpdating, setLikeUpdating] = useState(false);
   const [price, setPrice] = useState('');
 
   const formatPrice = useCallback(async workData => {
@@ -126,9 +127,9 @@ const WorkDataScreen = ({ route, navigation }) => {
   ]);
 
   const handleLikeToggle = async () => {
-    if (!work?.id || loading) return;
+    if (!work?.id || likeUpdating) return;
 
-    setLoading(true);
+    setLikeUpdating(true);
     try {
       if (hasLiked) {
         const response = await axios.delete(`${API.boongo_url}/like/unlike_entity/${userInfo.id}/work/${work.id}`, {
@@ -152,7 +153,7 @@ const WorkDataScreen = ({ route, navigation }) => {
       Alert.alert(t('error'), message);
       console.error('Erreur lors de la mise à jour du like:', error);
     } finally {
-      setLoading(false);
+      setLikeUpdating(false);
     }
   };
 
@@ -308,7 +309,9 @@ const WorkDataScreen = ({ route, navigation }) => {
           {work?.categories?.length ? <View style={styles.categoriesRow}><Text style={[styles.infoLabel, { color: COLORS.dark }]}>{work.categories.length > 1 ? t('work.categories') : t('work.category')}</Text><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryList}>{work.categories.map(category => <Text key={category.id} style={[styles.categoryChip, { backgroundColor: COLORS.light_primary, color: COLORS.primary }]}>{category.category_name}</Text>)}</ScrollView></View> : null}
           {isPrivate ? <View style={[styles.priceRow, { borderTopColor: COLORS.light_secondary }]}><View><Text style={[styles.infoLabel, { color: COLORS.dark }]}>{t('work.is_public.consult_price')}</Text><Text style={[styles.priceValue, { color: COLORS.black }]}>{price || `${work?.consultation_price || ''} ${work?.currency?.currency_acronym || ''}`}</Text></View><Icon name="lock-outline" size={23} color={COLORS.primary} /></View> : null}
           <View style={[styles.likeRow, { borderTopColor: COLORS.light_secondary }]}>
-            <TouchableOpacity style={[styles.likeButton, { backgroundColor: hasLiked ? COLORS.danger : COLORS.light_secondary }]} onPress={handleLikeToggle} disabled={loading} accessibilityLabel="Aimer cette œuvre"><Icon name={hasLiked ? 'heart' : 'heart-outline'} size={20} color={hasLiked ? '#ffffff' : COLORS.dark} /></TouchableOpacity>
+            <TouchableOpacity style={[styles.likeButton, { backgroundColor: hasLiked ? COLORS.danger : COLORS.light_secondary }]} onPress={handleLikeToggle} disabled={likeUpdating} accessibilityLabel="Aimer cette œuvre">
+              {likeUpdating ? <ActivityIndicator size="small" color={hasLiked ? '#ffffff' : COLORS.primary} /> : <Icon name={hasLiked ? 'heart' : 'heart-outline'} size={20} color={hasLiked ? '#ffffff' : COLORS.dark} />}
+            </TouchableOpacity>
             <Text style={[styles.likeText, { color: COLORS.dark }]}>{`${likeCount} ${likeCount === 1 ? t('like') : t('likes')}`}</Text>
           </View>
         </View>
