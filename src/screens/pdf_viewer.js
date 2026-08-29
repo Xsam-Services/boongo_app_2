@@ -4,11 +4,10 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   TouchableOpacity,
-  SafeAreaView,
   Dimensions,
   FlatList,
   Text,
@@ -16,6 +15,7 @@ import {
   Modal,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTranslation } from 'react-i18next';
@@ -27,8 +27,22 @@ import * as SQLite from 'expo-sqlite';
 
 import { IMAGE_SIZE, PADDING } from '../tools/constants';
 import useColors from '../hooks/useColors';
+import homeStyles from './style';
 
 const Tab = createBottomTabNavigator();
+
+const ReaderHeader = ({ navigation, title }) => {
+  const COLORS = useColors();
+
+  return (
+    <View style={{ alignItems: 'center', backgroundColor: COLORS.white, borderBottomColor: COLORS.light_secondary, borderBottomWidth: 1, flexDirection: 'row', minHeight: 64, paddingHorizontal: 16 }}>
+      <TouchableOpacity style={{ alignItems: 'center', backgroundColor: COLORS.light_secondary, borderRadius: 18, height: 36, justifyContent: 'center', width: 36 }} onPress={() => navigation.getParent()?.goBack()} accessibilityLabel="Retour">
+        <Icon name="chevron-left" size={24} color={COLORS.black} />
+      </TouchableOpacity>
+      <Text style={{ color: COLORS.black, flex: 1, fontSize: 16, fontWeight: '800', marginLeft: 10 }} numberOfLines={1}>{title}</Text>
+    </View>
+  );
+};
 
 /**
  * ============================================================
@@ -92,19 +106,10 @@ const SummaryScreenContent = ({ route, navigation }) => {
     return () => {
       mounted = false;
     };
-  }, []);
-
-  /**
-   * Load notes once database is ready
-   */
-  useEffect(() => {
-    if (db) {
-      loadNotes();
-    }
-  }, [db]);
+  }, [t]);
 
   // =============== Load notes ===============
-  const loadNotes = async () => {
+  const loadNotes = useCallback(async () => {
     if (!db) {
       return;
     }
@@ -119,7 +124,16 @@ const SummaryScreenContent = ({ route, navigation }) => {
       console.log('Error loading notes:', error);
       Alert.alert(t('error'), 'Error loading notes');
     }
-  };
+  }, [db, t]);
+
+  /**
+   * Load notes once database is ready
+   */
+  useEffect(() => {
+    if (db) {
+      loadNotes();
+    }
+  }, [db, loadNotes]);
 
   // =============== Add note ===============
   const addNote = async () => {
@@ -356,18 +370,14 @@ VALUES(?, ?, ?, ?)`,
 
   return (
     <>
-      <View
-        style={{
-          paddingVertical: PADDING.p01,
-          backgroundColor: COLORS.white,
-        }}
-      />
+      <ReaderHeader navigation={navigation} title={t('navigation.summary')} />
 
       <SafeAreaView
         style={{
           flex: 1,
           backgroundColor: COLORS.light_secondary,
         }}
+        edges={[]}
       >
         <View
           style={{
@@ -618,6 +628,7 @@ const PDFViewerScreenContent = ({
 }) => {
   // =============== Colors ===============
   const COLORS = useColors();
+  const { t } = useTranslation();
 
   // =============== Get parameters ===============
   const {
@@ -633,18 +644,14 @@ const PDFViewerScreenContent = ({
 
   return (
     <>
-      <View
-        style={{
-          paddingVertical: PADDING.p01,
-          backgroundColor: COLORS.white,
-        }}
-      />
+      <ReaderHeader navigation={navigation} title={route.params.docTitle || t('navigation.reading')} />
 
       <SafeAreaView
         style={{
           flex: 1,
           backgroundColor: COLORS.dark_secondary,
         }}
+        edges={[]}
       >
         <View
           style={{
