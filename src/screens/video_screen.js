@@ -43,11 +43,15 @@ const VideoPlayerScreen = ({ route }) => {
   useEffect(() => {
     if (!isVideo || videoState !== 'loading') return undefined;
 
-    const timeout = setTimeout(() => setVideoState('error'), 12000);
+    const timeout = setTimeout(() => {
+      console.error('Video loading timed out:', videoUri);
+      setVideoState('error');
+    }, 12000);
     return () => clearTimeout(timeout);
   }, [isVideo, videoKey, videoState]);
 
   const retryVideo = () => {
+    console.log('Video retry requested:', videoUri);
     setVideoState('loading');
     setVideoKey(currentKey => currentKey + 1);
   };
@@ -71,7 +75,25 @@ const VideoPlayerScreen = ({ route }) => {
             <YoutubePlayer height={((width - 32) / 16) * 9} play={playing} videoId={youtubeId} onChangeState={onYoutubeStateChange} />
           ) : isVideo ? (
             <View style={styles.videoContainer}>
-              <Video key={videoKey} source={{ uri: videoUri }} style={styles.video} controls resizeMode="contain" onLoadStart={() => setVideoState('loading')} onLoad={() => setVideoState('ready')} onError={() => setVideoState('error')} />
+              <Video
+                key={videoKey}
+                source={{ uri: videoUri }}
+                style={styles.video}
+                controls
+                resizeMode="contain"
+                onLoadStart={() => {
+                  console.log('Video load started:', videoUri);
+                  setVideoState('loading');
+                }}
+                onLoad={() => {
+                  console.log('Video loaded successfully:', videoUri);
+                  setVideoState('ready');
+                }}
+                onError={error => {
+                  console.error('Video failed to load:', { url: videoUri, error });
+                  setVideoState('error');
+                }}
+              />
               {videoState === 'loading' ? <View style={styles.videoOverlay}><ActivityIndicator color="#ffffff" /><Text style={styles.videoOverlayText}>{t('loading')}</Text></View> : null}
               {videoState === 'error' ? <View style={styles.videoOverlay}><Icon name="video-off-outline" size={38} color="#ffffff" /><Text style={styles.videoOverlayText}>{t('media.unavailable')}</Text><TouchableOpacity style={styles.retryButton} onPress={retryVideo}><Icon name="refresh" size={17} color="#ffffff" /><Text style={styles.retryText}>{t('media.retry')}</Text></TouchableOpacity></View> : null}
             </View>
