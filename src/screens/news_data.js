@@ -27,7 +27,7 @@ const NewsDataScreen = ({ route, navigation }) => {
   const { itemId } = route.params;
   const [work, setWork] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedMedia, setSelectedMedia] = useState(null);
+  const [selectedMediaIndex, setSelectedMediaIndex] = useState(null);
 
   const getWork = useCallback(async () => {
     if (!userInfo?.api_token) return;
@@ -48,6 +48,7 @@ const NewsDataScreen = ({ route, navigation }) => {
         },
       });
 
+      console.log('News detail API response:', response.data);
       setWork(response.data?.data || null);
     } catch (error) {
       console.error('Erreur lors de la récupération de l’actualité:', error);
@@ -62,6 +63,7 @@ const NewsDataScreen = ({ route, navigation }) => {
 
   const media = work?.images || [];
   const coverImage = work?.photo_url || media.find(image => image.type?.alias === 'image_file')?.file_url || media.find(image => image.file_url)?.file_url;
+  const selectedMedia = selectedMediaIndex === null ? null : media[selectedMediaIndex];
   const owner = work?.user_id ? work.user_owner : work?.organization_owner;
   const ownerName = work?.user_id
     ? [owner?.firstname, owner?.lastname].filter(Boolean).join(' ')
@@ -135,7 +137,7 @@ const NewsDataScreen = ({ route, navigation }) => {
               {media.map(item => {
                 const isVideo = item.is_video;
                 return (
-                  <TouchableOpacity key={item.id} style={[styles.mediaTile, { backgroundColor: COLORS.dark_secondary }]} onPress={() => setSelectedMedia(item)} activeOpacity={0.8}>
+                  <TouchableOpacity key={item.id} style={[styles.mediaTile, { backgroundColor: COLORS.dark_secondary }]} onPress={() => setSelectedMediaIndex(media.indexOf(item))} activeOpacity={0.8}>
                     {!isVideo && item.file_url ? <Image source={{ uri: item.file_url }} style={styles.mediaImage} resizeMode="cover" /> : null}
                     {isVideo ? <Icon name="play-circle" size={42} color="#ffffff" /> : null}
                   </TouchableOpacity>
@@ -146,17 +148,40 @@ const NewsDataScreen = ({ route, navigation }) => {
         ) : null}
       </ScrollView>
 
-      <Modal visible={Boolean(selectedMedia)} animationType="fade" transparent onRequestClose={() => setSelectedMedia(null)}>
-        <View style={styles.modalBackdrop}>
-          <TouchableOpacity style={styles.modalClose} onPress={() => setSelectedMedia(null)} accessibilityLabel="Fermer le média">
-            <Icon name="close" size={24} color="#ffffff" />
-          </TouchableOpacity>
+      <Modal visible={selectedMediaIndex !== null} animationType="fade" transparent onRequestClose={() => setSelectedMediaIndex(null)}>
+        <SafeAreaView style={styles.modalBackdrop} edges={['top', 'bottom']}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalCounter}>{`${(selectedMediaIndex || 0) + 1} / ${media.length}`}</Text>
+            <TouchableOpacity style={styles.modalClose} onPress={() => setSelectedMediaIndex(null)} accessibilityLabel="Fermer le média">
+              <Icon name="close" size={24} color="#ffffff" />
+            </TouchableOpacity>
+          </View>
           {selectedMedia?.is_video ? (
             <Video source={{ uri: selectedMedia.file_url }} style={styles.modalMedia} controls resizeMode="contain" />
           ) : (
             <Image source={{ uri: selectedMedia?.file_url }} style={styles.modalMedia} resizeMode="contain" />
           )}
-        </View>
+          {media.length > 1 ? (
+            <>
+              <TouchableOpacity
+                style={[styles.mediaNavigation, styles.previousMedia, selectedMediaIndex === 0 && styles.disabledMediaNavigation]}
+                disabled={selectedMediaIndex === 0}
+                onPress={() => setSelectedMediaIndex(index => index - 1)}
+                accessibilityLabel="Média précédent"
+              >
+                <Icon name="chevron-left" size={28} color="#ffffff" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.mediaNavigation, styles.nextMedia, selectedMediaIndex === media.length - 1 && styles.disabledMediaNavigation]}
+                disabled={selectedMediaIndex === media.length - 1}
+                onPress={() => setSelectedMediaIndex(index => index + 1)}
+                accessibilityLabel="Média suivant"
+              >
+                <Icon name="chevron-right" size={28} color="#ffffff" />
+              </TouchableOpacity>
+            </>
+          ) : null}
+        </SafeAreaView>
       </Modal>
     </SafeAreaView>
   );
@@ -184,9 +209,15 @@ const styles = StyleSheet.create({
   mediaList: { gap: 10, paddingRight: 16 },
   mediaTile: { alignItems: 'center', borderRadius: 16, height: 116, justifyContent: 'center', overflow: 'hidden', width: 116 },
   mediaImage: { height: '100%', width: '100%' },
-  modalBackdrop: { alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.94)', flex: 1, justifyContent: 'center', padding: 20 },
-  modalClose: { alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: 22, height: 44, justifyContent: 'center', position: 'absolute', right: 20, top: 20, width: 44, zIndex: 1 },
+  modalBackdrop: { alignItems: 'center', backgroundColor: 'rgba(8, 10, 16, 0.98)', flex: 1, justifyContent: 'center', paddingHorizontal: 20 },
+  modalHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', left: 20, position: 'absolute', right: 20, top: 12, zIndex: 1 },
+  modalCounter: { color: '#ffffff', fontSize: 14, fontWeight: '800' },
+  modalClose: { alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.16)', borderRadius: 22, height: 44, justifyContent: 'center', width: 44 },
   modalMedia: { height: '82%', width: '100%' },
+  mediaNavigation: { alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.16)', borderRadius: 22, height: 44, justifyContent: 'center', position: 'absolute', top: '50%', width: 44 },
+  disabledMediaNavigation: { opacity: 0.35 },
+  previousMedia: { left: 16 },
+  nextMedia: { right: 16 },
 });
 
 export default NewsDataScreen;
