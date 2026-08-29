@@ -139,7 +139,7 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
           }
           ListEmptyComponent={isLoading ? <LoadingList COLORS={COLORS} label={t('loading')} /> : <EmptyListComponent iconName='script-text-outline' title={t('empty_list.title')} description={t('empty_list.description_news')} />}
           ListFooterComponent={() =>
-            isLoading ? (
+            isLoading && combinedData.length > 0 ? (
               <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text>
             ) : null
           }
@@ -308,7 +308,7 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
               renderItem={({ item }) => <CategoryItem item={item} />}
             />
           }
-          ListFooterComponent={() => isLoading ? (<Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text>) : null}
+          ListFooterComponent={() => isLoading && combinedData.length > 0 ? (<Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text>) : null}
         />
       </SafeAreaView>
     </View>
@@ -425,7 +425,7 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, co
         contentContainerStyle={[styles.listContent, { paddingTop: contentTopInset }]}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={105} />}
         ListEmptyComponent={isLoading ? <LoadingList COLORS={COLORS} label={t('loading')} /> : <EmptyListComponent iconName="school-outline" title={t('empty_list.title')} description={t(emptyDescriptionKey)} />}
-        ListFooterComponent={() => isLoading ? <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text> : null}
+        ListFooterComponent={() => isLoading && data.length > 0 ? <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text> : null}
       />
     </SafeAreaView>
   );
