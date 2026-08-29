@@ -57,7 +57,8 @@
         "title": "Save summaries",
         "title_edit": "Edit the summary",
         "page_number": "Page number",
-        "enter_note": "Enter your note"
+        "enter_note": "Enter your note",
+        "empty": "No notes for this document."
     },
     "chat": {
         "new": "Start a chat",

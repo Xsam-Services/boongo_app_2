@@ -57,7 +57,8 @@
         "title": "Enregistrez des résumés",
         "title_edit": "Editer le résumé",
         "page_number": "Numéro page",
-        "enter_note": "Entrer votre note"
+        "enter_note": "Entrer votre note",
+        "empty": "Aucune note pour ce document."
     },
     "chat": {
         "new": "Démarrer une discussion",
