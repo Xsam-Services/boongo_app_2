@@ -104,6 +104,8 @@
         "description_news": "Here, news about the organizations (establishment or government) on the platform will be displayed.",
         "description_popular": "Here, the works most consulted by members will be displayed.",
         "description_books": "Here, the books will be displayed which can be consulted by members.",
+        "description_school_program": "School programs available on the platform will be displayed here.",
+        "description_academic_program": "Academic programs available on the platform will be displayed here.",
         "description_mags": "Here, the journals, newspapers or magazines which can be consulted by members will be displayed.",
         "description_medias": "Here, the medias will be displayed which can be consulted by members.",
         "description_favoris": "Your favorite media will be displayed here for you to read whenever you want.",
@@ -306,7 +308,9 @@
         "home": {
             "title": "Home",
             "news": "News",
-            "books": "Works"
+            "books": "Works",
+            "school_program": "School program",
+            "academic_program": "Academic program"
         },
         "chat": {
             "members": "Members",

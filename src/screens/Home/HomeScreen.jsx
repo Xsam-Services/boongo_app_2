@@ -314,22 +314,140 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
   );
 };
 
+const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, contentTopInset }) => {
+  const COLORS = useColors();
+  const { t } = useTranslation();
+  const { userInfo } = useContext(AuthContext);
+  const [works, setWorks] = useState([]);
+  const [ad, setAd] = useState(null);
+  const [typeId, setTypeId] = useState(null);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const fallbackListRef = useRef(null);
+  const flatListRef = listRef || fallbackListRef;
+  const loadingRef = useRef(false);
+  const lastPageRef = useRef(1);
+
+  useEffect(() => {
+    if (!userInfo?.api_token) return;
+
+    const headers = {
+      'X-localization': 'fr',
+      Authorization: `Bearer ${userInfo.api_token}`,
+    };
+
+    const fetchType = async () => {
+      try {
+        const encodedTypeName = encodeURIComponent(typeName);
+        const response = await axios.get(`${API.boongo_url}/type/search/fr/${encodedTypeName}`, { headers });
+        setTypeId(response.data?.data?.id || null);
+      } catch (error) {
+        setTypeId(null);
+        console.error(`Erreur lors de la récupération du type ${typeName}:`, error);
+      }
+    };
+
+    fetchType();
+  }, [typeName, userInfo?.api_token]);
+
+  const fetchWorks = useCallback(async (pageToFetch = 1) => {
+    if (!userInfo?.api_token || !typeId || loadingRef.current || (pageToFetch > lastPageRef.current && pageToFetch !== 1)) return;
+
+    loadingRef.current = true;
+    setIsLoading(true);
+    const qs = require('qs');
+    const headers = {
+      'X-localization': 'fr',
+      Authorization: `Bearer ${userInfo.api_token}`,
+    };
+
+    try {
+      const response = await axios.post(
+        `${API.boongo_url}/work/filter_by_categories?page=${pageToFetch}`,
+        qs.stringify({ type_id: typeId, status_id: 17 }),
+        { headers }
+      );
+      const data = response.data?.data || [];
+
+      setWorks(previousWorks => (pageToFetch === 1 ? data : [...previousWorks, ...data]));
+      setAd(response.data?.ad || null);
+      const nextLastPage = response.data?.lastPage || 1;
+      lastPageRef.current = nextLastPage;
+      setLastPage(nextLastPage);
+    } catch (error) {
+      console.error(`Erreur lors de la récupération de ${typeName}:`, error);
+    } finally {
+      loadingRef.current = false;
+      setIsLoading(false);
+    }
+  }, [typeId, typeName, userInfo?.api_token]);
+
+  useEffect(() => {
+    if (typeId) {
+      fetchWorks(page);
+    }
+  }, [fetchWorks, page, typeId]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setPage(1);
+    await fetchWorks(1);
+    setRefreshing(false);
+  };
+
+  const onEndReached = () => {
+    if (!isLoading && page < lastPage) {
+      setPage(currentPage => currentPage + 1);
+    }
+  };
+
+  const data = ad ? [...works, { ...ad, id: 'ad', realId: ad.id }] : works;
+
+  return (
+    <SafeAreaView style={[styles.scene, { backgroundColor: COLORS.light }]} edges={[]}>
+      <Animated.FlatList
+        ref={flatListRef}
+        data={data}
+        keyExtractor={item => item.id ? item.id.toString() : Math.random().toString()}
+        renderItem={({ item }) => <WorkItemComponent item={item} />}
+        showsVerticalScrollIndicator={false}
+        alwaysBounceVertical={false}
+        onScroll={handleScroll}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.1}
+        scrollEventThrottle={16}
+        windowSize={10}
+        contentContainerStyle={[styles.listContent, { paddingTop: contentTopInset }]}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={105} />}
+        ListEmptyComponent={<EmptyListComponent iconName="school-outline" title={t('empty_list.title')} description={t(emptyDescriptionKey)} />}
+        ListFooterComponent={() => isLoading ? <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text> : null}
+      />
+    </SafeAreaView>
+  );
+};
+
 const HomeScreen = () => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const newsListRef = useRef(null);
   const booksListRef = useRef(null);
+  const schoolProgramListRef = useRef(null);
+  const academicProgramListRef = useRef(null);
   const [index, setIndex] = useState(0);
-  const [showBackToTopByTab, setShowBackToTopByTab] = useState({ news: false, books: false });
+  const [showBackToTopByTab, setShowBackToTopByTab] = useState({ news: false, books: false, school_program: false, academic_program: false });
   const scrollY = useRef(new Animated.Value(0)).current;
-  const savedScrollOffsets = useRef({ news: 0, books: 0 });
+  const savedScrollOffsets = useRef({ news: 0, books: 0, school_program: 0, academic_program: 0 });
 
   const contentTopInset = insets.top + 112;
 
   const [routes] = useState([
     { key: 'news', title: t('navigation.home.news') },
     { key: 'books', title: t('navigation.home.books') },
+    { key: 'school_program', title: t('navigation.home.school_program') },
+    { key: 'academic_program', title: t('navigation.home.academic_program') },
   ]);
 
   const renderScene = ({ route }) => {
@@ -338,6 +456,10 @@ const HomeScreen = () => {
         return <News handleScroll={handleScroll} listRef={newsListRef} contentTopInset={contentTopInset} />;
       case 'books':
         return <Books handleScroll={handleScroll} listRef={booksListRef} contentTopInset={contentTopInset} />;
+      case 'school_program':
+        return <ProgramWorks typeName="Programme scolaire" emptyDescriptionKey="empty_list.description_school_program" handleScroll={handleScroll} listRef={schoolProgramListRef} contentTopInset={contentTopInset} />;
+      case 'academic_program':
+        return <ProgramWorks typeName="Programme académique" emptyDescriptionKey="empty_list.description_academic_program" handleScroll={handleScroll} listRef={academicProgramListRef} contentTopInset={contentTopInset} />;
       default:
         return null;
     }
@@ -349,7 +471,7 @@ const HomeScreen = () => {
       useNativeDriver: true,
       listener: (event) => {
         const offsetY = event.nativeEvent.contentOffset.y;
-        const currentTab = index === 0 ? 'news' : 'books';
+        const currentTab = routes[index].key;
         savedScrollOffsets.current[currentTab] = offsetY;
         const isAtTop = offsetY <= 0;
 
@@ -362,14 +484,11 @@ const HomeScreen = () => {
   );
 
   const handleIndexChange = (newIndex) => {
-    const newTabKey = newIndex === 0 ? 'news' : 'books';
+    const newTabKey = routes[newIndex].key;
     const offset = savedScrollOffsets.current[newTabKey] || 0;
 
-    if (newIndex === 0 && newsListRef.current) {
-      newsListRef.current.scrollToOffset({ offset, animated: true });
-    } else if (newIndex === 1 && booksListRef.current) {
-      booksListRef.current.scrollToOffset({ offset, animated: true });
-    }
+    const listRefs = [newsListRef, booksListRef, schoolProgramListRef, academicProgramListRef];
+    listRefs[newIndex].current?.scrollToOffset({ offset, animated: true });
 
     setIndex(newIndex);
   };
@@ -384,17 +503,15 @@ const HomeScreen = () => {
         activeColor={COLORS.primary}
         inactiveColor={COLORS.dark}
         tabStyle={styles.tab}
+        scrollEnabled
         renderLabel={({ route, focused, color }) => <Text style={[styles.tabLabel, { color, fontWeight: focused ? '700' : '600' }]}>{route.title}</Text>}
       />
     </View>
   );
 
   const handleBackToTop = () => {
-    if (index === 0 && newsListRef.current) {
-      newsListRef.current.scrollToOffset({ offset: 0, animated: true });
-    } else if (index === 1 && booksListRef.current) {
-      booksListRef.current.scrollToOffset({ offset: 0, animated: true });
-    }
+    const listRefs = [newsListRef, booksListRef, schoolProgramListRef, academicProgramListRef];
+    listRefs[index].current?.scrollToOffset({ offset: 0, animated: true });
   };
 
   return (
@@ -407,7 +524,7 @@ const HomeScreen = () => {
         renderTabBar={renderTabBar}
       />
 
-      {showBackToTopByTab[index === 0 ? 'news' : 'books'] && (
+      {showBackToTopByTab[routes[index].key] && (
         <TouchableOpacity
           onPress={handleBackToTop}
           style={[styles.backToTopButton, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}
@@ -430,7 +547,7 @@ const styles = StyleSheet.create({
   listContent: { paddingBottom: 34 },
   homeHeader: { elevation: 8, position: 'absolute', shadowColor: '#172033', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.1, shadowRadius: 8, top: 0, width: '100%', zIndex: 1000 },
   tabBar: { elevation: 0, shadowOpacity: 0 },
-  tab: { minHeight: 48 },
+  tab: { minHeight: 48, width: 'auto' },
   tabIndicator: { borderRadius: 3, height: 3 },
   tabLabel: { fontSize: 13 },
   categoriesList: { flexGrow: 0, height: 48 },

@@ -104,6 +104,8 @@
         "description_news": "Awa, ba sango etali ba organisations (etablisséman to institution ya gouvernement) oyo ezali na plateforme ekolakisama.",
         "description_popular": "Awa, misala oyo ba membres ba consulté mingi ekolakisama.",
         "description_books": "Awa, misala mikolakisama miye mikoki kozala consulte na ba membres.",
+        "description_school_program": "Awa, programme scolaire oyo ezali na plateforme ekolakisama.",
+        "description_academic_program": "Awa, programme académique oyo ezali na plateforme ekolakisama.",
         "description_mags": "Awa, eko lakisama ba journals, ba journaux to ba magazines oyo ba membres bakoki ko consulte.",
         "description_medias": "Awa, eko lakisama ba médias oyo ba membres bakoki ko consulte.",
         "description_favoris": "Ba médias oyo olingaka mingi ekolakisama awa po otanga tango nionso olingi.",
@@ -306,7 +308,9 @@
         "home": {
             "title": "Ebandeli",
             "news": "Ba sango",
-            "books": "Ba buku"
+            "books": "Ba buku",
+            "school_program": "Programme scolaire",
+            "academic_program": "Programme académique"
         },
         "chat": {
             "members": "Ba membres",
