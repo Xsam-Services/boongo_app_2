@@ -31,6 +31,15 @@ const VideoPlayerScreen = ({ route }) => {
   const isYoutube = Boolean(youtubeId) && (videoUri?.includes('youtube.com') || videoUri?.includes('youtu.be'));
   const isVideo = isYoutube || isVideoFile(videoUri);
 
+  useEffect(() => {
+    console.log('VideoPlayer opened:', {
+      title: videoTitle,
+      url: videoUri,
+      isYoutube,
+      isVideo,
+    });
+  }, [isVideo, isYoutube, videoTitle, videoUri]);
+
   const onYoutubeStateChange = useCallback(state => {
     if (state === 'ended') {
       setPlaying(false);
