@@ -330,13 +330,14 @@ const Books = ({ handleScroll, isActive, listRef, contentTopInset }) => {
   );
 };
 
-const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, isActive, listRef, contentTopInset }) => {
+const ProgramWorks = ({ typeId, emptyDescriptionKey, handleScroll, isActive, listRef, contentTopInset }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const { userInfo } = useContext(AuthContext);
+  const [categories, setCategories] = useState([]);
+  const [idCat, setIdCat] = useState(0);
   const [works, setWorks] = useState([]);
   const [ad, setAd] = useState(null);
-  const [typeId, setTypeId] = useState(null);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -346,29 +347,28 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, isActive, l
   const loadingRef = useRef(false);
   const lastPageRef = useRef(1);
 
-  useEffect(() => {
+  const fetchCategories = useCallback(async () => {
     if (!userInfo?.api_token) return;
-
     const headers = {
       'X-localization': 'fr',
       Authorization: `Bearer ${userInfo.api_token}`,
     };
 
-    const fetchType = async () => {
-      setIsLoading(true);
-      try {
-        const encodedTypeName = encodeURIComponent(typeName);
-        const response = await axios.get(`${API.boongo_url}/type/search/fr/${encodedTypeName}`, { headers });
-        setTypeId(response.data?.data?.id || null);
-      } catch (error) {
-        setTypeId(null);
-        setIsLoading(false);
-        console.error(`Erreur lors de la récupération du type ${typeName}:`, error);
-      }
-    };
+    try {
+      const group = encodeURIComponent('Catégorie pour programme national');
+      const response = await axios.get(`${API.boongo_url}/category/find_by_group/${group}`, { headers });
+      const itemAll = { id: 0, category_name: t('all_f'), category_name_fr: 'Toutes', category_name_en: 'All', category_name_ln: 'Nioso', category_description: null };
 
-    fetchType();
-  }, [typeName, userInfo?.api_token]);
+      setCategories([itemAll, ...(response.data?.data || [])]);
+      setIdCat(itemAll.id);
+    } catch (error) {
+      console.error('Erreur fetchCategories programmes', error);
+    }
+  }, [t, userInfo?.api_token]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   const fetchWorks = useCallback(async (pageToFetch = 1, silent = false) => {
     if (!userInfo?.api_token || !typeId || loadingRef.current || (pageToFetch > lastPageRef.current && pageToFetch !== 1)) return;
@@ -384,7 +384,7 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, isActive, l
     try {
       const response = await axios.post(
         `${API.boongo_url}/work/filter_by_categories?page=${pageToFetch}`,
-        qs.stringify({ type_id: typeId, status_id: 17 }),
+        qs.stringify({ 'categories_ids[0]': idCat, type_id: typeId, status_id: 17 }),
         { headers }
       );
       const data = response.data?.data || [];
@@ -395,25 +395,23 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, isActive, l
       lastPageRef.current = nextLastPage;
       setLastPage(nextLastPage);
     } catch (error) {
-      console.error(`Erreur lors de la récupération de ${typeName}:`, error);
+      console.error('Erreur lors de la récupération des programmes:', error);
     } finally {
       loadingRef.current = false;
       if (!silent) setIsLoading(false);
     }
-  }, [typeId, typeName, userInfo?.api_token]);
+  }, [idCat, typeId, userInfo?.api_token]);
 
   useEffect(() => {
-    if (typeId) {
-      fetchWorks(page);
-    }
-  }, [fetchWorks, page, typeId]);
+    fetchWorks(page);
+  }, [fetchWorks, page]);
 
   useEffect(() => {
-    if (!isActive || !typeId) return undefined;
+    if (!isActive) return undefined;
 
     const interval = setInterval(() => fetchWorks(1, true), AUTO_REFRESH_MS);
     return () => clearInterval(interval);
-  }, [fetchWorks, isActive, typeId]);
+  }, [fetchWorks, isActive]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -426,6 +424,27 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, isActive, l
     if (!isLoading && page < lastPage) {
       setPage(currentPage => currentPage + 1);
     }
+  };
+
+  const handleBadgePress = useCallback((id) => {
+    setIdCat(id);
+    setPage(1);
+    setWorks([]);
+    setLastPage(1);
+    lastPageRef.current = 1;
+  }, []);
+
+  const CategoryItem = ({ item }) => {
+    const isSelected = idCat === item.id;
+    return (
+      <TouchableOpacity
+        onPress={() => handleBadgePress(item.id)}
+        activeOpacity={0.78}
+        style={[styles.categoryChip, { backgroundColor: isSelected ? COLORS.primary : COLORS.white, borderColor: isSelected ? COLORS.primary : COLORS.light_secondary }]}
+      >
+        <Text style={[styles.categoryChipText, { color: isSelected ? '#ffffff' : COLORS.black }]}>{item.category_name}</Text>
+      </TouchableOpacity>
+    );
   };
 
   const data = ad ? [...works, { ...ad, id: 'ad', realId: ad.id }] : works;
@@ -447,6 +466,17 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, isActive, l
         contentContainerStyle={[styles.listContent, { paddingTop: contentTopInset }]}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={105} />}
         ListEmptyComponent={isLoading ? <LoadingList COLORS={COLORS} label={t('loading')} /> : <EmptyListComponent iconName="school-outline" title={t('empty_list.title')} description={t(emptyDescriptionKey)} />}
+        ListHeaderComponent={
+          <FlatList
+            data={categories}
+            keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.categoriesList}
+            contentContainerStyle={styles.categoriesContent}
+            renderItem={({ item }) => <CategoryItem item={item} />}
+          />
+        }
         ListFooterComponent={() => isLoading && data.length > 0 ? <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text> : null}
       />
     </SafeAreaView>
@@ -483,9 +513,9 @@ const HomeScreen = () => {
       case 'books':
         return <Books handleScroll={handleScroll} isActive={index === 1} listRef={booksListRef} contentTopInset={contentTopInset} />;
       case 'school_program':
-        return <ProgramWorks typeName="Programme scolaire" emptyDescriptionKey="empty_list.description_school_program" handleScroll={handleScroll} isActive={index === 2} listRef={schoolProgramListRef} contentTopInset={contentTopInset} />;
+        return <ProgramWorks typeId={43} emptyDescriptionKey="empty_list.description_school_program" handleScroll={handleScroll} isActive={index === 2} listRef={schoolProgramListRef} contentTopInset={contentTopInset} />;
       case 'academic_program':
-        return <ProgramWorks typeName="Programme académique" emptyDescriptionKey="empty_list.description_academic_program" handleScroll={handleScroll} isActive={index === 3} listRef={academicProgramListRef} contentTopInset={contentTopInset} />;
+        return <ProgramWorks typeId={44} emptyDescriptionKey="empty_list.description_academic_program" handleScroll={handleScroll} isActive={index === 3} listRef={academicProgramListRef} contentTopInset={contentTopInset} />;
       default:
         return null;
     }
@@ -579,6 +609,7 @@ const styles = StyleSheet.create({
   tabIndicator: { borderRadius: 3, height: 3 },
   tabLabel: { fontSize: 13 },
   categoriesList: { flexGrow: 0, height: 48 },
+  categoriesContent: { alignItems: 'center', paddingHorizontal: 16 },
   categoryChip: { borderRadius: 16, borderWidth: 1, marginRight: 8, paddingHorizontal: 14, paddingVertical: 8 },
   categoryChipText: { fontSize: 13, fontWeight: '700' },
   backToTopButton: { alignItems: 'center', borderRadius: 24, borderWidth: 1, bottom: 24, elevation: 6, height: 48, justifyContent: 'center', position: 'absolute', right: 20, shadowColor: '#172033', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.16, shadowRadius: 6, width: 48, zIndex: 20 },
