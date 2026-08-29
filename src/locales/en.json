@@ -304,7 +304,9 @@
     },
     "media": {
         "title": "Media reading",
-        "description": "In progress..."
+        "description": "In progress...",
+        "unavailable": "This video is currently unavailable.",
+        "retry": "Try again"
     },
     "navigation": {
         "home": {

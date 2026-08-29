@@ -304,7 +304,9 @@
     },
     "media": {
         "title": "Kotanga média",
-        "description": "Ez’otanga..."
+        "description": "Ez’otanga...",
+        "unavailable": "Video oyo ezali disponible te mpo na sik’oyo.",
+        "retry": "Meka lisusu"
     },
     "navigation": {
         "home": {
