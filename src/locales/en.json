@@ -69,6 +69,7 @@
     },
     "video_ended": "The video is finished!",
     "success": {
+        "title": "Success",
         "whatsapp": "Whatsapp is open."
     },
     "error": "Error:",
