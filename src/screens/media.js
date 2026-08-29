@@ -3,529 +3,258 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { View, Text, FlatList, RefreshControl, TouchableOpacity, SafeAreaView, TouchableHighlight, Animated, Image } from 'react-native';
+import { ActivityIndicator, Animated, Dimensions, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TabBar, TabView } from 'react-native-tab-view';
 import { useTranslation } from 'react-i18next';
-import Video from 'react-native-video';
-import Sound from 'react-native-sound';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { AuthContext } from '../contexts/AuthContext';
-import { API, IMAGE_SIZE, PADDING, TEXT_SIZE } from '../tools/constants';
+import { API, PADDING } from '../tools/constants';
 import HeaderComponent from './header';
 import FloatingActionsButton from '../components/floating_actions_button';
 import EmptyListComponent from '../components/empty_list';
-import useColors from '../hooks/useColors';
-import homeStyles from './style';
-import Spinner from 'react-native-loading-spinner-overlay';
 import MediaItemComponent from '../components/media_item';
-import { useNavigation } from '@react-navigation/native';
+import useColors from '../hooks/useColors';
 
-const TAB_BAR_HEIGHT = 48;
+const screenWidth = Dimensions.get('window').width;
+const AUTO_REFRESH_MS = 60000;
 
-// Medias frame
-const Medias = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
-  // =============== Colors ===============
+const LoadingList = ({ COLORS, label }) => (
+  <View style={styles.loadingState}>
+    <ActivityIndicator size="large" color={COLORS.primary} />
+    <Text style={[styles.loadingLabel, { color: COLORS.dark }]}>{label}</Text>
+  </View>
+);
+
+const MediaList = ({ contentTopInset, handleScroll, isActive, listRef }) => {
   const COLORS = useColors();
-  // =============== Language ===============
   const { t } = useTranslation();
-  // =============== Get contexts ===============
   const { userInfo } = useContext(AuthContext);
-  // =============== Get data ===============
   const [categories, setCategories] = useState([]);
-  const [idCat, setIdCat] = useState(0);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(0);
   const [medias, setMedias] = useState([]);
   const [ad, setAd] = useState(null);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [count, setCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const flatListRef = listRef || useRef(null);
+  const fallbackListRef = useRef(null);
+  const flatListRef = listRef || fallbackListRef;
+  const loadingRef = useRef(false);
+  const lastPageRef = useRef(1);
 
-  // ================= Get categories =================
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
-    const headers = {
-      'X-localization': 'fr',
-      Authorization: `Bearer ${userInfo.api_token}`,
-    };
+  const fetchCategories = useCallback(async () => {
+    if (!userInfo?.api_token) return;
 
     try {
       const group = encodeURIComponent('Catégorie pour œuvre');
-      const res = await axios.get(`${API.boongo_url}/category/find_by_group/${group}`, { headers });
-      const data = res.data.data;
-      const itemAll = { id: 0, category_name: t('all_f'), category_name_fr: "Toutes", category_name_en: "All", category_name_ln: "Nioso", category_description: null, };
-
-      data.unshift(itemAll);
-      setCategories(data);
-      setIdCat(itemAll.id);
-
+      const response = await axios.get(`${API.boongo_url}/category/find_by_group/${group}`, {
+        headers: { 'X-localization': 'fr', Authorization: `Bearer ${userInfo.api_token}` },
+      });
+      setCategories([{ id: 0, category_name: t('all_f') }, ...(response.data?.data || [])]);
     } catch (error) {
-      console.error('Erreur fetchCategories', error);
+      console.error('Erreur fetchCategories media:', error);
     }
-  };
+  }, [t, userInfo?.api_token]);
 
-  // ================= Fetch meidas when idCat or page changes =================
-  // useEffect(() => {
-  //   fetchMedias();
-  // }, [page, idCat]);
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      fetchMedias();
-    }, 5000);
+  const fetchMedias = useCallback(async (pageToFetch = 1, silent = false) => {
+    if (!userInfo?.api_token || loadingRef.current || (pageToFetch > lastPageRef.current && pageToFetch !== 1)) return;
 
-    return () => clearInterval(intervalId);
-  }, [page, idCat]);
-
-  const fetchMedias = async () => {
-    if (isLoading || page > lastPage) return;
-    setIsLoading(true);
-
+    loadingRef.current = true;
+    if (!silent) setIsLoading(true);
     const qs = require('qs');
-    const url = `${API.boongo_url}/work/filter_by_categories?page=${page}`;
-    const params = {
-      'categories_ids[0]': idCat,
-      type_id: 31,
-      status_id: 17,
-    };
-
-    const headers = {
-      'X-localization': 'fr',
-      Authorization: `Bearer ${userInfo.api_token}`,
-    };
 
     try {
-      const response = await axios.post(url, qs.stringify(params), { headers });
-      const data = response.data.data || [];
-
-      setMedias(prev => (page === 1 ? data : [...prev, ...data]));
-      setAd(response.data.ad || null);
-      setLastPage(response.data.lastPage || page);
-      setCount(response.data.count || 0);
-
-      // console.log(response.data);
-
+      const response = await axios.post(
+        `${API.boongo_url}/work/filter_by_categories?page=${pageToFetch}`,
+        qs.stringify({ 'categories_ids[0]': selectedCategoryId, type_id: 31, status_id: 17 }),
+        { headers: { 'X-localization': 'fr', Authorization: `Bearer ${userInfo.api_token}` } }
+      );
+      const nextLastPage = response.data?.lastPage || 1;
+      lastPageRef.current = nextLastPage;
+      setLastPage(nextLastPage);
+      setMedias(currentMedias => pageToFetch === 1 ? (response.data?.data || []) : [...currentMedias, ...(response.data?.data || [])]);
+      setAd(response.data?.ad || null);
     } catch (error) {
-      console.error('Erreur fetchMedias', error);
+      console.error('Erreur fetchMedias:', error);
     } finally {
-      setIsLoading(false);
+      loadingRef.current = false;
+      if (!silent) setIsLoading(false);
     }
-  };
+  }, [selectedCategoryId, userInfo?.api_token]);
 
-  // ================= Combined data =================
-  const combinedData = [...medias];
-  if (ad) {
-    combinedData.push({ ...ad, id: 'ad', realId: ad.id });
-  }
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
-  // ================= Handlers =================
+  useEffect(() => {
+    fetchMedias(page);
+  }, [fetchMedias, page]);
+
+  useEffect(() => {
+    if (!isActive) return undefined;
+
+    const interval = setInterval(() => fetchMedias(1, true), AUTO_REFRESH_MS);
+    return () => clearInterval(interval);
+  }, [fetchMedias, isActive]);
+
   const onRefresh = async () => {
     setRefreshing(true);
     setPage(1);
-    setMedias([]);
-    await fetchMedias();
+    await fetchMedias(1);
     setRefreshing(false);
   };
 
-  const onEndReached = () => {
-    if (!isLoading && page < lastPage) {
-      setPage(prev => prev + 1);
-    }
-  };
-
-  const scrollToTop = () => {
-    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-  };
-
-  const handleBadgePress = useCallback((id) => {
-    setIdCat(id);
+  const selectCategory = useCallback((id) => {
+    setSelectedCategoryId(id);
     setPage(1);
     setMedias([]);
+    setAd(null);
     setLastPage(1);
+    lastPageRef.current = 1;
   }, []);
 
-  const CategoryItem = ({ item }) => {
-    const isSelected = idCat === item.id;
-    const Container = isSelected ? TouchableHighlight : TouchableOpacity;
-
-    return (
-      <Container
-        key={item.id}
-        onPress={() => handleBadgePress(item.id)}
-        style={
-          isSelected
-            ? [homeStyles.categoryBadgeSelected, { backgroundColor: COLORS.white }]
-            : [homeStyles.categoryBadge, { backgroundColor: COLORS.warning }]
-        }
-        underlayColor={COLORS.light_secondary}
-      >
-        <Text
-          style={
-            isSelected
-              ? [homeStyles.categoryBadgeTextSelected, { color: COLORS.black }]
-              : [homeStyles.categoryBadgeText, { color: 'black' }]
-          }
-        >
-          {item.category_name}
-        </Text>
-      </Container>
-    );
-  };
+  const data = ad ? [...medias, { ...ad, id: 'ad', realId: ad.id }] : medias;
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
-      {/* {showBackToTop && (
-        <TouchableOpacity
-          style={[homeStyles.floatingButton, { backgroundColor: COLORS.warning }]}
-          onPress={scrollToTop}
-        >
-          <Icon name='chevron-double-up' size={IMAGE_SIZE.s09} style={{ color: 'black' }} />
-        </TouchableOpacity>
-      )} */}
-
-      <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
-        {/* <View style={[homeStyles.cardEmpty, { height: Dimensions.get('window').height, marginLeft: 0, paddingHorizontal: 2 }]}> */}
-        {/* Medias List */}
-        <Animated.FlatList
-          ref={flatListRef}
-          data={combinedData}
-          extraData={combinedData}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({ item }) => <MediaItemComponent item={item} />}
-          horizontal={false}
-          showsVerticalScrollIndicator={false}
-          alwaysBounceVertical={false}
-          onScroll={handleScroll}
-          onEndReached={onEndReached}
-          onEndReachedThreshold={0.1}
-          scrollEventThrottle={16}
-          windowSize={10}
-          contentContainerStyle={{
-            paddingTop: 110,
-          }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={105} />}
-          ListEmptyComponent={<EmptyListComponent iconName="play-box-multiple-outline" title={t('empty_list.title')} description={t('empty_list.description_medias')} />}
-          ListHeaderComponent={
-            <>
-              <FlatList
-                data={categories}
-                keyExtractor={item => item.id.toString()}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={{ height: 40, flexGrow: 0 }}
-                contentContainerStyle={{
-                  alignItems: 'center',
-                  paddingHorizontal: PADDING.p00,
-                }}
-                renderItem={({ item }) => <CategoryItem item={item} />}
-              />
-            </>
-          }
-          ListFooterComponent={() => isLoading ? (<Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01, }} >{t('loading')}</Text>) : null}
-        />
-        {/* </View> */}
-      </SafeAreaView>
-    </View>
+    <SafeAreaView style={[styles.scene, { backgroundColor: COLORS.light }]} edges={[]}>
+      <Animated.FlatList
+        ref={flatListRef}
+        data={data}
+        keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
+        renderItem={({ item }) => <MediaItemComponent item={item} />}
+        showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        onEndReached={() => !isLoading && page < lastPage && setPage(currentPage => currentPage + 1)}
+        onEndReachedThreshold={0.25}
+        scrollEventThrottle={16}
+        contentContainerStyle={[styles.listContent, { paddingTop: contentTopInset }]}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={contentTopInset} />}
+        ListHeaderComponent={
+          <FlatList
+            data={categories}
+            horizontal
+            keyExtractor={(item) => item.id.toString()}
+            showsHorizontalScrollIndicator={false}
+            style={styles.categoriesList}
+            contentContainerStyle={styles.categoriesContent}
+            renderItem={({ item }) => {
+              const isSelected = selectedCategoryId === item.id;
+              return (
+                <TouchableOpacity
+                  activeOpacity={0.78}
+                  onPress={() => selectCategory(item.id)}
+                  style={[styles.categoryChip, { backgroundColor: isSelected ? COLORS.primary : COLORS.white, borderColor: isSelected ? COLORS.primary : COLORS.light_secondary }]}
+                >
+                  <Text style={[styles.categoryChipText, { color: isSelected ? '#ffffff' : COLORS.black }]}>{item.category_name}</Text>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        }
+        ListEmptyComponent={isLoading ? <LoadingList COLORS={COLORS} label={t('loading')} /> : <EmptyListComponent iconName="play-box-multiple-outline" title={t('empty_list.title')} />}
+        ListFooterComponent={() => isLoading && data.length > 0 ? <Text style={[styles.footerLoading, { color: COLORS.dark }]}>{t('loading')}</Text> : null}
+      />
+    </SafeAreaView>
   );
 };
 
-// Favorite frame
-const Favorite = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
-  // =============== Colors ===============
+const FavoritesList = ({ contentTopInset, handleScroll, listRef }) => {
   const COLORS = useColors();
-  // =============== Navigation ===============
-  const navigation = useNavigation();
-  // =============== Language ===============
   const { t } = useTranslation();
-  // =============== Get contexts ===============
-  const { userInfo, removeFromCart, isLoading } = useContext(AuthContext);
-  // =============== Get data ===============
-  const favorites = userInfo.favorite_works;
-  const flatListRef = listRef || useRef(null);
-
-  // State pour la lecture de l'audio/vidéo et l'élément en cours
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentItemIndex, setCurrentItemIndex] = useState(null);
-  const [audio, setAudio] = useState(null); // Pour gérer l'audio avec react-native-sound
-  const videoRef = useRef(null); // Utiliser useRef pour la référence vidéo
-
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
-
-  const handleItemPress = (index, item) => {
-    setCurrentItemIndex(index);
-
-    console.log(JSON.stringify(item));
-
-    if (item.video_url) {
-      if (videoRef.current) {
-        // Au lieu de chercher et de jouer immédiatement, on attend que la vidéo soit prête
-        console.log('Vidéo prête à être lue.');
-        // Ne pas appeler `seek(0)` ici, on le fait dans `onLoad`
-      } else {
-        console.log('Erreur: vidéo non prête');
-      }
-    } else if (item.audio_url) {
-      playAudio(item.audio_url);
-    }
-    setIsPlaying(true);
-  };
-
-
-
-  const playAudio = (uri) => {
-    if (audio) {
-      audio.stop(); // Stoppe l’audio précédent avant de jouer un nouveau
-    }
-
-    const newAudio = new Sound(uri, null, (error) => {
-      if (error) {
-        console.log('Erreur de chargement audio', error);
-      } else {
-        newAudio.play(() => {
-          newAudio.release();
-          // Appeler handleNext() seulement si l'index a changé
-          if (currentItemIndex !== null && currentItemIndex < favorites.length - 1) {
-            handleNext();
-          }
-        });
-      }
-    });
-
-    setAudio(newAudio);
-    newAudio.play();
-  };
-
-  const handleNext = () => {
-    const nextIndex = currentItemIndex < favorites.length - 1 ? currentItemIndex + 1 : 0;
-    if (nextIndex !== currentItemIndex) {
-      setCurrentItemIndex(nextIndex);
-      setIsPlaying(true); // Assurez-vous que l'état est correctement mis à jour
-    }
-  };
-
-  const stopAudio = () => {
-    if (audio) {
-      audio.stop();
-    }
-  };
+  const { userInfo } = useContext(AuthContext);
+  const fallbackListRef = useRef(null);
+  const favorites = userInfo?.favorite_works || [];
 
   return (
-    <>
-      {/* Spinner (for AuthContext requests) */}
-      <Spinner visible={isLoading} />
-
-      {/* Content */}
-      <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
-        {/* Contrôle global play/pause */}
-        {/* <TouchableOpacity style={[homeStyles.floatingButton, { left: 20, bottom: 30, backgroundColor: COLORS.black }]} onPress={handlePlayPause}>
-          <Icon name={isPlaying ? 'pause' : 'play'} size={IMAGE_SIZE.s09} color={COLORS.white} />
-        </TouchableOpacity> */}
-
-        <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
-          {/* Favorites List */}
-          <Animated.FlatList
-            ref={flatListRef}
-            data={favorites}
-            extraData={favorites}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({ item, index }) => {
-              return (
-                <View style={[homeStyles.workTop, { backgroundColor: COLORS.white, marginBottom: 1, padding: PADDING.p03 }]}>
-                  <Image source={{ uri: item.photo_url }} style={{ width: IMAGE_SIZE.s13, height: IMAGE_SIZE.s13, borderRadius: PADDING.p00, borderWidth: 1, borderColor: COLORS.light_secondary }} />
-                  <View style={{ flexDirection: 'column', width: '60%' }}>
-                    <Text numberOfLines={2} style={{ fontSize: TEXT_SIZE.paragraph, fontWeight: '400', color: COLORS.black }}>{item.work_content}</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity style={{ backgroundColor: COLORS.white, marginRight: PADDING.p00, padding: 3, borderRadius: 3, borderWidth: 1, borderColor: COLORS.danger }} onPress={() => { removeFromCart(userInfo.favorite_works_cart.id, item.id, null); }}>
-                      <Icon name="trash-can-outline" size={20} color={COLORS.danger} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{ backgroundColor: COLORS.white, padding: 3, borderRadius: 3, borderWidth: 1, borderColor: COLORS.link_color }} onPress={() => navigation.navigate('WorkData', { itemId: item.id })}>
-                      <Icon name="arrow-right" size={20} color={COLORS.link_color} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              );
-            }}
-            horizontal={false}
-            showsVerticalScrollIndicator={false}
-            alwaysBounceVertical={false}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            windowSize={10}
-            contentContainerStyle={{
-              paddingTop: 110,
-            }}
-            ListEmptyComponent={<EmptyListComponent iconName="play-box-multiple-outline" title={t('empty_list.title')} description={t('empty_list.description_medias')} />}
-          />
-        </SafeAreaView>
-      </View>
-
-      {/* Player vidéo */}
-      {currentItemIndex !== null && favorites[currentItemIndex].video_url && (
-        <Video
-          source={{ uri: favorites[currentItemIndex].video_url }}
-          ref={videoRef} // Assurez-vous d'utiliser `videoRef` ici
-          onReadyForDisplay={() => {
-            console.log('Vidéo prête pour affichage');
-            if (videoRef.current) {
-              videoRef.current.seek(0);  // Chercher le début de la vidéo
-              videoRef.current.resume();   // Lire la vidéo
-            }
-          }}
-          onEnd={handleNext}
-          paused={!isPlaying}
-          resizeMode="contain"
-          style={{ width: '100%', height: 200 }}
-        />
-      )}
-
-      {/* Player audio */}
-      {currentItemIndex !== null && favorites[currentItemIndex].audio_url && (
-        <Sound
-          source={{ uri: favorites[currentItemIndex].audio_url }}
-          shouldPlay={isPlaying}
-          onPlaybackStatusUpdate={status => {
-            if (status.didJustFinish) handleNext();
-          }}
-        />
-      )}
-    </>
+    <SafeAreaView style={[styles.scene, { backgroundColor: COLORS.light }]} edges={[]}>
+      <Animated.FlatList
+        ref={listRef || fallbackListRef}
+        data={favorites}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <MediaItemComponent item={item} />}
+        showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={[styles.listContent, { flexGrow: 1, paddingTop: contentTopInset }]}
+        ListHeaderComponent={<Text style={[styles.favoriteIntro, { color: COLORS.dark }]}>{t('navigation.media.favorite')}</Text>}
+        ListEmptyComponent={<EmptyListComponent iconName="heart-outline" title={t('empty_list.title')} />}
+      />
+    </SafeAreaView>
   );
 };
 
 const MediaScreen = () => {
-  // =============== Colors ===============
   const COLORS = useColors();
-  // =============== Language ===============
   const { t } = useTranslation();
-  // =============== Get data ===============
-  const mediasListRef = useRef(null);
+  const insets = useSafeAreaInsets();
+  const mediaListRef = useRef(null);
   const favoriteListRef = useRef(null);
-  const [index, setIndex] = useState(0); // State for managing active tab index
-  const [showBackToTopByTab, setShowBackToTopByTab] = useState({ medias: false, favorite: false });
-  const scrollY = useRef(new Animated.Value(0)).current;
-  const savedScrollOffsets = useRef({ medias: 0, favorite: 0 });
-
-  const headerTranslateY = scrollY.interpolate({
-    inputRange: [0, 50],
-    outputRange: [0, -60], // The header hides at -60px
-    extrapolate: 'clamp',
-  });
-
+  const [index, setIndex] = useState(0);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const contentTopInset = insets.top + 112;
   const [routes] = useState([
     { key: 'medias', title: t('navigation.media.title') },
     { key: 'favorite', title: t('navigation.media.favorite') },
   ]);
 
-  const renderScene = ({ route }) => {
-    switch (route.key) {
-      case 'medias':
-        return <Medias handleScroll={handleScroll} showBackToTop={showBackToTopByTab.news} listRef={mediasListRef} />;
-      case 'favorite':
-        return <Favorite handleScroll={handleScroll} showBackToTop={showBackToTopByTab.books} listRef={favoriteListRef} />;
-      default:
-        return null;
-    }
-  };
+  const handleScroll = (event) => setShowBackToTop(event.nativeEvent.contentOffset.y > 0);
 
-  // Handle scrolling and show/hide the header
-  const handleScroll = Animated.event(
-    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-    {
-      useNativeDriver: true,
-      listener: (event) => {
-        const offsetY = event.nativeEvent.contentOffset.y;
-        const currentTab = (index === 0 ? 'medias' : 'favorite');
+  const renderScene = ({ route }) => route.key === 'medias'
+    ? <MediaList contentTopInset={contentTopInset} handleScroll={handleScroll} isActive={index === 0} listRef={mediaListRef} />
+    : <FavoritesList contentTopInset={contentTopInset} handleScroll={handleScroll} listRef={favoriteListRef} />;
 
-        savedScrollOffsets.current[currentTab] = offsetY;
-
-        const isAtTop = (offsetY <= 0);
-        setShowBackToTopByTab(prev => ({
-          ...prev,
-          [currentTab]: !isAtTop,
-        }));
-      },
-    }
-  );
-
-  // On "TabBar" index change
-  const handleIndexChange = (newIndex) => {
-    const newTabKey = newIndex === 0 ? 'medias' : 'favorite';
-    const offset = savedScrollOffsets.current[newTabKey] || 0;
-
-    // Animate scrollY back to 0 smoothly (for header + tabbar)
-    Animated.timing(scrollY, {
-      toValue: offset,
-      duration: 300, // 300ms for smooth effect
-      useNativeDriver: true,
-    }).start();
-
-    // Back to top according to selected tab
-    if (newIndex === 0 && mediasListRef.current) {
-      mediasListRef.current.scrollToOffset({ offset, animated: true });
-
-    } else if (newIndex === 1 && favoriteListRef.current) {
-      favoriteListRef.current.scrollToOffset({ offset, animated: true });
-    }
-
-    setIndex(newIndex);
-  };
-
-  // Custom "TabBar"
   const renderTabBar = (props) => (
-    <>
-      <Animated.View style={{ transform: [{ translateY: headerTranslateY }], zIndex: 1000, position: 'absolute', top: 0, width: '100%', backgroundColor: COLORS.white, paddingTop: 20 }}>
-        <HeaderComponent />
-        <TabBar
-          {...props}
-          style={{ backgroundColor: COLORS.white, borderBottomWidth: 0, elevation: 0, shadowOpacity: 0 }}
-          indicatorStyle={{ backgroundColor: COLORS.black }}
-          activeColor={COLORS.black}
-          inactiveColor={COLORS.dark_secondary}
-        />
-      </Animated.View>
-    </>
+    <View style={[styles.header, { backgroundColor: COLORS.white, paddingTop: insets.top }]}>
+      <HeaderComponent title={t('navigation.media.title')} />
+      <TabBar
+        {...props}
+        style={[styles.tabBar, { backgroundColor: COLORS.white }]}
+        indicatorStyle={[styles.tabIndicator, { backgroundColor: COLORS.primary }]}
+        activeColor={COLORS.primary}
+        inactiveColor={COLORS.dark}
+        renderLabel={({ route, focused, color }) => <Text style={[styles.tabLabel, { color, fontWeight: focused ? '700' : '600' }]}>{route.title}</Text>}
+      />
+    </View>
   );
 
-  // Back to top handler
-  const handleBackToTop = () => {
-    if (index === 0 && newsListRef.current) {
-      newsListRef.current.scrollToOffset({ offset: 0, animated: true });
-    } else if (index === 1 && booksListRef.current) {
-      booksListRef.current.scrollToOffset({ offset: 0, animated: true });
-    }
+  const handleIndexChange = (nextIndex) => {
+    setIndex(nextIndex);
+    setShowBackToTop(false);
+  };
+
+  const scrollToTop = () => {
+    [mediaListRef, favoriteListRef][index].current?.scrollToOffset({ offset: 0, animated: true });
   };
 
   return (
-    <>
-      <TabView
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={handleIndexChange}
-        initialLayout={{ width: 100 }}
-        renderTabBar={renderTabBar} // Using the Custom TabBar
-      />
-
-      {/* === Bouton global BackToTop === */}
-      {showBackToTopByTab[index === 0 ? 'medias' : 'favorite'] && (
-        <TouchableOpacity
-          onPress={handleBackToTop}
-          style={[homeStyles.floatingButton, { backgroundColor: COLORS.warning }]}
-        >
-          <Icon name='chevron-double-up' size={IMAGE_SIZE.s09} style={{ color: 'black' }} />
-        </TouchableOpacity>
-      )}
-
-      {/* === Floating Button === */}
+    <View style={[styles.container, { backgroundColor: COLORS.light }]}>
+      <TabView navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={handleIndexChange} initialLayout={{ width: screenWidth }} renderTabBar={renderTabBar} />
+      {showBackToTop ? <TouchableOpacity onPress={scrollToTop} style={[styles.backToTop, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}><Icon name="chevron-up" size={24} color={COLORS.black} /></TouchableOpacity> : null}
       <FloatingActionsButton />
-    </>
+    </View>
   );
 };
 
 export default MediaScreen;
+
+const styles = StyleSheet.create({
+  backToTop: { alignItems: 'center', borderRadius: 24, borderWidth: 1, bottom: 24, elevation: 6, height: 48, justifyContent: 'center', position: 'absolute', right: 20, shadowColor: '#172033', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.16, shadowRadius: 6, width: 48, zIndex: 20 },
+  categoriesContent: { alignItems: 'center', paddingHorizontal: 16 },
+  categoriesList: { flexGrow: 0, height: 48 },
+  categoryChip: { borderRadius: 16, borderWidth: 1, marginRight: 8, paddingHorizontal: 14, paddingVertical: 8 },
+  categoryChipText: { fontSize: 13, fontWeight: '700' },
+  container: { flex: 1 },
+  favoriteIntro: { fontSize: 14, fontWeight: '700', marginBottom: 12, marginHorizontal: 16 },
+  footerLoading: { padding: PADDING.p01, textAlign: 'center' },
+  header: { elevation: 8, position: 'absolute', shadowColor: '#172033', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.1, shadowRadius: 8, top: 0, width: '100%', zIndex: 10 },
+  loadingLabel: { fontSize: 14, marginTop: 12 },
+  loadingState: { alignItems: 'center', justifyContent: 'center', minHeight: 280, paddingHorizontal: 24 },
+  listContent: { paddingBottom: 34 },
+  scene: { flex: 1 },
+  tabBar: { elevation: 0, shadowOpacity: 0 },
+  tabIndicator: { borderRadius: 3, height: 3 },
+  tabLabel: { fontSize: 13 },
+});
