@@ -25,11 +25,11 @@ const VideoPlayerScreen = ({ route }) => {
   const [playing, setPlaying] = useState(false);
   const [imageSize, setImageSize] = useState(null);
   const [imageError, setImageError] = useState(false);
-  const [videoState, setVideoState] = useState(isVideoFile(videoUri) ? 'loading' : 'ready');
-  const [videoKey, setVideoKey] = useState(0);
-  const youtubeId = getVideoId(videoUri || '').id;
+  const youtubeId = getVideoId(videoUri || '').id || videoUri?.match(/(?:embed\/|v=|youtu\.be\/)([^?&/]+)/)?.[1];
   const isYoutube = Boolean(youtubeId) && (videoUri?.includes('youtube.com') || videoUri?.includes('youtu.be'));
   const isVideo = isYoutube || isVideoFile(videoUri);
+  const [videoState, setVideoState] = useState(isVideo ? 'loading' : 'ready');
+  const [videoKey, setVideoKey] = useState(0);
 
   useEffect(() => {
     console.log('VideoPlayer opened:', {
@@ -81,7 +81,25 @@ const VideoPlayerScreen = ({ route }) => {
 
         <View style={[styles.playerCard, { backgroundColor: COLORS.black }]}>
           {isYoutube ? (
-            <YoutubePlayer height={((width - 32) / 16) * 9} play={playing} videoId={youtubeId} onChangeState={onYoutubeStateChange} />
+            <View style={styles.videoContainer}>
+              <YoutubePlayer
+                key={videoKey}
+                height={((width - 32) / 16) * 9}
+                play={playing}
+                videoId={youtubeId}
+                onReady={() => {
+                  console.log('YouTube video loaded successfully:', { url: videoUri, videoId: youtubeId });
+                  setVideoState('ready');
+                }}
+                onError={error => {
+                  console.error('YouTube video failed to load:', { url: videoUri, videoId: youtubeId, error });
+                  setVideoState('error');
+                }}
+                onChangeState={onYoutubeStateChange}
+              />
+              {videoState === 'loading' ? <View style={styles.videoOverlay}><ActivityIndicator color="#ffffff" /><Text style={styles.videoOverlayText}>{t('loading')}</Text></View> : null}
+              {videoState === 'error' ? <View style={styles.videoOverlay}><Icon name="video-off-outline" size={38} color="#ffffff" /><Text style={styles.videoOverlayText}>{t('media.unavailable')}</Text><TouchableOpacity style={styles.retryButton} onPress={retryVideo}><Icon name="refresh" size={17} color="#ffffff" /><Text style={styles.retryText}>{t('media.retry')}</Text></TouchableOpacity></View> : null}
+            </View>
           ) : isVideo ? (
             <View style={styles.videoContainer}>
               <Video
