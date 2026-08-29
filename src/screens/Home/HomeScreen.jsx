@@ -20,6 +20,7 @@ import useColors from '../../hooks/useColors';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const screenWidth = Dimensions.get('window').width;
+const AUTO_REFRESH_MS = 60000;
 
 const LoadingList = ({ COLORS, label }) => (
   <View style={styles.loadingState}>
@@ -29,7 +30,7 @@ const LoadingList = ({ COLORS, label }) => (
 );
 
 // News frame
-const News = ({ handleScroll, listRef, contentTopInset }) => {
+const News = ({ handleScroll, isActive, listRef, contentTopInset }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const { userInfo } = useContext(AuthContext);
@@ -46,11 +47,11 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
   const loadingRef = useRef(false);
   const lastPageRef = useRef(1);
 
-  const fetchWorks = useCallback(async (pageToFetch = 1) => {
+  const fetchWorks = useCallback(async (pageToFetch = 1, silent = false) => {
     if (!userInfo?.api_token || loadingRef.current || (pageToFetch > lastPageRef.current && pageToFetch !== 1)) return;
 
     loadingRef.current = true;
-    setIsLoading(true);
+    if (!silent) setIsLoading(true);
     const qs = require('qs');
     const url = `${API.boongo_url}/work/filter_by_categories?page=${pageToFetch}`;
     const mParams = { type_id: 33, status_id: 17 };
@@ -82,7 +83,7 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
       }
     } finally {
       loadingRef.current = false;
-      setIsLoading(false);
+      if (!silent) setIsLoading(false);
     }
   }, [userInfo?.api_token]);
 
@@ -95,6 +96,13 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
       fetchWorks(page);
     }
   }, [page, fetchWorks]);
+
+  useEffect(() => {
+    if (!isActive) return undefined;
+
+    const interval = setInterval(() => fetchWorks(1, true), AUTO_REFRESH_MS);
+    return () => clearInterval(interval);
+  }, [fetchWorks, isActive]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -150,7 +158,7 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
 };
 
 // Books frame
-const Books = ({ handleScroll, listRef, contentTopInset }) => {
+const Books = ({ handleScroll, isActive, listRef, contentTopInset }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const { userInfo } = useContext(AuthContext);
@@ -194,10 +202,10 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
     fetchCategories();
   }, [fetchCategories]);
 
-  const fetchBooks = useCallback(async (pageToFetch = 1) => {
+  const fetchBooks = useCallback(async (pageToFetch = 1, silent = false) => {
     if (!userInfo?.api_token || loadingRef.current || (pageToFetch > lastPageRef.current && pageToFetch !== 1)) return;
     loadingRef.current = true;
-    setIsLoading(true);
+    if (!silent) setIsLoading(true);
 
     const qs = require('qs');
     const url = `${API.boongo_url}/work/filter_by_categories?page=${pageToFetch}`;
@@ -226,13 +234,20 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
       console.error('Erreur fetchBooks', error);
     } finally {
       loadingRef.current = false;
-      setIsLoading(false);
+      if (!silent) setIsLoading(false);
     }
   }, [userInfo?.api_token, idCat]);
 
   useEffect(() => {
     fetchBooks(page);
   }, [page, idCat, fetchBooks]);
+
+  useEffect(() => {
+    if (!isActive) return undefined;
+
+    const interval = setInterval(() => fetchBooks(1, true), AUTO_REFRESH_MS);
+    return () => clearInterval(interval);
+  }, [fetchBooks, isActive]);
 
   const combinedData = [...books];
   if (ad) {
@@ -315,7 +330,7 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
   );
 };
 
-const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, contentTopInset }) => {
+const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, isActive, listRef, contentTopInset }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const { userInfo } = useContext(AuthContext);
@@ -355,11 +370,11 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, co
     fetchType();
   }, [typeName, userInfo?.api_token]);
 
-  const fetchWorks = useCallback(async (pageToFetch = 1) => {
+  const fetchWorks = useCallback(async (pageToFetch = 1, silent = false) => {
     if (!userInfo?.api_token || !typeId || loadingRef.current || (pageToFetch > lastPageRef.current && pageToFetch !== 1)) return;
 
     loadingRef.current = true;
-    setIsLoading(true);
+    if (!silent) setIsLoading(true);
     const qs = require('qs');
     const headers = {
       'X-localization': 'fr',
@@ -383,7 +398,7 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, co
       console.error(`Erreur lors de la récupération de ${typeName}:`, error);
     } finally {
       loadingRef.current = false;
-      setIsLoading(false);
+      if (!silent) setIsLoading(false);
     }
   }, [typeId, typeName, userInfo?.api_token]);
 
@@ -392,6 +407,13 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, co
       fetchWorks(page);
     }
   }, [fetchWorks, page, typeId]);
+
+  useEffect(() => {
+    if (!isActive || !typeId) return undefined;
+
+    const interval = setInterval(() => fetchWorks(1, true), AUTO_REFRESH_MS);
+    return () => clearInterval(interval);
+  }, [fetchWorks, isActive, typeId]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -457,13 +479,13 @@ const HomeScreen = () => {
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'news':
-        return <News handleScroll={handleScroll} listRef={newsListRef} contentTopInset={contentTopInset} />;
+        return <News handleScroll={handleScroll} isActive={index === 0} listRef={newsListRef} contentTopInset={contentTopInset} />;
       case 'books':
-        return <Books handleScroll={handleScroll} listRef={booksListRef} contentTopInset={contentTopInset} />;
+        return <Books handleScroll={handleScroll} isActive={index === 1} listRef={booksListRef} contentTopInset={contentTopInset} />;
       case 'school_program':
-        return <ProgramWorks typeName="Programme scolaire" emptyDescriptionKey="empty_list.description_school_program" handleScroll={handleScroll} listRef={schoolProgramListRef} contentTopInset={contentTopInset} />;
+        return <ProgramWorks typeName="Programme scolaire" emptyDescriptionKey="empty_list.description_school_program" handleScroll={handleScroll} isActive={index === 2} listRef={schoolProgramListRef} contentTopInset={contentTopInset} />;
       case 'academic_program':
-        return <ProgramWorks typeName="Programme académique" emptyDescriptionKey="empty_list.description_academic_program" handleScroll={handleScroll} listRef={academicProgramListRef} contentTopInset={contentTopInset} />;
+        return <ProgramWorks typeName="Programme académique" emptyDescriptionKey="empty_list.description_academic_program" handleScroll={handleScroll} isActive={index === 3} listRef={academicProgramListRef} contentTopInset={contentTopInset} />;
       default:
         return null;
     }
