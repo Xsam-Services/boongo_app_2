@@ -8,13 +8,13 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import useColors from '../hooks/useColors';
 import EmptyListIllustration from '../../assets/img/empty-list-search.svg';
 
-const EmptyListComponent = ({ iconName, title, description }) => {
+const EmptyListComponent = ({ iconName, title }) => {
     const COLORS = useColors();
 
     return (
         <View style={styles.container}>
             <View style={[styles.card, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
-                <EmptyListIllustration width={188} height={148} />
+                <EmptyListIllustration width={248} height={196} />
                 {iconName &&
                     <View style={[styles.iconBadge, { backgroundColor: COLORS.light_secondary }]}>
                         <Icon name={iconName} size={18} color={COLORS.primary} />
@@ -22,9 +22,6 @@ const EmptyListComponent = ({ iconName, title, description }) => {
                 }
                 {title &&
                     <Text style={[styles.title, { color: COLORS.dark }]}>{title}</Text>
-                }
-                {description &&
-                    <Text style={[styles.description, { color: COLORS.black }]}>{description}</Text>
                 }
             </View>
         </View>
@@ -50,12 +47,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         paddingVertical: 32,
     },
-    description: {
-        fontSize: 14,
-        lineHeight: 21,
-        marginTop: 8,
-        textAlign: 'center',
-    },
     iconBadge: {
         alignItems: 'center',
         borderRadius: 18,
@@ -67,7 +58,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 19,
         fontWeight: '800',
-        marginTop: 12,
+        marginTop: 16,
         textAlign: 'center',
     },
 });
