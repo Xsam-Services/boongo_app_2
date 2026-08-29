@@ -48,7 +48,7 @@ const VideoPlayerScreen = ({ route }) => {
       setVideoState('error');
     }, 12000);
     return () => clearTimeout(timeout);
-  }, [isVideo, videoKey, videoState]);
+  }, [isVideo, videoKey, videoState, videoUri]);
 
   const retryVideo = () => {
     console.log('Video retry requested:', videoUri);
