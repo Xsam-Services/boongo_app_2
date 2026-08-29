@@ -2,147 +2,101 @@
  * @author Vander Otis
  * @see https://github.com/vanotis720
  */
-
 import React, { useEffect } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Slider from '@react-native-community/slider';
-import {
-    useAudioPlayer,
-    useAudioPlayerStatus,
-    setAudioModeAsync,
-} from 'expo-audio';
+import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import { PADDING, TEXT_SIZE } from '../tools/constants';
+
 import useColors from '../hooks/useColors';
 
-const SoundPlayer = ({ audioUrl, title, artist, artwork, color }) => {
-    // =============== Colors ===============
-    const COLORS = useColors();
+const formatDuration = (seconds) => {
+  if (!Number.isFinite(seconds) || seconds < 0) return '00:00';
 
-    // =============== Audio player ===============
-    const player = useAudioPlayer({
-        uri: decodeURIComponent(audioUrl),
-        name: title,
-        artist: artist,
-        artwork: artwork,
-    });
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
 
-    const status = useAudioPlayerStatus(player);
+  return hours > 0
+    ? `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+    : `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+};
 
-    // =============== Audio mode ===============
-    useEffect(() => {
-        const configureAudio = async () => {
-            try {
-                await setAudioModeAsync({
-                    playsInSilentMode: true,
-                    shouldPlayInBackground: true,
-                    interruptionMode: 'doNotMix',
-                });
-            } catch (error) {
-                console.error('Failed to configure audio mode:', error);
-            }
-        };
+const SoundPlayer = ({ audioUrl, artwork, artist, title }) => {
+  const COLORS = useColors();
+  const player = useAudioPlayer({ uri: decodeURIComponent(audioUrl), name: title, artist, artwork });
+  const status = useAudioPlayerStatus(player);
+  const position = status.currentTime || 0;
+  const duration = status.duration || 0;
 
-        configureAudio();
-    }, []);
-
-    // =============== Play / Pause ===============
-    const togglePlayback = () => {
-        if (status.playing) {
-            player.pause();
-        } else {
-            player.play();
-        }
+  useEffect(() => {
+    const configureAudio = async () => {
+      try {
+        await setAudioModeAsync({
+          playsInSilentMode: true,
+          shouldPlayInBackground: true,
+          interruptionMode: 'doNotMix',
+        });
+      } catch (error) {
+        console.error('Failed to configure audio mode:', error);
+      }
     };
 
-    // =============== Seek ===============
-    const onSliderChange = (value) => {
-        player.seekTo(value);
-    };
+    configureAudio();
+  }, []);
 
-    // =============== Format duration ===============
-    const formatDuration = (seconds) => {
-        if (!Number.isFinite(seconds) || seconds < 0) {
-            return '00:00';
-        }
+  const togglePlayback = () => {
+    if (status.playing) {
+      player.pause();
+    } else {
+      player.play();
+    }
+  };
 
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const sec = Math.floor(seconds % 60);
+  const seekBy = (seconds) => {
+    player.seekTo(Math.max(0, Math.min(duration, position + seconds)));
+  };
 
-        if (hours > 0) {
-            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(sec).padStart(2, '0')} `;
-        }
-
-        return `${String(minutes).padStart(2, '0')}:${String(sec).padStart(2, '0')} `;
-    };
-
-    const position = status.currentTime || 0;
-    const duration = status.duration || 0;
-
-    return (
-        <View
-            style={{
-                flexDirection: 'column',
-                backgroundColor: COLORS.black,
-                paddingVertical: PADDING.p00,
-                paddingHorizontal: PADDING.p02,
-            }}
-        >
-            {/* Track title */}
-            <Text
-                style={{
-                    fontSize: TEXT_SIZE.label,
-                    color: color,
-                }}
-                numberOfLines={1}
-            >
-                {title}
-            </Text>
-
-            <View
-                style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                }}
-            >
-                {/* Play / Pause button */}
-                <Pressable
-                    onPress={togglePlayback}
-                    style={{
-                        marginLeft: -10,
-                        marginRight: -10,
-                    }}
-                >
-                    <Icon
-                        name={status.playing ? 'pause' : 'play'}
-                        size={40}
-                        color={COLORS.white}
-                    />
-                </Pressable>
-
-                {/* Progress Slider */}
-                <Slider
-                    value={position}
-                    minimumValue={0}
-                    maximumValue={duration || 1}
-                    onSlidingComplete={onSliderChange}
-                    minimumTrackTintColor={COLORS.warning}
-                    maximumTrackTintColor={COLORS.light_secondary}
-                    thumbTintColor={color}
-                    style={{
-                        width: '65%',
-                    }}
-                />
-
-                {/* Time */}
-                <Text style={{ color: color }}>
-                    {`${formatDuration(position)} / ${formatDuration(duration)}`}
-                </Text >
-            </View >
-        </View >
-    );
+  return (
+    <View style={styles.container}>
+      <View style={styles.transport}>
+        <Pressable accessibilityLabel="Reculer de 10 secondes" onPress={() => seekBy(-10)} style={[styles.secondaryButton, { backgroundColor: COLORS.light_secondary }]}>
+          <Icon name="rewind-10" size={23} color={COLORS.dark} />
+        </Pressable>
+        <Pressable accessibilityLabel={status.playing ? 'Pause' : 'Lecture'} onPress={togglePlayback} style={[styles.playButton, { backgroundColor: COLORS.primary }]}>
+          <Icon name={status.playing ? 'pause' : 'play'} size={31} color="#ffffff" />
+        </Pressable>
+        <Pressable accessibilityLabel="Avancer de 10 secondes" onPress={() => seekBy(10)} style={[styles.secondaryButton, { backgroundColor: COLORS.light_secondary }]}>
+          <Icon name="fast-forward-10" size={23} color={COLORS.dark} />
+        </Pressable>
+      </View>
+      <Slider
+        disabled={!duration}
+        value={position}
+        minimumValue={0}
+        maximumValue={duration || 1}
+        minimumTrackTintColor={COLORS.primary}
+        maximumTrackTintColor={COLORS.dark_light}
+        thumbTintColor={COLORS.primary}
+        onSlidingComplete={(value) => player.seekTo(value)}
+        style={styles.slider}
+      />
+      <View style={styles.timeRow}>
+        <Text style={[styles.time, { color: COLORS.dark }]}>{formatDuration(position)}</Text>
+        <Text style={[styles.time, { color: COLORS.dark }]}>{formatDuration(duration)}</Text>
+      </View>
+    </View>
+  );
 };
 
 export default SoundPlayer;
+
+const styles = StyleSheet.create({
+  container: { paddingHorizontal: 18, paddingVertical: 18 },
+  playButton: { alignItems: 'center', borderRadius: 32, height: 64, justifyContent: 'center', width: 64 },
+  secondaryButton: { alignItems: 'center', borderRadius: 22, height: 44, justifyContent: 'center', width: 44 },
+  slider: { height: 32, marginTop: 14, width: '100%' },
+  time: { fontSize: 12, fontVariant: ['tabular-nums'], fontWeight: '700' },
+  timeRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: -2 },
+  transport: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 28 },
+});
