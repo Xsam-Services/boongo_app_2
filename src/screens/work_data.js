@@ -134,7 +134,7 @@ const WorkDataScreen = ({ route, navigation }) => {
         const response = await axios.delete(`${API.boongo_url}/like/unlike_entity/${userInfo.id}/work/${work.id}`, {
           headers: { 'X-localization': getLanguage(), Authorization: `Bearer ${userInfo.api_token}` },
         });
-        Alert.alert(t('success.title'), response.data?.message || '');
+        console.log(response.data?.message || 'Like retiré.');
         setLikeCount(currentCount => Math.max(0, currentCount - 1));
         setHasLiked(false);
       } else {
@@ -143,7 +143,7 @@ const WorkDataScreen = ({ route, navigation }) => {
           { user_id: userInfo.id, for_work_id: work.id },
           { headers: { 'X-localization': getLanguage(), Authorization: `Bearer ${userInfo.api_token}` } }
         );
-        Alert.alert(t('success.title'), response.data?.message || '');
+        console.log(response.data?.message || 'Like ajouté.');
         setLikeCount(currentCount => currentCount + 1);
         setHasLiked(true);
       }
