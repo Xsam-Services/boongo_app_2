@@ -441,7 +441,8 @@ const HomeScreen = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
   const savedScrollOffsets = useRef({ news: 0, books: 0, school_program: 0, academic_program: 0 });
 
-  const contentTopInset = insets.top + 112;
+  // Keep the first card visually separated from the fixed tab bar.
+  const contentTopInset = insets.top + 128;
 
   const [routes] = useState([
     { key: 'news', title: t('navigation.home.news') },
