@@ -4,7 +4,7 @@
  */
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Image, Modal, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import NetInfo from '@react-native-community/netinfo';
 import Constants from 'expo-constants';
 import * as RNLocalize from 'react-native-localize';
@@ -24,6 +24,7 @@ const NewsDataScreen = ({ route, navigation }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const { userInfo } = useContext(AuthContext);
+  const insets = useSafeAreaInsets();
   const { itemId } = route.params;
   const [work, setWork] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -149,8 +150,8 @@ const NewsDataScreen = ({ route, navigation }) => {
       </ScrollView>
 
       <Modal visible={selectedMediaIndex !== null} animationType="fade" transparent onRequestClose={() => setSelectedMediaIndex(null)}>
-        <SafeAreaView style={styles.modalBackdrop} edges={['top', 'bottom']}>
-          <View style={styles.modalHeader}>
+        <View style={styles.modalBackdrop}>
+          <View style={[styles.modalHeader, { paddingTop: insets.top + 12 }]}>
             <Text style={styles.modalCounter}>{`${(selectedMediaIndex || 0) + 1} / ${media.length}`}</Text>
             <TouchableOpacity style={styles.modalClose} onPress={() => setSelectedMediaIndex(null)} accessibilityLabel="Fermer le média">
               <Icon name="close" size={24} color="#ffffff" />
@@ -181,7 +182,7 @@ const NewsDataScreen = ({ route, navigation }) => {
               </TouchableOpacity>
             </>
           ) : null}
-        </SafeAreaView>
+        </View>
       </Modal>
     </SafeAreaView>
   );
@@ -204,13 +205,13 @@ const styles = StyleSheet.create({
   ownerCopy: { flex: 1, marginLeft: 10 },
   ownerName: { fontSize: 14, fontWeight: '800' },
   date: { fontSize: 12, marginTop: 3 },
-  mediaSection: { marginTop: 24 },
-  mediaTitle: { fontSize: 17, fontWeight: '800', marginBottom: 11, marginLeft: 2 },
-  mediaList: { gap: 10, paddingRight: 16 },
+  mediaSection: { marginHorizontal: -16, marginTop: 24 },
+  mediaTitle: { fontSize: 17, fontWeight: '800', marginBottom: 11, marginLeft: 18 },
+  mediaList: { gap: 10, paddingHorizontal: 16 },
   mediaTile: { alignItems: 'center', borderRadius: 16, height: 116, justifyContent: 'center', overflow: 'hidden', width: 116 },
   mediaImage: { height: '100%', width: '100%' },
   modalBackdrop: { alignItems: 'center', backgroundColor: 'rgba(8, 10, 16, 0.98)', flex: 1, justifyContent: 'center', paddingHorizontal: 20 },
-  modalHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', left: 20, position: 'absolute', right: 20, top: 12, zIndex: 1 },
+  modalHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', left: 20, position: 'absolute', right: 20, top: 0, zIndex: 1 },
   modalCounter: { color: '#ffffff', fontSize: 14, fontWeight: '800' },
   modalClose: { alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.16)', borderRadius: 22, height: 44, justifyContent: 'center', width: 44 },
   modalMedia: { height: '82%', width: '100%' },
