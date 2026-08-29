@@ -104,6 +104,8 @@
         "description_news": "Ici, sera affichée l’actualité sur les organisations (établissement ou institution) de la plateforme.",
         "description_popular": "Ici, seront affichés les œuvres les plus consultées par les membres.",
         "description_books": "Ici, seront affichés les ouvrages qui pourront être consultés par les membres.",
+        "description_school_program": "Ici, seront affichés les programmes scolaires disponibles sur la plateforme.",
+        "description_academic_program": "Ici, seront affichés les programmes académiques disponibles sur la plateforme.",
         "description_mags": "Ici, seront affichés les revues, journaux ou magazines qui pourront être consultés par les membres.",
         "description_medias": "Ici, seront affichés les médias qui pourront être consultés par les membres.",
         "description_favoris": "Vos médias favoris seront affichés ici pour être lus quand vous voulez.",
@@ -306,7 +308,9 @@
         "home": {
             "title": "Accueil",
             "news": "Actualité",
-            "books": "Ouvrages"
+            "books": "Ouvrages",
+            "school_program": "Programme scolaire",
+            "academic_program": "Programme académique"
         },
         "chat": {
             "members": "Membres",

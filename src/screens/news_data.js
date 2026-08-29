@@ -3,263 +3,222 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { View, Text, RefreshControl, Image, Dimensions, TouchableOpacity, FlatList, Modal } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { useTranslation } from 'react-i18next';
+import { Image, Modal, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import NetInfo from '@react-native-community/netinfo';
 import Constants from 'expo-constants';
 import * as RNLocalize from 'react-native-localize';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import UserAgent from 'react-native-user-agent';
+import Video from 'react-native-video';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
+
 import { AuthContext } from '../contexts/AuthContext';
-import { API, IMAGE_SIZE, PADDING, TEXT_SIZE } from '../tools/constants';
-import homeStyles from './style';
+import { API } from '../tools/constants';
 import useColors from '../hooks/useColors';
 import HeaderComponent from './header';
-import ImageViewer from 'react-native-image-zoom-viewer';
-import Video from 'react-native-video';
+
+const getLanguage = () => RNLocalize.getLocales()[0]?.languageCode || 'fr';
 
 const NewsDataScreen = ({ route, navigation }) => {
-  // =============== Colors ===============
   const COLORS = useColors();
-  // =============== Language ===============
   const { t } = useTranslation();
-  // =============== Get contexts ===============
   const { userInfo } = useContext(AuthContext);
-  // =============== Get parameters ===============
+  const insets = useSafeAreaInsets();
   const { itemId } = route.params;
-  // =============== Get data ===============
-  const [work, setWork] = useState({});
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const mediaList = work && work.images ? work.images?.map(img => ({
-    url: img.file_url,
-    is_video: img.is_video,
-  })) : [];
+  const [work, setWork] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedMediaIndex, setSelectedMediaIndex] = useState(null);
 
-  // =============== Get system language ===============
-  const getLanguage = () => {
-    const locales = RNLocalize.getLocales();
+  const getWork = useCallback(async () => {
+    if (!userInfo?.api_token) return;
 
-    if (locales && locales.length > 0) {
-      return locales[0].languageCode;
-    }
-
-    return 'fr';
-  };
-
-  // =============== First letter uppercase ===============
-  const ucfirst = (str) => {
-    if (!str) return str;
-
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
-
-  // =============== First word from splitted word ===============
-  const getFirstPart = (str) => {
-    if (!str) return str;
-
-    const parts = str.split('_');
-
-    return parts[0];
-  };
-
-  // =============== Refresh control ===============
-  const onRefresh = useCallback(() => {
     setLoading(true);
-    setTimeout(() => { setLoading(false); }, 2000);
-  }, []);
-
-  useEffect(() => {
-    getWork();
-  }, []);
-
-  // Vander Otis
-  // Replaced react-native-network-info with @react-native-community/netinfo
-  // and react-native-user-agent with expo-constants (Constants.getWebViewUserAgentAsync).
-  // Refactored to async/await using Promise.all for IP and User-Agent retrieval
-  // to ensure compatibility with Expo and New Architecture support.
-  const getWork = async () => {
     try {
-      // Récupération en parallèle de l'IP et du User-Agent
       const [netState, userAgent] = await Promise.all([
         NetInfo.fetch(),
         Constants.getWebViewUserAgentAsync(),
       ]);
-
-      const ipAddress = netState.details?.ipAddress || '';
-
-      const config = {
-        method: 'GET',
-        url: `${API.boongo_url}/work/${itemId}`,
+      const response = await axios.get(`${API.boongo_url}/work/${itemId}`, {
         headers: {
           'X-localization': getLanguage(),
           'X-user-id': userInfo.id,
-          'X-ip-address': ipAddress,
+          'X-ip-address': netState.details?.ipAddress || '',
           'X-user-agent': userAgent || '',
-          'Authorization': `Bearer ${userInfo.api_token}`,
+          Authorization: `Bearer ${userInfo.api_token}`,
         },
-      };
+      });
 
-      const res = await axios(config);
-      const workData = res.data.data;
-
-      setWork(workData);
-      console.log(workData.organization_owner.type.alias);
-
-      return workData;
+      console.log('News detail API response:', response.data);
+      setWork(response.data?.data || null);
     } catch (error) {
-      console.log(error);
+      console.error('Erreur lors de la récupération de l’actualité:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [itemId, userInfo?.api_token, userInfo?.id]);
 
-  // =============== Show/Hide modal ===============
-  const openModal = (index) => {
-    setSelectedIndex(index);
-    setModalVisible(true);
-  };
+  useEffect(() => {
+    getWork();
+  }, [getWork]);
 
-  const closeModal = () => {
-    setModalVisible(false);
-    setSelectedIndex(0);
-  };
+  const media = work?.images || [];
+  const coverImage = work?.photo_url || media.find(image => image.type?.alias === 'image_file')?.file_url || media.find(image => image.file_url)?.file_url;
+  const selectedMedia = selectedMediaIndex === null ? null : media[selectedMediaIndex];
+  const owner = work?.user_id ? work.user_owner : work?.organization_owner;
+  const ownerName = work?.user_id
+    ? [owner?.firstname, owner?.lastname].filter(Boolean).join(' ')
+    : owner?.org_name;
+  const ownerImage = work?.user_id ? owner?.avatar_url : owner?.cover_url;
 
-  // =============== Render the thumbnails ===============
-  const renderItem = ({ item, index }) => {
-    const isVideo = item.is_video;
+  const openOwner = () => {
+    if (!owner?.id) return;
 
-    return (
-      <TouchableOpacity onPress={() => openModal(index)}>
-        <View style={{ width: 100, height: 100, margin: 5 }}>
-          {!isVideo && (
-            <Image
-              source={{ uri: item.file_url }}
-              style={{ width: '100%', height: '100%', borderRadius: 5 }}
-            />
-          )}
+    if (work.user_id) {
+      navigation.navigate('Profile', { user_id: owner.id });
+      return;
+    }
 
-          {isVideo && (
-            <View style={{
-              width: '100%',
-              height: '100%',
-              borderRadius: 5,
-              backgroundColor: '#000',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}>
-              <Icon name="play-circle-outline" size={40} color="white" />
-            </View>
-          )}
-        </View>
-      </TouchableOpacity>
-    );
+    const type = owner?.type?.alias?.split('_')[0];
+    navigation.navigate('Profile', { organization_id: owner.id, type });
   };
 
   return (
-    <>
-      {/* Header */}
-      <View style={{ paddingVertical: PADDING.p01, backgroundColor: COLORS.white }}>
-        <HeaderComponent />
+    <SafeAreaView style={[styles.screen, { backgroundColor: COLORS.light }]} edges={['top']}>
+      <StatusBar barStyle={COLORS.bar_style} backgroundColor={COLORS.white} />
+      <View style={{ backgroundColor: COLORS.white }}>
+        <HeaderComponent title={t('navigation.home.news')} />
       </View>
 
-      {/* Content */}
-      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: PADDING.p07, backgroundColor: COLORS.white }}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} />}>
-        <View style={[homeStyles.workBody, { paddingTop: 0, paddingBottom: PADDING.p01 }]}>
-          <View style={homeStyles.workCard}>
-            <View style={[homeStyles.workTop, { flexDirection: 'column', alignItems: 'flex-start' }]}>
-              <View>
-                <Image source={{ uri: work.photo_url }} style={[homeStyles.workImage, { width: Dimensions.get('window').width, height: Dimensions.get('window').width, marginLeft: -25, marginTop: 0, borderRadius: 0 }]} />
-              </View>
-              <View style={homeStyles.workDescTop}>
-                <Text style={[homeStyles.workTitle, { color: COLORS.black }]}>{work.work_title}</Text>
-                <Text style={[homeStyles.workContent, { color: COLORS.black, textAlign: 'justify' }]}>{work.work_content}</Text>
-              </View>
-
-              {/* Horizontal FlatList */}
-              {work.images && (
-                <>
-                  <FlatList
-                    data={work.images}
-                    renderItem={renderItem}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item) => item.id.toString()}
-                    contentContainerStyle={{ padding: 10 }}
-                  />
-
-                  {/* Modal to display the image or video */}
-                  {modalVisible && (
-                    <Modal
-                      visible={modalVisible}
-                      transparent={true}
-                      animationType="fade"
-                      onRequestClose={closeModal}
-                    >
-                      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.9)' }}>
-                        <TouchableOpacity style={{ position: 'absolute', right: PADDING.p01, top: PADDING.p01, zIndex: 10, width: 37, height: 37, backgroundColor: 'rgba(200,200,200,0.5)', padding: 2.6, borderRadius: 37 / 2 }} onPress={closeModal}>
-                          <Icon name='close' size={IMAGE_SIZE.s07} color='black' />
-                        </TouchableOpacity>
-
-                        <ImageViewer
-                          imageUrls={mediaList}
-                          index={selectedIndex}
-                          enableSwipeDown={true}
-                          onSwipeDown={() => setModalVisible(false)}
-                          renderIndicator={() => null}
-                          /* ⬇️ LE POINT IMPORTANT : rendre les vidéos */
-                          renderImage={(props) => {
-                            const media = mediaList.find(m => m.url === props.source.uri);
-
-                            if (media?.is_video) {
-                              return (
-                                <Video
-                                  source={{ uri: media.url }}
-                                  style={{ width: '100%', height: '100%' }}
-                                  controls={true}
-                                  resizeMode="contain"
-                                />
-                              );
-                            }
-
-                            return <Image {...props} resizeMode="contain" />;
-                          }}
-                        />
-                      </View>
-                    </Modal>
-                  )}
-                </>
-              )}
-
-              {/* News owner */}
-              {work.user_id ?
-                <View style={{ width: Dimensions.get('window').width - 50, marginTop: PADDING.p07 }}>
-                  <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={() => { navigation.navigate('Profile', { user_id: work.user_owner.id }); }}>
-                    <Image source={{ uri: work.user_owner.avatar_url }} style={{ width: 37, height: 37, marginRight: PADDING.p02, borderRadius: 37 / 2 }} />
-                    <Text style={{ fontSize: TEXT_SIZE.normal, color: COLORS.black }}>{`${work.user_owner.firstname} ${work.user_owner.lastname}`}</Text>
-                  </TouchableOpacity>
-                  <Text style={{ fontSize: TEXT_SIZE.label, color: COLORS.dark_secondary, textAlign: 'center' }}>{`${t('work.publication_date')} ${ucfirst(work.created_at_explicit)}`}</Text>
-                </View>
-                : ''}
-              {work.organization_id ?
-                <View style={{ width: Dimensions.get('window').width - 50, marginTop: PADDING.p07 }}>
-                  <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={() => { navigation.navigate('Profile', { organization_id: work.organization_owner.id, type: getFirstPart(work.organization_owner.type.alias) }); }}>
-                    <Image source={{ uri: work.organization_owner.cover_url }} style={{ width: 37, height: 37, marginRight: PADDING.p02, borderRadius: 37 / 2 }} />
-                    <Text style={{ fontSize: TEXT_SIZE.normal, color: COLORS.black }}>{work.organization_owner.org_name}</Text>
-                  </TouchableOpacity>
-                  <Text style={{ fontSize: TEXT_SIZE.label, color: COLORS.dark_secondary, textAlign: 'center' }}>{`${t('work.publication_date')} ${ucfirst(work.created_at_explicit)}`}</Text>
-                </View>
-                : ''}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={getWork} />}
+      >
+        <View style={[styles.articleCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
+          {coverImage ? (
+            <Image source={{ uri: coverImage }} style={[styles.cover, { backgroundColor: COLORS.light_secondary }]} resizeMode="cover" />
+          ) : (
+            <View style={[styles.cover, styles.coverFallback, { backgroundColor: COLORS.light_primary }]}>
+              <Icon name="newspaper-variant-outline" size={42} color={COLORS.primary} />
             </View>
+          )}
+
+          <View style={styles.articleBody}>
+            <View style={[styles.categoryPill, { backgroundColor: COLORS.light_primary }]}>
+              <Icon name="newspaper-variant-outline" size={15} color={COLORS.primary} />
+              <Text style={[styles.categoryLabel, { color: COLORS.primary }]}>{t('navigation.home.news')}</Text>
+            </View>
+            <Text style={[styles.title, { color: COLORS.black }]}>{work?.work_title || ''}</Text>
+            {work?.work_content ? <Text style={[styles.description, { color: COLORS.dark }]}>{work.work_content}</Text> : null}
+
+            {ownerName ? (
+              <TouchableOpacity style={[styles.owner, { borderTopColor: COLORS.light_secondary }]} onPress={openOwner} activeOpacity={0.76}>
+                {ownerImage ? (
+                  <Image source={{ uri: ownerImage }} style={[styles.ownerImage, { backgroundColor: COLORS.light_secondary }]} />
+                ) : (
+                  <View style={[styles.ownerImage, styles.ownerFallback, { backgroundColor: COLORS.light_primary }]}>
+                    <Icon name={work?.user_id ? 'account' : 'domain'} size={19} color={COLORS.primary} />
+                  </View>
+                )}
+                <View style={styles.ownerCopy}>
+                  <Text style={[styles.ownerName, { color: COLORS.black }]} numberOfLines={1}>{ownerName}</Text>
+                  {work?.created_at_explicit ? <Text style={[styles.date, { color: COLORS.dark }]} numberOfLines={1}>{`${t('work.publication_date')} ${work.created_at_explicit}`}</Text> : null}
+                </View>
+                <Icon name="chevron-right" size={21} color={COLORS.dark} />
+              </TouchableOpacity>
+            ) : null}
           </View>
         </View>
+
+        {media.length ? (
+          <View style={styles.mediaSection}>
+            <Text style={[styles.mediaTitle, { color: COLORS.black }]}>{t('work.add_files')}</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.mediaList}>
+              {media.map(item => {
+                const isVideo = item.is_video;
+                return (
+                  <TouchableOpacity key={item.id} style={[styles.mediaTile, { backgroundColor: COLORS.dark_secondary }]} onPress={() => setSelectedMediaIndex(media.indexOf(item))} activeOpacity={0.8}>
+                    {!isVideo && item.file_url ? <Image source={{ uri: item.file_url }} style={styles.mediaImage} resizeMode="cover" /> : null}
+                    {isVideo ? <Icon name="play-circle" size={42} color="#ffffff" /> : null}
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
+        ) : null}
       </ScrollView>
-    </>
+
+      <Modal visible={selectedMediaIndex !== null} animationType="fade" transparent onRequestClose={() => setSelectedMediaIndex(null)}>
+        <View style={styles.modalBackdrop}>
+          <View style={[styles.modalHeader, { paddingTop: insets.top + 12 }]}>
+            <Text style={styles.modalCounter}>{`${(selectedMediaIndex || 0) + 1} / ${media.length}`}</Text>
+            <TouchableOpacity style={styles.modalClose} onPress={() => setSelectedMediaIndex(null)} accessibilityLabel="Fermer le média">
+              <Icon name="close" size={24} color="#ffffff" />
+            </TouchableOpacity>
+          </View>
+          {selectedMedia?.is_video ? (
+            <Video source={{ uri: selectedMedia.file_url }} style={styles.modalMedia} controls resizeMode="contain" />
+          ) : (
+            <Image source={{ uri: selectedMedia?.file_url }} style={styles.modalMedia} resizeMode="contain" />
+          )}
+          {media.length > 1 ? (
+            <>
+              <TouchableOpacity
+                style={[styles.mediaNavigation, styles.previousMedia, selectedMediaIndex === 0 && styles.disabledMediaNavigation]}
+                disabled={selectedMediaIndex === 0}
+                onPress={() => setSelectedMediaIndex(index => index - 1)}
+                accessibilityLabel="Média précédent"
+              >
+                <Icon name="chevron-left" size={28} color="#ffffff" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.mediaNavigation, styles.nextMedia, selectedMediaIndex === media.length - 1 && styles.disabledMediaNavigation]}
+                disabled={selectedMediaIndex === media.length - 1}
+                onPress={() => setSelectedMediaIndex(index => index + 1)}
+                accessibilityLabel="Média suivant"
+              >
+                <Icon name="chevron-right" size={28} color="#ffffff" />
+              </TouchableOpacity>
+            </>
+          ) : null}
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  screen: { flex: 1 },
+  content: { padding: 16, paddingBottom: 36 },
+  articleCard: { borderRadius: 24, borderWidth: 1, overflow: 'hidden' },
+  cover: { height: 238, width: '100%' },
+  coverFallback: { alignItems: 'center', justifyContent: 'center' },
+  articleBody: { padding: 18 },
+  categoryPill: { alignItems: 'center', alignSelf: 'flex-start', borderRadius: 14, flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 6 },
+  categoryLabel: { fontSize: 12, fontWeight: '800', marginLeft: 5 },
+  title: { fontSize: 25, fontWeight: '800', letterSpacing: -0.4, lineHeight: 31, marginTop: 14 },
+  description: { fontSize: 15, lineHeight: 23, marginTop: 10 },
+  owner: { alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth, flexDirection: 'row', marginTop: 20, paddingTop: 15 },
+  ownerImage: { borderRadius: 21, height: 42, width: 42 },
+  ownerFallback: { alignItems: 'center', justifyContent: 'center' },
+  ownerCopy: { flex: 1, marginLeft: 10 },
+  ownerName: { fontSize: 14, fontWeight: '800' },
+  date: { fontSize: 12, marginTop: 3 },
+  mediaSection: { marginHorizontal: -16, marginTop: 24 },
+  mediaTitle: { fontSize: 17, fontWeight: '800', marginBottom: 11, marginLeft: 18 },
+  mediaList: { gap: 10, paddingHorizontal: 16 },
+  mediaTile: { alignItems: 'center', borderRadius: 16, height: 116, justifyContent: 'center', overflow: 'hidden', width: 116 },
+  mediaImage: { height: '100%', width: '100%' },
+  modalBackdrop: { alignItems: 'center', backgroundColor: 'rgba(8, 10, 16, 0.98)', flex: 1, justifyContent: 'center', paddingHorizontal: 20 },
+  modalHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', left: 20, position: 'absolute', right: 20, top: 0, zIndex: 1 },
+  modalCounter: { color: '#ffffff', fontSize: 14, fontWeight: '800' },
+  modalClose: { alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.16)', borderRadius: 22, height: 44, justifyContent: 'center', width: 44 },
+  modalMedia: { height: '82%', width: '100%' },
+  mediaNavigation: { alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.16)', borderRadius: 22, height: 44, justifyContent: 'center', position: 'absolute', top: '50%', width: 44 },
+  disabledMediaNavigation: { opacity: 0.35 },
+  previousMedia: { left: 16 },
+  nextMedia: { right: 16 },
+});
 
 export default NewsDataScreen;

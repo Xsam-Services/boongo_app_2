@@ -1,0 +1,6302 @@
+{
+	"info": {
+		"_postman_id": "a5cfc486-8158-437f-8645-156e7809ed72",
+		"name": "Boongo",
+		"description": "All APIs enpoints for the [Boongo](https://boongo7.com) platform.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33332194",
+		"_collection_link": "https://xsamtech-developers.postman.co/workspace/Team-Workspace~a3a3becf-311c-450a-826d-2576c37a5e46/collection/33332194-a5cfc486-8158-437f-8645-156e7809ed72?action=share&source=collection_link&creator=33332194"
+	},
+	"item": [
+		{
+			"name": "Country",
+			"item": [
+				{
+					"name": "All countries",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/country",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"country"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a country",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "country_name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "country_phone_code",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "country_lang_code",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/country",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"country"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a country",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/country/{{country-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"country",
+								"{{country-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a country",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{country-id}}",
+									"type": "text"
+								},
+								{
+									"key": "country_name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "country_phone_code",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "country_lang_code",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/country/{{country-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"country",
+								"{{country-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a country",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/country/{{country-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"country",
+								"{{country-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find a country by its real name",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/country/search/{{real-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"country",
+								"search",
+								"{{real-name}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Currency",
+			"item": [
+				{
+					"name": "All currencies",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/currency",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"currency"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a currency",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "currency_name_en",
+									"value": "",
+									"description": "Currency name in English",
+									"type": "text"
+								},
+								{
+									"key": "currency_name_fr",
+									"value": "",
+									"description": "Currency name in French",
+									"type": "text"
+								},
+								{
+									"key": "currency_name_ln",
+									"value": "",
+									"description": "Currency name in Lingala",
+									"type": "text"
+								},
+								{
+									"key": "currency_acronym",
+									"value": "",
+									"description": "Currency acronym",
+									"type": "text"
+								},
+								{
+									"key": "currency_icon",
+									"value": "",
+									"description": "Currency icon (from Font Awesome)",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/currency",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"currency"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a currency",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/currency/{{currency-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"currency",
+								"{{currency-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a currency",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{currency-id}}",
+									"type": "text"
+								},
+								{
+									"key": "currency_name_en",
+									"value": "",
+									"description": "Currency name in English",
+									"type": "text"
+								},
+								{
+									"key": "currency_name_fr",
+									"value": "",
+									"description": "Currency name in French",
+									"type": "text"
+								},
+								{
+									"key": "currency_name_ln",
+									"value": "",
+									"description": "Currency name in Lingala",
+									"type": "text"
+								},
+								{
+									"key": "currency_acronym",
+									"value": "",
+									"description": "Currency acronym",
+									"type": "text"
+								},
+								{
+									"key": "currency_icon",
+									"value": "",
+									"description": "Currency icon (from Font Awesome)",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/currency/{{currency-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"currency",
+								"{{currency-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a currency",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/currency/{{currency-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"currency",
+								"{{currency-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search a currency",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/currency/search/{{approx-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"currency",
+								"search",
+								"{{approx-name}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CurrenciesRate",
+			"item": [
+				{
+					"name": "All currencies rates",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/currencies_rate",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"currencies_rate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a currencies rate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "rate",
+									"value": "",
+									"description": "The rate between 2 currencies",
+									"type": "text"
+								},
+								{
+									"key": "from_currency_id",
+									"value": "",
+									"description": "The given currency by its ID",
+									"type": "text"
+								},
+								{
+									"key": "to_currency_id",
+									"value": "",
+									"description": "The currency (by its ID) whose rate is wanted",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/currencies_rate",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"currencies_rate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a currencies rate",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/currencies_rate/{{rate-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"currencies_rate",
+								"{{rate-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a currencies rate",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{rate-id}}",
+									"type": "text"
+								},
+								{
+									"key": "rate",
+									"value": "",
+									"description": "The rate between 2 currencies",
+									"type": "text"
+								},
+								{
+									"key": "from_currency_id",
+									"value": "",
+									"description": "The given currency by its ID",
+									"type": "text"
+								},
+								{
+									"key": "to_currency_id",
+									"value": "",
+									"description": "The currency (by its ID) whose rate is wanted",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/currencies_rate/{{rate-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"currencies_rate",
+								"{{rate-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a currencies rate",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/currencies_rate/{{rate-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"currencies_rate",
+								"{{rate-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find a inter-currencies rate",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/currencies_rate/find_currency_rate/{{currency-acronym}}/{{currency-acronym}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"currencies_rate",
+								"find_currency_rate",
+								"{{currency-acronym}}",
+								"{{currency-acronym}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Role",
+			"item": [
+				{
+					"name": "All roles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/role",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a role",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "role_name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "role_description",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/role",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a role",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/role/{{role-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"role",
+								"{{role-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a role",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{role-id}}",
+									"type": "text"
+								},
+								{
+									"key": "role_name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "role_description",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/role/{{role-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"role",
+								"{{role-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a role",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/role/{{role-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"role",
+								"{{role-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a role by its real name",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/role/search/{{real-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"role",
+								"search",
+								"{{real-name}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Group",
+			"item": [
+				{
+					"name": "All groups",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/group",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"group"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a group",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "group_name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "group_description",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/group",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"group"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/group/{{group-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"group",
+								"{{group-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a group",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{group-id}}",
+									"type": "text"
+								},
+								{
+									"key": "group_name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "group_description",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/group/{{group-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"group",
+								"{{group-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a group",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/group/{{group-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"group",
+								"{{group-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Status",
+			"item": [
+				{
+					"name": "All statuses",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/status",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status_name_en",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "status_name_fr",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "status_name_ln",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "status_description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "icon",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "color",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "group_id",
+									"value": "{{group-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/status",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/status/{{status-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"status",
+								"{{status-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{status-id}}",
+									"type": "text"
+								},
+								{
+									"key": "status_name_en",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "status_name_fr",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "status_name_ln",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "status_description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "icon",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "color",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "group_id",
+									"value": "{{group-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/status/{{status-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"status",
+								"{{status-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a status",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/status/{{status-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"status",
+								"{{status-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a status by its real name",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/status/search/{{language}}/{{real-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"status",
+								"search",
+								"{{language}}",
+								"{{real-name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find statuses by group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/status/find_by_group/{{group-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"status",
+								"find_by_group",
+								"{{group-name}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Type",
+			"item": [
+				{
+					"name": "All types",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/type",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a type",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "type_name_en",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type_name_fr",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type_name_ln",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type_description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "alias",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "icon",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "group_id",
+									"value": "{{group-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/type",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a type",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/type/{{type-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"type",
+								"{{type-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a type",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "type_name_en",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type_name_fr",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type_name_ln",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type_description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "alias",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "icon",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "group_id",
+									"value": "{{group-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/type/{{type-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"type",
+								"{{type-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a type",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/type/{{type-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"type",
+								"{{type-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a type by its real name",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/type/search/{{language}}/{{real-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"type",
+								"search",
+								"{{language}}",
+								"{{real-name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find types by group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/type/find_by_group/{{group-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"type",
+								"find_by_group",
+								"{{group-name}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "All categories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/category",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "category_name_en",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "category_name_fr",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "category_name_ln",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "category_description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "icon",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "color",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "group_id",
+									"value": "{{group-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/category",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a category",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/category/{{category-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"category",
+								"{{category-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a category",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{category-id}}",
+									"type": "text"
+								},
+								{
+									"key": "category_name_en",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "category_name_fr",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "category_name_ln",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "category_description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "icon",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "color",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "group_id",
+									"value": "{{group-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/category/{{category-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"category",
+								"{{category-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a category",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/category/{{category-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"category",
+								"{{category-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a category by its real name",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/category/search/{{language}}/{{real-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"category",
+								"search",
+								"{{language}}",
+								"{{real-name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find categories by group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/category/find_by_group/{{group-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"category",
+								"find_by_group",
+								"{{group-name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All categories used in works",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/category/all_used_in_works",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"category",
+								"all_used_in_works"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All categories used in works type",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/category/all_used_in_works_type/{{type-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"category",
+								"all_used_in_works_type",
+								"{{type-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ReportReason",
+			"item": [
+				{
+					"name": "All reports reasons",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/report_reason",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"report_reason"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a report reason",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "reason_content_en",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "reason_content_fr",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "reason_content_ln",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "reports_count",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "blocked_for",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "entity",
+									"value": "{{entity}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/report_reason",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"report_reason"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a report reason",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/report_reason/{{reason-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"report_reason",
+								"{{reason-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a report reason",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{reason-id}}",
+									"type": "text"
+								},
+								{
+									"key": "reason_content_en",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "reason_content_fr",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "reason_content_ln",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "reports_count",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "blocked_for",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "entity",
+									"value": "{{entity}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/report_reason/{{reason-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"report_reason",
+								"{{reason-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a report reason",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/report_reason/{{reason-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"report_reason",
+								"{{reason-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find reports reasons by entity",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/report_reason/find_by_entity/{{entity}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"report_reason",
+								"find_by_entity",
+								"{{entity}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Work",
+			"item": [
+				{
+					"name": "All works",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/work",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a work",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "work_title",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "work_content",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "work_url",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "video_source",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "media_length",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "is_public",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "{{user-id}}",
+									"type": "text"
+								},
+								{
+									"key": "organization_id",
+									"value": "{{organization-id}}",
+									"type": "text"
+								},
+								{
+									"key": "category_id",
+									"value": "{{category-id}}",
+									"type": "text"
+								},
+								{
+									"key": "categories_ids[]",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "video_file_url",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "image_file_type_id",
+									"value": "{{image-type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "document_file_url",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "document_file_type_id",
+									"value": "{{document-type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "audio_file_url",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "audio_file_type_id",
+									"value": "{{audio-type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "file_name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "image_64",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "image_name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "image_type_id",
+									"value": "{{image-type-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/work",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a work",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/work/{{work-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work",
+								"{{work-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a work",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{work-id}}",
+									"type": "text"
+								},
+								{
+									"key": "work_title",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "work_content",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "work_url",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "status_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "organization_id",
+									"value": "{{organization-id}}",
+									"type": "text"
+								},
+								{
+									"key": "category_id",
+									"value": "{{category-id}}",
+									"type": "text"
+								},
+								{
+									"key": "categories_ids[]",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/work/{{work-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work",
+								"{{work-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a work",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/work/{{work-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work",
+								"{{work-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Trends of a specific year",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							},
+							{
+								"key": "X-user-id",
+								"value": "{{user-id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/work/trends/{{year}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work",
+								"trends",
+								"{{year}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All views in a work",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/work/find_views/{{work-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work",
+								"find_views",
+								"{{work-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All works by user or organization",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							},
+							{
+								"key": "X-user-id",
+								"value": "{{user-id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/work/find_all_by_entity/{{entity}}/{{entity-id}}?type_id={{type-id}}&status_id={{status-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work",
+								"find_all_by_entity",
+								"{{entity}}",
+								"{{entity-id}}"
+							],
+							"query": [
+								{
+									"key": "type_id",
+									"value": "{{type-id}}"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All works by type",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/work/find_all_by_type/{{language}}/{{type-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work",
+								"find_all_by_type",
+								"{{language}}",
+								"{{type-name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter works by categories",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"type": "text"
+								},
+								{
+									"key": "categories_ids[]",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/work/filter_by_categories",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work",
+								"filter_by_categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All works by user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/work/find_all_by_user/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work",
+								"find_all_by_user",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Switch a work view",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							},
+							{
+								"key": "X-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "X-ip-address",
+								"value": "{{ip-address}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/work/switch_view/{{work-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work",
+								"switch_view",
+								"{{work-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search (filtering) work",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							},
+							{
+								"key": "X-user-id",
+								"value": "{{user-id}}",
+								"type": "text"
+							},
+							{
+								"key": "X-ip-address",
+								"value": "{{ip-address}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "data",
+									"value": "{{approx-data}}",
+									"type": "text"
+								},
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"type": "text"
+								},
+								{
+									"key": "categories_ids",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/work/search",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload other files for work",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "work_id",
+									"value": "{{work-id}}",
+									"type": "text"
+								},
+								{
+									"key": "video_file_url",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "image_file_type_id",
+									"value": "{{image-type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "document_file_url",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "document_file_type_id",
+									"value": "{{document-type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "audio_file_url",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "audio_file_type_id",
+									"value": "{{audio-type-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/work/upload_files",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work",
+								"upload_files"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add image for work",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							},
+							{
+								"key": "X-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "X-ip-address",
+								"value": "{{ip-address}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "work_id",
+									"value": "{{work-id}}",
+									"type": "text"
+								},
+								{
+									"key": "image_64",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "file_name",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/work/add_image/{{work-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"work",
+								"add_image",
+								"{{work-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Like",
+			"item": [
+				{
+					"name": "All likes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/like",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a like",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user_id",
+									"value": "{{user-id}}",
+									"description": "The user (by his ID) who liked",
+									"type": "text"
+								},
+								{
+									"key": "for_work_id",
+									"value": "{{work-id}}",
+									"description": "Not empty if the user liked a work",
+									"type": "text"
+								},
+								{
+									"key": "for_message_id",
+									"value": "{{message-id}}",
+									"description": "Not empty if the user liked a message",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/like",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a like",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/like/{{like-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"like",
+								"{{like-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a like",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user_id",
+									"value": "{{user-id}}",
+									"description": "The user (by his ID) who liked",
+									"type": "text"
+								},
+								{
+									"key": "for_work_id",
+									"value": "{{work-id}}",
+									"description": "Not empty if the user liked a work",
+									"type": "text"
+								},
+								{
+									"key": "for_message_id",
+									"value": "{{message-id}}",
+									"description": "Not empty if the user liked a message",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/like/{{like-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"like",
+								"{{like-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a like",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/like/{{like-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"like",
+								"{{like-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Message",
+			"item": [
+				{
+					"name": "All messages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/message",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "message_content",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "answered_for",
+									"value": "{{another-message-id}}",
+									"type": "text"
+								},
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "{{user-id}}",
+									"type": "text"
+								},
+								{
+									"key": "addressee_user_id",
+									"value": "{{another-user-id}}",
+									"type": "text"
+								},
+								{
+									"key": "addressee_organization_id",
+									"value": "{{organization-id}}",
+									"type": "text"
+								},
+								{
+									"key": "addressee_circle_id",
+									"value": "{{circle-id}}",
+									"type": "text"
+								},
+								{
+									"key": "event_id",
+									"value": "{{event-id}}",
+									"type": "text"
+								},
+								{
+									"key": "file_url[]",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "file_type_id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "file_name",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/message",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a message",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/message/{{message-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"message",
+								"{{message-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a message",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "message_content",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "answered_for",
+									"value": "{{another-message-id}}",
+									"type": "text"
+								},
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "{{user-id}}",
+									"type": "text"
+								},
+								{
+									"key": "addressee_user_id",
+									"value": "{{another-user-id}}",
+									"type": "text"
+								},
+								{
+									"key": "addressee_organization_id",
+									"value": "{{organization-id}}",
+									"type": "text"
+								},
+								{
+									"key": "addressee_circle_id",
+									"value": "{{circle-id}}",
+									"type": "text"
+								},
+								{
+									"key": "event_id",
+									"value": "{{event-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/message/{{message-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"message",
+								"{{message-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a message",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/message/{{message-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"message",
+								"{{message-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chat with user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/message/chat_with_user/{{language}}/{{type-name}}/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"message",
+								"chat_with_user",
+								"{{language}}",
+								"{{type-name}}",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "File",
+			"item": [
+				{
+					"name": "All files",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/file",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a file",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file_name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "file_url",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "type_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "work_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/file",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a file",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/file/{{file-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"file",
+								"{{file-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a file",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "{{file-id}}",
+									"type": "text"
+								},
+								{
+									"key": "file_name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "file_url",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "type_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "work_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/file/{{file-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"file",
+								"{{file-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a file",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/file/{{file-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"file",
+								"{{file-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Subscription",
+			"item": [
+				{
+					"name": "All subscriptions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/subscription",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"subscription"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a subscription",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "number_of_hours",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "currency_id",
+									"value": "{{currency-id}}",
+									"type": "text"
+								},
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "category_id",
+									"value": "{{category-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/subscription",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"subscription"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a subscription",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/subscription/{{subscription-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"subscription",
+								"{{subscription-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a subscription",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "number_of_hours",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "currency_id",
+									"value": "{{currency-id}}",
+									"type": "text"
+								},
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "category_id",
+									"value": "{{category-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/subscription/{{subscription-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"subscription",
+								"{{subscription-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a subscription",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/subscription/{{subscription-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"subscription",
+								"{{subscription-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check if user is subscribed",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/subscription/is_subscribed/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"subscription",
+								"is_subscribed",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate a user subscription",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/subscription/validate_subscription/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"subscription",
+								"validate_subscription",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalidate a user subscription",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/subscription/invalidate_subscription/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"subscription",
+								"invalidate_subscription",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "All carts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/cart",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "payment_code",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "entity",
+									"value": "{{entity}}",
+									"type": "text"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "{{user-id}}",
+									"type": "text"
+								},
+								{
+									"key": "payment_id",
+									"value": "{{payment-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/cart",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a cart",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/cart/{{cart-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"cart",
+								"{{cart-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a cart",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{cart-id}}",
+									"type": "text"
+								},
+								{
+									"key": "payment_code",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "entity",
+									"value": "{{entity}}",
+									"type": "text"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "{{user-id}}",
+									"type": "text"
+								},
+								{
+									"key": "payment_id",
+									"value": "{{payment-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/cart",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a cart",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/cart/{{cart-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"cart",
+								"{{cart-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check existence in the cart",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/cart/is_inside/{{cart-id}}/{{entity}}/{{entity-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"cart",
+								"is_inside",
+								"{{cart-id}}",
+								"{{entity}}",
+								"{{entity-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add in the cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user_id",
+									"value": "{{user-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/cart/add_to_cart/{{entity}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"cart",
+								"add_to_cart",
+								"{{entity}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Withdraw from the cart",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "work_id",
+									"value": "{{work-id}}",
+									"type": "text"
+								},
+								{
+									"key": "subscription_id",
+									"value": "{{subscription-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/cart/remove_from_cart/{{cart-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"cart",
+								"remove_from_cart",
+								"{{cart-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Purchase items in the cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "transaction_type_id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "other_phone",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "channel",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "app_url",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/cart/purchase/{{cart-id}}/{{entity}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"cart",
+								"purchase",
+								"{{cart-id}}",
+								"{{entity}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PasswordReset",
+			"item": [
+				{
+					"name": "All password resets",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/password_reset",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"password_reset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a password reset",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "former_password",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/password_reset",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"password_reset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a password reset",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/password_reset/{{password-reset-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"password_reset",
+								"{{password-reset-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a password reset",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{password-reset-id}}",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "token",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "former_password",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/password_reset/{{password-reset-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"password_reset",
+								"{{password-reset-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a password reset",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/password_reset/{{password-reset-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"password_reset",
+								"{{password-reset-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search by email or phone",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/password_reset/search_by_email_or_phone/{{real-data}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"password_reset",
+								"search_by_email_or_phone",
+								"{{real-data}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search by email",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/password_reset/search_by_email/{{real-data}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"password_reset",
+								"search_by_email",
+								"{{real-data}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search by phone",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/password_reset/search_by_phone/{{real-data}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"password_reset",
+								"search_by_phone",
+								"{{real-data}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check the token validity",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "token",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/password_reset/check_token",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"password_reset",
+								"check_token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "All users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/user",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "firstname",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "lastname",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "birthdate",
+									"value": "",
+									"description": "YYYY-mm-dd",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "address_1",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "address_2",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "p_o_box",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "confirm_password",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "country_id",
+									"value": "{{country-id}}",
+									"type": "text"
+								},
+								{
+									"key": "role_id",
+									"value": "{{role-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/user",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/user/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a user",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{user-id}}",
+									"type": "text"
+								},
+								{
+									"key": "firstname",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "lastname",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "birthdate",
+									"value": "",
+									"description": "YYYY-mm-dd",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "address_1",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "address_2",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "p_o_box",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "email_verified_at",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "phone_verified_at",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "confirm_password",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "country_id",
+									"value": "{{country-id}}",
+									"type": "text"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/user/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a user",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/user/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log in a user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/user/login",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a user by his username",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/user/profile/{{username}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user",
+								"profile",
+								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All users with a specific role",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/user/find_by_role/{{real-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user",
+								"find_by_role",
+								"{{real-name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All users without a specific role",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/user/find_by_not_role/{{language}}/{{real-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user",
+								"find_by_not_role",
+								"{{language}}",
+								"{{real-name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All users with a specific status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/user/find_by_status/{{status-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user",
+								"find_by_status",
+								"{{status-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/user/switch_status/{{user-id}}/{{status-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user",
+								"switch_status",
+								"{{user-id}}",
+								"{{status-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user role",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "role_id",
+									"value": "{{role-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/user/update_role/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user",
+								"update_role",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user organization",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "organization_id",
+									"value": "{{organization-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/user/update_organization/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user",
+								"update_organization",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user password",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "former_password",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "new_password",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "confirm_new_password",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/user/update_password/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user",
+								"update_password",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user avatar",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user_id",
+									"value": "{{user-id}}",
+									"type": "text"
+								},
+								{
+									"key": "image_64",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/user/update_avatar_picture/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"user",
+								"update_avatar_picture",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Event",
+			"item": [
+				{
+					"name": "Select all",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/event",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add new",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "event_title",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "event_description",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "start_at",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "end_at",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "time_zone",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "is_virtual",
+									"value": "{{is-virtual}}",
+									"description": "Equal « 1 » if empty",
+									"type": "text"
+								},
+								{
+									"key": "event_place",
+									"value": "",
+									"description": "The address where will the event be",
+									"type": "text"
+								},
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"description": "Event type. See the « Type » folder",
+									"type": "default"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"description": "Event status. See the « Status » folder",
+									"type": "default"
+								},
+								{
+									"key": "user_id",
+									"value": "{{user-id}}",
+									"description": "The event organizer",
+									"type": "default"
+								},
+								{
+									"key": "fields_ids",
+									"value": "",
+									"description": "The fields related to the event (fields_ids[0], fields_ids[1], fields_ids[2], ...)",
+									"type": "default"
+								},
+								{
+									"key": "image_64",
+									"value": "",
+									"description": "The event cover in Base64",
+									"type": "text"
+								},
+								{
+									"key": "x",
+									"value": "",
+									"description": "Coordinate X for the event cover",
+									"type": "text"
+								},
+								{
+									"key": "y",
+									"value": "",
+									"description": "Coordinate Y for the event cover",
+									"type": "text"
+								},
+								{
+									"key": "width",
+									"value": "",
+									"description": "Event cover width",
+									"type": "text"
+								},
+								{
+									"key": "height",
+									"value": "",
+									"description": "Event cover height",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/event",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/event/{{event-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"{{event-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{event-id}}",
+									"type": "default"
+								},
+								{
+									"key": "event_title",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "event_description",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "start_at",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "end_at",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "time_zone",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "is_virtual",
+									"value": "{{is-virtual}}",
+									"type": "text"
+								},
+								{
+									"key": "event_place",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"description": "Event type. See the « Type » folder",
+									"type": "default"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"description": "Event status. See the « Status » folder",
+									"type": "default"
+								},
+								{
+									"key": "user_id",
+									"value": "{{user-id}}",
+									"description": "The event organizer",
+									"type": "default"
+								},
+								{
+									"key": "fields_ids",
+									"value": "",
+									"description": "The fields related to the event (fields_ids[0], fields_ids[1], fields_ids[2], ...)",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/event/{{event-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"{{event-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/event/{{event-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"{{event-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search an event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "data",
+									"value": "{{search-data}}",
+									"description": "If it's NULL, then check \"date_from\" and/or \"date_to\"",
+									"type": "default"
+								},
+								{
+									"key": "date_from",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "date_to",
+									"value": "",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/event/search/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"search",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find by access type",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/event/find_by_type/{{language}}/{{type-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"find_by_type",
+								"{{language}}",
+								"{{type-name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find by status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/event/find_by_status/{{language}}/{{status-name}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"find_by_status",
+								"{{language}}",
+								"{{status-name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find by user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/event/find_by_user/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"find_by_user",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All event speakers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/event/find_speakers/{{event-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"find_speakers",
+								"{{event-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All events filtered for user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"description": "Access type. See the « Type » folder",
+									"type": "default"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"description": "Event status. See the « Status » folder",
+									"type": "default"
+								},
+								{
+									"key": "fields_ids",
+									"value": "",
+									"description": "Fields related to the event (fields_ids[0], fields_ids[1], fields_ids[2], ...)",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/event/filter_for_user/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"filter_for_user",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All events filtered for everybody",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"description": "Access type. See the « Type » folder",
+									"type": "default"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"description": "Event status. See the « Status » folder",
+									"type": "default"
+								},
+								{
+									"key": "fields_ids",
+									"value": "",
+									"description": "Fields related to the event (fields_ids[0], fields_ids[1], fields_ids[2], ...)",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/event/filter_for_user",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"filter_for_user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add fields to event",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "field_id",
+									"value": "{{field-id}}",
+									"type": "default"
+								},
+								{
+									"key": "fields_ids",
+									"value": "",
+									"description": "Fields related to the event (fields_ids[0], fields_ids[1], fields_ids[2], ...)",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/event/add_fields/{{event-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"add_fields",
+								"{{event-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Withdraw fields to event",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "field_id",
+									"value": "{{field-id}}",
+									"type": "default"
+								},
+								{
+									"key": "fields_ids",
+									"value": "",
+									"description": "Fields related to the event (fields_ids[0], fields_ids[1], fields_ids[2], ...)",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/event/withdraw_fields/{{event-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"withdraw_fields",
+								"{{event-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update the event cover",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "event_id",
+									"value": "{{event-id}}",
+									"type": "default"
+								},
+								{
+									"key": "image_64",
+									"value": "",
+									"description": "The image sent in base 64",
+									"type": "default"
+								},
+								{
+									"key": "x",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "y",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "width",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "height",
+									"value": "",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/event/update_cover/{{event-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"update_cover",
+								"{{event-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload a file",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file_type_id",
+									"value": "",
+									"description": "The file type. See the « Type » folder",
+									"type": "text"
+								},
+								{
+									"key": "file_url",
+									"description": "The file to uplaod",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "file_name",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/event/upload_file/{{event-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"event",
+								"upload_file",
+								"{{event-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notification",
+			"item": [
+				{
+					"name": "All notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/notification",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"notification"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"type": "text"
+								},
+								{
+									"key": "from_user_id",
+									"value": "{{user-id}}",
+									"description": "The user who triggered the notification action",
+									"type": "text"
+								},
+								{
+									"key": "to_user_id",
+									"value": "{{user-id}}",
+									"description": "The user who experienced the action and receives the notification",
+									"type": "text"
+								},
+								{
+									"key": "work_id",
+									"value": "{{work-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/notification",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"notification"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a notification",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/notification/{{notification-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"notification",
+								"{{notification-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a notification",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "{{notification-id}}",
+									"type": "text"
+								},
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"type": "text"
+								},
+								{
+									"key": "from_user_id",
+									"value": "{{user-id}}",
+									"description": "The user who triggered the notification action",
+									"type": "text"
+								},
+								{
+									"key": "to_user_id",
+									"value": "{{user-id}}",
+									"description": "The user who experienced the action and receives the notification",
+									"type": "text"
+								},
+								{
+									"key": "work_id",
+									"value": "{{work-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/notification/{{notification-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"notification",
+								"{{notification-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a notification",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/notification/{{notification-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"notification",
+								"{{notification-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All user notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/notification/select_by_user/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"notification",
+								"select_by_user",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All user notifications by status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/notification/select_by_status_user/{{status-id}}/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"notification",
+								"select_by_status_user",
+								"{{status-id}}",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change notification status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/notification/switch_status/{{notification-id}}/{{status-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"notification",
+								"switch_status",
+								"{{notification-id}}",
+								"{{status-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "All payments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/payment",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a payment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "reference",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "provider_reference",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "orderNumber",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "amount",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "amountCustomer",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "currency",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "channel",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "code",
+									"value": "{{status-id}}",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "{{user-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/payment/store",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"payment",
+								"store"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select a payment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/payment/{{payment-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"payment",
+								"{{payment-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a payment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "reference",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "provider_reference",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "order_number",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "amount",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "amount_customer",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "currency",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "channel",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type_id",
+									"value": "{{type-id}}",
+									"type": "text"
+								},
+								{
+									"key": "status_id",
+									"value": "{{status-id}}",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "{{user-id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api-url}}/payment/{{payment-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"payment",
+								"{{payment-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a payment",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/payment/{{payment-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"payment",
+								"{{payment-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select by order number",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/payment/find_by_order_number/{{order-number}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"payment",
+								"find_by_order_number",
+								"{{order-number}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select by order number and user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/payment/find_by_order_number_user/{{order-number}}/{{user-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"payment",
+								"find_by_order_number_user",
+								"{{order-number}}",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All payments with a phone number",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/payment/find_by_phone/{{phone}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"payment",
+								"find_by_phone",
+								"{{phone}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change payment status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-localization",
+								"value": "{{language}}"
+							}
+						],
+						"url": {
+							"raw": "{{api-url}}/payment/switch_status/{{status-id}}/{{payment-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"payment",
+								"switch_status",
+								"{{status-id}}",
+								"{{payment-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{api-token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "api-url",
+			"value": "http://51.21.134.27/api",
+			"type": "string"
+		},
+		{
+			"key": "api-token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "language",
+			"value": "fr",
+			"type": "string"
+		},
+		{
+			"key": "year",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "real-data",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "approx-data",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "real-name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "approx-name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "country-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "group-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "group-name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "status-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "status-name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "type-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "image-type-id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "document-type-id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "audio-type-id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "type-name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "category-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "work-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "role-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "password-reset-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "username",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "email",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "phone",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "notification-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ip-address",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "file-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "subscription-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "payment-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "order-number",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cart-id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "organization-id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "entity",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "entity-id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "reason-id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "currency-id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "rate-id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "currency-acronym",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "message-id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "like-id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "another-message-id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "circle-id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "event-id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "another-user-id",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
