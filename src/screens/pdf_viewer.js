@@ -3,787 +3,268 @@
  * @note SQLite implementation migrated to expo-sqlite by Vander Otis.
  * @see https://team.xsamtech.com/xanderssamoth
  */
-
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  TouchableOpacity,
-  SafeAreaView,
-  Dimensions,
-  FlatList,
-  Text,
-  TextInput,
-  Modal,
-  Alert,
-} from 'react-native';
-
+import React, { useCallback, useEffect, useState } from 'react';
+import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTranslation } from 'react-i18next';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-
 import Pdf from 'react-native-pdf';
-import Spinner from 'react-native-loading-spinner-overlay';
 import * as SQLite from 'expo-sqlite';
 
-import { IMAGE_SIZE, PADDING } from '../tools/constants';
 import useColors from '../hooks/useColors';
 
 const Tab = createBottomTabNavigator();
 
-/**
- * ============================================================
- * SUMMARY / NOTES
- * ============================================================
- */
-const SummaryScreenContent = ({ route, navigation }) => {
-  // =============== Colors ===============
+const ReaderHeader = ({ navigation, title }) => {
   const COLORS = useColors();
 
-  // =============== Get parameters ===============
-  const { docTitle, docUri } = route.params;
+  return (
+    <SafeAreaView edges={['top']} style={{ backgroundColor: COLORS.white }}>
+      <View style={[styles.readerHeader, { borderBottomColor: COLORS.light_secondary }]}>
+        <TouchableOpacity style={[styles.backButton, { backgroundColor: COLORS.light_secondary }]} onPress={() => navigation.getParent()?.goBack()} accessibilityLabel="Retour">
+          <Icon name="chevron-left" size={24} color={COLORS.black} />
+        </TouchableOpacity>
+        <Text style={[styles.readerTitle, { color: COLORS.black }]} numberOfLines={1}>{title}</Text>
+      </View>
+    </SafeAreaView>
+  );
+};
 
-  // =============== Language ===============
+const SummaryScreenContent = ({ route, navigation }) => {
+  const COLORS = useColors();
   const { t } = useTranslation();
-
-  // =============== Get data ===============
+  const { docTitle, docUri } = route.params;
+  const [db, setDb] = useState(null);
   const [notes, setNotes] = useState([]);
-  const [noteItem, setNoteItem] = useState({});
-  const [expandedId, setExpandedId] = useState(null);
   const [page, setPage] = useState('');
   const [noteText, setNoteText] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
+  const [editingNote, setEditingNote] = useState(null);
 
-  // =============== SQLite database ===============
-  const [db, setDb] = useState(null);
-
-  /**
-   * Initialize SQLite database
-   */
   useEffect(() => {
-    let mounted = true;
+    let isMounted = true;
 
     const initializeDatabase = async () => {
       try {
         const database = await SQLite.openDatabaseAsync('notes.db');
-
         await database.execAsync(`
           CREATE TABLE IF NOT EXISTS BlocNotes(
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  page INTEGER,
-  noteText TEXT,
-  doc_title TEXT,
-  doc_uri TEXT
-);
-`);
-
-        if (mounted) {
-          setDb(database);
-        }
-
-        console.log('SQLite database initialized successfully');
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            page INTEGER,
+            noteText TEXT,
+            doc_title TEXT,
+            doc_uri TEXT
+          );
+        `);
+        if (isMounted) setDb(database);
       } catch (error) {
-        console.log('Error initializing SQLite database:', error);
-        Alert.alert(t('error'), 'Error initializing notes database');
+        console.error('Erreur lors de l’initialisation des notes:', error);
+        Alert.alert(t('error'), 'Impossible d’initialiser les notes.');
       }
     };
 
     initializeDatabase();
+    return () => { isMounted = false; };
+  }, [t]);
 
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  /**
-   * Load notes once database is ready
-   */
-  useEffect(() => {
-    if (db) {
-      loadNotes();
-    }
-  }, [db]);
-
-  // =============== Load notes ===============
-  const loadNotes = async () => {
-    if (!db) {
-      return;
-    }
+  const loadNotes = useCallback(async () => {
+    if (!db) return;
 
     try {
-      const rows = await db.getAllAsync(
-        'SELECT * FROM BlocNotes ORDER BY id DESC'
-      );
-
+      const rows = await db.getAllAsync('SELECT * FROM BlocNotes WHERE doc_uri = ? ORDER BY id DESC', [docUri]);
       setNotes(rows);
     } catch (error) {
-      console.log('Error loading notes:', error);
-      Alert.alert(t('error'), 'Error loading notes');
+      console.error('Erreur lors du chargement des notes:', error);
+      Alert.alert(t('error'), 'Impossible de charger les notes.');
     }
+  }, [db, docUri, t]);
+
+  useEffect(() => {
+    loadNotes();
+  }, [loadNotes]);
+
+  const resetForm = () => {
+    setPage('');
+    setNoteText('');
+    setEditingNote(null);
   };
 
-  // =============== Add note ===============
-  const addNote = async () => {
-    if (!db) {
-      return;
-    }
-
-    if (!noteText.trim()) {
-      Alert.alert(
-        t('error'),
-        t('error_message.cannot_be_empty')
-      );
+  const saveNote = async () => {
+    if (!db || !noteText.trim()) {
+      Alert.alert(t('error'), t('error_message.cannot_be_empty'));
       return;
     }
 
     try {
-      await db.runAsync(
-        `INSERT INTO BlocNotes
-  (page, noteText, doc_title, doc_uri)
-VALUES(?, ?, ?, ?)`,
-        [
-          parseInt(page, 10) || 0,
-          noteText,
-          docTitle,
-          docUri,
-        ]
-      );
-
-      console.log('Note saved successfully');
-
-      setPage('');
-      setNoteText('');
-
-      await loadNotes();
-    } catch (error) {
-      console.log('Error saving note:', error);
-      Alert.alert(t('error'), 'Error saving note');
-    }
-  };
-
-  // =============== Edit note ===============
-  const editNote = async (id) => {
-    if (!db) {
-      return;
-    }
-
-    if (!noteItem.noteText || !noteItem.noteText.trim()) {
-      Alert.alert(
-        t('error'),
-        t('error_message.cannot_be_empty')
-      );
-      return;
-    }
-
-    try {
-      await db.runAsync(
-        `UPDATE BlocNotes
-         SET page = ?, noteText = ?
-  WHERE id = ? `,
-        [
-          parseInt(noteItem.page, 10) || 0,
-          noteItem.noteText,
-          id,
-        ]
-      );
-
-      console.log('Note edited successfully');
-
-      setPage('');
-      setNoteText('');
-
-      await loadNotes();
-      setModalVisible(false);
-    } catch (error) {
-      console.log('Error editing note:', error);
-      Alert.alert(t('error'), 'Error editing note');
-    }
-  };
-
-  // =============== Delete note ===============
-  const deleteNote = async (id) => {
-    if (!db) {
-      return;
-    }
-
-    try {
-      await db.runAsync(
-        'DELETE FROM BlocNotes WHERE id = ?',
-        [id]
-      );
-
-      await loadNotes();
-    } catch (error) {
-      console.log('Error while deleting note:', error);
-      Alert.alert(t('error'), 'Error while deleting note');
-    }
-  };
-
-  // =============== Open modal ===============
-  const openModal = async (id) => {
-    if (!db) {
-      return;
-    }
-
-    try {
-      const data = await db.getFirstAsync(
-        'SELECT * FROM BlocNotes WHERE id = ?',
-        [id]
-      );
-
-      if (data) {
-        setNoteItem(data);
-        setModalVisible(true);
+      if (editingNote) {
+        await db.runAsync('UPDATE BlocNotes SET page = ?, noteText = ? WHERE id = ?', [Number(page) || 0, noteText.trim(), editingNote.id]);
+      } else {
+        await db.runAsync('INSERT INTO BlocNotes (page, noteText, doc_title, doc_uri) VALUES (?, ?, ?, ?)', [Number(page) || 0, noteText.trim(), docTitle, docUri]);
       }
+      resetForm();
+      await loadNotes();
     } catch (error) {
-      console.log('Error loading note:', error);
-      Alert.alert(t('error'), 'Error loading note');
+      console.error('Erreur lors de l’enregistrement de la note:', error);
+      Alert.alert(t('error'), 'Impossible d’enregistrer la note.');
     }
   };
 
-  // =============== Edit button ===============
-  const editButtonPress = (id) => {
-    openModal(id);
+  const deleteNote = note => {
+    Alert.alert(t('notepad.title'), 'Supprimer cette note ?', [
+      { text: t('cancel'), style: 'cancel' },
+      {
+        text: t('delete.just'),
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await db?.runAsync('DELETE FROM BlocNotes WHERE id = ?', [note.id]);
+            if (editingNote?.id === note.id) resetForm();
+            await loadNotes();
+          } catch (error) {
+            console.error('Erreur lors de la suppression de la note:', error);
+          }
+        },
+      },
+    ]);
   };
 
-  // =============== Go to page ===============
-  const goToPage = (pageNumber, doc_uri) => {
-    navigation.navigate('PDFViewerContent', {
-      isLoading: false,
-      docUri: doc_uri,
-      curPage: parseInt(pageNumber, 10) || 1,
-    });
-
-    console.log('goToPage => ' + pageNumber);
+  const editNote = note => {
+    setEditingNote(note);
+    setPage(String(note.page || ''));
+    setNoteText(note.noteText || '');
   };
 
-  // =============== Render note ===============
-  const renderNoteItem = ({ item }) => {
-    const isExpanded = item.id === expandedId;
-    const maxLength = 34;
-
-    const displayTitle =
-      isExpanded
-        ? item.doc_title
-        : item.doc_title?.length > maxLength
-          ? `${item.doc_title.substring(0, maxLength)}...`
-          : item.doc_title;
-
-    const displayText =
-      isExpanded
-        ? item.noteText
-        : item.noteText?.length > maxLength
-          ? `${item.noteText.substring(0, maxLength)}...`
-          : item.noteText;
-
-    return (
-      <View
-        style={[
-          homeStyles.noteContainer,
-          {
-            backgroundColor: COLORS.white,
-            borderColor: COLORS.dark_secondary,
-          },
-        ]}
-      >
-        <TouchableOpacity
-          onPress={() => goToPage(item.page, item.doc_uri)}
-          style={homeStyles.noteTextContainer}
-        >
-          <Text
-            style={[
-              homeStyles.noteWorkTitle,
-              { color: COLORS.dark_secondary },
-            ]}
-          >
-            {displayTitle}
-          </Text>
-
-          <Text
-            style={[
-              homeStyles.noteText,
-              { color: COLORS.black },
-            ]}
-          >
-            {displayText}
-          </Text>
-
-          {item.noteText?.length > maxLength ? (
-            <TouchableOpacity
-              onPress={() =>
-                setExpandedId(
-                  isExpanded ? null : item.id
-                )
-              }
-              style={homeStyles.noteSeeTextButton}
-            >
-              <Icon
-                size={IMAGE_SIZE.s06}
-                color={COLORS.dark_secondary}
-                name={
-                  isExpanded
-                    ? 'chevron-double-up'
-                    : 'chevron-double-down'
-                }
-              />
-            </TouchableOpacity>
-          ) : null}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => editButtonPress(item.id)}
-          style={homeStyles.noteEditButton}
-        >
-          <Icon
-            size={IMAGE_SIZE.s04}
-            color={COLORS.dark_secondary}
-            name="pencil"
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => deleteNote(item.id)}
-          style={homeStyles.noteDeleteButton}
-        >
-          <Icon
-            size={IMAGE_SIZE.s04}
-            color={COLORS.dark_secondary}
-            name="close"
-          />
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
-  return (
-    <>
-      <View
-        style={{
-          paddingVertical: PADDING.p01,
-          backgroundColor: COLORS.white,
-        }}
-      />
-
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: COLORS.light_secondary,
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: COLORS.light_secondary,
-          }}
-        >
-          <Text
-            style={[
-              homeStyles.noteTitle,
-              { color: COLORS.black },
-            ]}
-          >
-            {t('notepad.title')}
-          </Text>
-
-          <View style={homeStyles.noteForm}>
-            <TextInput
-              keyboardType="number-pad"
-              style={[
-                homeStyles.noteInput,
-                {
-                  color: COLORS.black,
-                  borderColor: COLORS.dark,
-                  borderTopLeftRadius: PADDING.p03,
-                  borderTopRightRadius: PADDING.p03,
-                },
-              ]}
-              placeholder={t('notepad.page_number')}
-              placeholderTextColor={COLORS.dark}
-              value={page}
-              onChangeText={setPage}
-            />
-
-            <TextInput
-              multiline
-              numberOfLines={5}
-              style={[
-                homeStyles.noteInput,
-                {
-                  height: 80,
-                  color: COLORS.black,
-                  textAlignVertical: 'top',
-                  borderColor: COLORS.dark,
-                },
-              ]}
-              placeholder={t('notepad.enter_note')}
-              placeholderTextColor={COLORS.dark}
-              value={noteText}
-              onChangeText={setNoteText}
-            />
-
-            <TouchableOpacity
-              style={[
-                homeStyles.noteSubmit,
-                {
-                  backgroundColor: COLORS.dark,
-                  borderBottomLeftRadius: PADDING.p03,
-                  borderBottomRightRadius: PADDING.p03,
-                },
-              ]}
-              onPress={addNote}
-            >
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: 15,
-                  color: COLORS.white,
-                }}
-              >
-                {t('save')}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {noteItem.id ? (
-            <Modal
-              animationType="slide"
-              transparent
-              visible={modalVisible}
-              onRequestClose={() =>
-                setModalVisible(false)
-              }
-            >
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                }}
-              >
-                <View
-                  style={{
-                    width: 300,
-                    padding: 20,
-                    backgroundColor: COLORS.white,
-                    borderRadius: 10,
-                    alignItems: 'center',
-                  }}
-                >
-                  <TouchableOpacity
-                    style={[
-                      homeStyles.modalClose,
-                      {
-                        backgroundColor:
-                          'rgba(255, 255, 255, 0)',
-                      },
-                    ]}
-                    onPress={() =>
-                      setModalVisible(false)
-                    }
-                  >
-                    <Icon
-                      style={homeStyles.noteButtonIcon}
-                      color={COLORS.black}
-                      name="close"
-                    />
-                  </TouchableOpacity>
-
-                  <Text
-                    style={[
-                      homeStyles.noteTitle,
-                      { color: COLORS.black },
-                    ]}
-                  >
-                    {t('notepad.title_edit')}
-                  </Text>
-
-                  <View style={homeStyles.noteForm}>
-                    <TextInput
-                      keyboardType="numeric"
-                      style={[
-                        homeStyles.noteInput,
-                        {
-                          width:
-                            Dimensions.get('window').width -
-                            100,
-                          color: COLORS.black,
-                          borderColor:
-                            COLORS.dark_secondary,
-                        },
-                      ]}
-                      placeholderTextColor={
-                        COLORS.dark_secondary
-                      }
-                      placeholder={t(
-                        'notepad.page_number'
-                      )}
-                      value={String(
-                        noteItem.page ?? ''
-                      )}
-                      onChangeText={(text) =>
-                        setNoteItem({
-                          ...noteItem,
-                          page: text,
-                        })
-                      }
-                    />
-
-                    <TextInput
-                      multiline
-                      numberOfLines={5}
-                      style={[
-                        homeStyles.noteInput,
-                        {
-                          width:
-                            Dimensions.get('window').width -
-                            100,
-                          height: 80,
-                          color: COLORS.black,
-                          textAlignVertical: 'top',
-                          borderColor:
-                            COLORS.dark_secondary,
-                        },
-                      ]}
-                      placeholderTextColor={
-                        COLORS.dark_secondary
-                      }
-                      placeholder={t(
-                        'notepad.enter_note'
-                      )}
-                      value={noteItem.noteText}
-                      onChangeText={(text) =>
-                        setNoteItem({
-                          ...noteItem,
-                          noteText: text,
-                        })
-                      }
-                    />
-
-                    <TouchableOpacity
-                      style={[
-                        homeStyles.noteSubmit,
-                        {
-                          width:
-                            Dimensions.get('window').width -
-                            100,
-                          backgroundColor:
-                            COLORS.warning,
-                        },
-                      ]}
-                      onPress={() =>
-                        editNote(noteItem.id)
-                      }
-                    >
-                      <Text
-                        style={{
-                          textAlign: 'center',
-                          fontSize: 15,
-                          color: COLORS.black,
-                        }}
-                      >
-                        {t('update')}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            </Modal>
-          ) : null}
-
-          <FlatList
-            data={notes}
-            keyExtractor={(item) =>
-              String(item.id)
-            }
-            style={{
-              marginLeft: -10,
-              marginTop: 16,
-            }}
-            renderItem={renderNoteItem}
-          />
-        </View>
-      </SafeAreaView>
-    </>
-  );
-};
-
-/**
- * ============================================================
- * PDF VIEWER
- * ============================================================
- */
-const PDFViewerScreenContent = ({
-  route,
-  navigation,
-}) => {
-  // =============== Colors ===============
-  const COLORS = useColors();
-
-  // =============== Get parameters ===============
-  const {
-    isLoading,
-    docUri,
-    curPage,
-  } = route.params;
-
-  const source = {
-    uri: docUri,
-    cache: true,
-  };
-
-  return (
-    <>
-      <View
-        style={{
-          paddingVertical: PADDING.p01,
-          backgroundColor: COLORS.white,
-        }}
-      />
-
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: COLORS.dark_secondary,
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            marginTop: 5,
-          }}
-        >
-          <Spinner visible={isLoading} />
-
-          <Pdf
-            trustAllCerts={false}
-            source={source}
-            onLoadComplete={(
-              numberOfPages,
-              filePath
-            ) => {
-              console.log(
-                `Number of pages: ${numberOfPages} `
-              );
-            }}
-            onPageChanged={(
-              page,
-              numberOfPages
-            ) => {
-              console.log(
-                `Current page: ${page} `
-              );
-            }}
-            onError={(error) => {
-              console.log(error);
-            }}
-            onPressLink={(uri) => {
-              console.log(
-                `Link pressed: ${uri} `
-              );
-            }}
-            page={curPage}
-            style={{
-              flex: 1,
-              width:
-                Dimensions.get('window').width,
-              height:
-                Dimensions.get('window').height,
-            }}
-          />
-        </View>
-      </SafeAreaView>
-    </>
-  );
-};
-
-/**
- * ============================================================
- * MAIN PDF SCREEN
- * ============================================================
- */
-const PDFViewerScreen = ({ route }) => {
-  // =============== Colors ===============
-  const COLORS = useColors();
-
-  // =============== Get parameters ===============
-  const {
+  const openPage = note => navigation.navigate('PDFViewerContent', {
     docTitle,
-    docUri,
-  } = route.params;
+    docUri: note.doc_uri,
+    curPage: Number(note.page) || 1,
+  });
 
-  // =============== Language ===============
+  return (
+    <View style={[styles.summaryScreen, { backgroundColor: COLORS.light }]}>
+      <ReaderHeader navigation={navigation} title={t('navigation.summary')} />
+      <View style={styles.summaryContent}>
+        <View style={[styles.noteFormCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
+          <View style={styles.noteFormHeading}>
+            <View style={[styles.noteIcon, { backgroundColor: COLORS.light_primary }]}><Icon name="note-text-outline" size={22} color={COLORS.primary} /></View>
+            <View style={styles.noteHeadingCopy}>
+              <Text style={[styles.noteHeadingTitle, { color: COLORS.black }]}>{editingNote ? t('notepad.title_edit') : t('notepad.title')}</Text>
+              <Text style={[styles.noteHeadingDescription, { color: COLORS.dark }]}>{docTitle}</Text>
+            </View>
+          </View>
+          <TextInput keyboardType="number-pad" style={[styles.pageInput, { backgroundColor: COLORS.light, borderColor: COLORS.light_secondary, color: COLORS.black }]} placeholder={t('notepad.page_number')} placeholderTextColor={COLORS.dark} value={page} onChangeText={setPage} />
+          <TextInput multiline textAlignVertical="top" style={[styles.noteInput, { backgroundColor: COLORS.light, borderColor: COLORS.light_secondary, color: COLORS.black }]} placeholder={t('notepad.enter_note')} placeholderTextColor={COLORS.dark} value={noteText} onChangeText={setNoteText} />
+          <View style={styles.formActions}>
+            {editingNote ? <TouchableOpacity style={[styles.cancelEdit, { backgroundColor: COLORS.light_secondary }]} onPress={resetForm}><Text style={[styles.cancelEditText, { color: COLORS.dark }]}>{t('cancel')}</Text></TouchableOpacity> : null}
+            <TouchableOpacity style={[styles.saveButton, { backgroundColor: COLORS.primary }]} onPress={saveNote}><Icon name={editingNote ? 'check' : 'content-save-outline'} size={18} color="#ffffff" /><Text style={styles.saveButtonText}>{editingNote ? t('update') : t('save')}</Text></TouchableOpacity>
+          </View>
+        </View>
+
+        <FlatList
+          data={notes}
+          keyExtractor={item => String(item.id)}
+          contentContainerStyle={notes.length ? styles.notesList : styles.emptyNotesList}
+          ListEmptyComponent={<View style={[styles.emptyNotes, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}><Icon name="notebook-outline" size={34} color={COLORS.primary} /><Text style={[styles.emptyNotesText, { color: COLORS.dark }]}>{t('notepad.empty')}</Text></View>}
+          renderItem={({ item }) => (
+            <View style={[styles.noteCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
+              <TouchableOpacity style={styles.noteMain} onPress={() => openPage(item)} activeOpacity={0.78}>
+                <View style={[styles.notePage, { backgroundColor: COLORS.light_primary }]}><Text style={[styles.notePageText, { color: COLORS.primary }]}>{item.page || 1}</Text></View>
+                <Text style={[styles.noteText, { color: COLORS.black }]} numberOfLines={3}>{item.noteText}</Text>
+              </TouchableOpacity>
+              <View style={styles.noteActions}>
+                <TouchableOpacity style={[styles.noteAction, { backgroundColor: COLORS.light_secondary }]} onPress={() => editNote(item)} accessibilityLabel="Modifier la note"><Icon name="pencil-outline" size={18} color={COLORS.dark} /></TouchableOpacity>
+                <TouchableOpacity style={[styles.noteAction, { backgroundColor: COLORS.danger_transparent }]} onPress={() => deleteNote(item)} accessibilityLabel="Supprimer la note"><Icon name="trash-can-outline" size={18} color={COLORS.danger} /></TouchableOpacity>
+              </View>
+            </View>
+          )}
+        />
+      </View>
+    </View>
+  );
+};
+
+const PDFViewerScreenContent = ({ route, navigation }) => {
+  const COLORS = useColors();
   const { t } = useTranslation();
+  const { docTitle, docUri, curPage = 1 } = route.params;
+  const [pageCount, setPageCount] = useState(null);
+
+  return (
+    <View style={[styles.pdfScreen, { backgroundColor: COLORS.dark_secondary }]}>
+      <ReaderHeader navigation={navigation} title={docTitle || t('navigation.reading')} />
+      <View style={styles.pdfBody}>
+        {pageCount ? <View style={styles.pageCount}><Text style={styles.pageCountText}>{`${curPage} / ${pageCount}`}</Text></View> : null}
+        <Pdf
+          trustAllCerts={false}
+          source={{ uri: docUri, cache: true }}
+          page={curPage}
+          onLoadComplete={numberOfPages => setPageCount(numberOfPages)}
+          onError={error => { console.error('Erreur du lecteur PDF:', error); Alert.alert(t('error'), 'Impossible d’ouvrir ce document.'); }}
+          style={styles.pdf}
+        />
+      </View>
+    </View>
+  );
+};
+
+const PDFViewerScreen = ({ route }) => {
+  const COLORS = useColors();
+  const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  const { docTitle, docUri } = route.params;
 
   return (
     <Tab.Navigator
       initialRouteName="PDFViewerContent"
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: COLORS.black,
-        tabBarStyle: {
-          height: 55,
-          backgroundColor: COLORS.white,
-        },
-        tabBarShowLabel: true,
-        headerStyle: {
-          backgroundColor: COLORS.white,
-        },
-        headerTitleStyle: {
-          color: COLORS.black,
-        },
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.dark,
+        tabBarStyle: [styles.tabBar, { backgroundColor: COLORS.white, borderTopColor: COLORS.light_secondary, height: 58 + insets.bottom, paddingBottom: insets.bottom }],
       }}
     >
-      <Tab.Screen
-        name="PDFViewerContent"
-        component={PDFViewerScreenContent}
-        initialParams={{
-          docTitle,
-          docUri,
-          isLoading: false,
-          curPage: 1,
-        }}
-        options={{
-          title: t('navigation.reading'),
-          tabBarLabel: t('navigation.reading'),
-          tabBarIcon: ({
-            color,
-            size,
-          }) => (
-            <Icon
-              name="book-open-page-variant"
-              color={color}
-              size={size}
-            />
-          ),
-        }}
-      />
-
-      <Tab.Screen
-        name="Summary"
-        component={SummaryScreenContent}
-        initialParams={{
-          docTitle,
-          docUri,
-        }}
-        options={{
-          title: t('navigation.summary'),
-          tabBarLabel: t('navigation.summary'),
-          tabBarIcon: ({
-            color,
-            size,
-          }) => (
-            <Icon
-              name="note-text-outline"
-              color={color}
-              size={size}
-            />
-          ),
-        }}
-      />
+      <Tab.Screen name="PDFViewerContent" component={PDFViewerScreenContent} initialParams={{ docTitle, docUri, curPage: 1 }} options={{ title: t('navigation.reading'), tabBarLabel: t('navigation.reading'), tabBarIcon: ({ color, size }) => <Icon name="book-open-page-variant" color={color} size={size} /> }} />
+      <Tab.Screen name="Summary" component={SummaryScreenContent} initialParams={{ docTitle, docUri }} options={{ title: t('navigation.summary'), tabBarLabel: t('navigation.summary'), tabBarIcon: ({ color, size }) => <Icon name="note-text-outline" color={color} size={size} /> }} />
     </Tab.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  readerHeader: { alignItems: 'center', borderBottomWidth: StyleSheet.hairlineWidth, flexDirection: 'row', minHeight: 64, paddingHorizontal: 16 },
+  backButton: { alignItems: 'center', borderRadius: 18, height: 36, justifyContent: 'center', width: 36 },
+  readerTitle: { flex: 1, fontSize: 16, fontWeight: '800', marginLeft: 10 },
+  summaryScreen: { flex: 1 },
+  summaryContent: { flex: 1, padding: 16 },
+  noteFormCard: { borderRadius: 20, borderWidth: 1, padding: 16 },
+  noteFormHeading: { alignItems: 'center', flexDirection: 'row', marginBottom: 14 },
+  noteIcon: { alignItems: 'center', borderRadius: 17, height: 42, justifyContent: 'center', width: 42 },
+  noteHeadingCopy: { flex: 1, marginLeft: 10 },
+  noteHeadingTitle: { fontSize: 16, fontWeight: '800' },
+  noteHeadingDescription: { fontSize: 12, marginTop: 2 },
+  pageInput: { borderRadius: 12, borderWidth: 1, fontSize: 14, minHeight: 46, paddingHorizontal: 12 },
+  noteInput: { borderRadius: 12, borderWidth: 1, fontSize: 14, height: 104, marginTop: 9, padding: 12 },
+  formActions: { flexDirection: 'row', gap: 8, marginTop: 10 },
+  cancelEdit: { alignItems: 'center', borderRadius: 12, justifyContent: 'center', minHeight: 46, paddingHorizontal: 14 },
+  cancelEditText: { fontSize: 14, fontWeight: '800' },
+  saveButton: { alignItems: 'center', borderRadius: 12, flex: 1, flexDirection: 'row', justifyContent: 'center', minHeight: 46 },
+  saveButtonText: { color: '#ffffff', fontSize: 14, fontWeight: '800', marginLeft: 7 },
+  notesList: { gap: 9, paddingTop: 14, paddingBottom: 18 },
+  emptyNotesList: { flexGrow: 1, justifyContent: 'center', paddingBottom: 70 },
+  emptyNotes: { alignItems: 'center', borderRadius: 20, borderWidth: 1, padding: 24 },
+  emptyNotesText: { fontSize: 14, marginTop: 10, textAlign: 'center' },
+  noteCard: { borderRadius: 17, borderWidth: 1, padding: 12 },
+  noteMain: { alignItems: 'center', flexDirection: 'row' },
+  notePage: { alignItems: 'center', borderRadius: 15, height: 40, justifyContent: 'center', width: 40 },
+  notePageText: { fontSize: 14, fontWeight: '800' },
+  noteText: { flex: 1, fontSize: 14, lineHeight: 20, marginLeft: 10 },
+  noteActions: { flexDirection: 'row', gap: 8, justifyContent: 'flex-end', marginTop: 10 },
+  noteAction: { alignItems: 'center', borderRadius: 14, height: 30, justifyContent: 'center', width: 30 },
+  pdfScreen: { flex: 1 },
+  pdfBody: { flex: 1 },
+  pageCount: { backgroundColor: 'rgba(0, 0, 0, 0.58)', borderRadius: 12, paddingHorizontal: 9, paddingVertical: 5, position: 'absolute', right: 14, top: 14, zIndex: 1 },
+  pageCountText: { color: '#ffffff', fontSize: 12, fontWeight: '800' },
+  pdf: { flex: 1, width: '100%' },
+  tabBar: { borderTopWidth: StyleSheet.hairlineWidth },
+});
 
 export default PDFViewerScreen;

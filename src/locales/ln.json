@@ -57,7 +57,8 @@
         "title": "Bomba ba résumés",
         "title_edit": "Bongisa résumé",
         "page_number": "Motángo ya lokasa",
-        "enter_note": "Kotisa note na yo"
+        "enter_note": "Kotisa note na yo",
+        "empty": "Note moko te ezali mpo na document oyo."
     },
     "chat": {
         "new": "Banda masolo",
@@ -69,6 +70,7 @@
     },
     "video_ended": "Video esili!",
     "success": {
+        "title": "Elonga",
         "whatsapp": "Whatsapp ezali polele."
     },
     "error": "Libunga :",
@@ -302,7 +304,9 @@
     },
     "media": {
         "title": "Kotanga média",
-        "description": "Ez’otanga..."
+        "description": "Ez’otanga...",
+        "unavailable": "Video oyo ezali disponible te mpo na sik’oyo.",
+        "retry": "Meka lisusu"
     },
     "navigation": {
         "home": {

@@ -57,7 +57,8 @@
         "title": "Enregistrez des résumés",
         "title_edit": "Editer le résumé",
         "page_number": "Numéro page",
-        "enter_note": "Entrer votre note"
+        "enter_note": "Entrer votre note",
+        "empty": "Aucune note pour ce document."
     },
     "chat": {
         "new": "Démarrer une discussion",
@@ -69,6 +70,7 @@
     },
     "video_ended": "La vidéo est terminée !",
     "success": {
+        "title": "Succès",
         "whatsapp": "Whatsapp est bien ouvert."
     },
     "error": "Erreur :",
@@ -302,7 +304,9 @@
     },
     "media": {
         "title": "Lecture média",
-        "description": "En cours..."
+        "description": "En cours...",
+        "unavailable": "Cette vidéo n’est pas disponible pour le moment.",
+        "retry": "Réessayer"
     },
     "navigation": {
         "home": {

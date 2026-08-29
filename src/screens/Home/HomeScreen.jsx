@@ -3,7 +3,7 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { View, TouchableOpacity, Animated, Dimensions, RefreshControl, FlatList, Text, StyleSheet } from 'react-native';
+import { ActivityIndicator, View, TouchableOpacity, Animated, Dimensions, RefreshControl, FlatList, Text, StyleSheet } from 'react-native';
 import { TabBar, TabView } from 'react-native-tab-view';
 import { useTranslation } from 'react-i18next';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
@@ -20,9 +20,17 @@ import useColors from '../../hooks/useColors';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const screenWidth = Dimensions.get('window').width;
+const AUTO_REFRESH_MS = 60000;
+
+const LoadingList = ({ COLORS, label }) => (
+  <View style={styles.loadingState}>
+    <ActivityIndicator size="large" color={COLORS.primary} />
+    <Text style={[styles.loadingLabel, { color: COLORS.dark }]}>{label}</Text>
+  </View>
+);
 
 // News frame
-const News = ({ handleScroll, listRef, contentTopInset }) => {
+const News = ({ handleScroll, isActive, listRef, contentTopInset }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const { userInfo } = useContext(AuthContext);
@@ -32,18 +40,18 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [count, setCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const fallbackListRef = useRef(null);
   const flatListRef = listRef || fallbackListRef;
   const loadingRef = useRef(false);
   const lastPageRef = useRef(1);
 
-  const fetchWorks = useCallback(async (pageToFetch = 1) => {
+  const fetchWorks = useCallback(async (pageToFetch = 1, silent = false) => {
     if (!userInfo?.api_token || loadingRef.current || (pageToFetch > lastPageRef.current && pageToFetch !== 1)) return;
 
     loadingRef.current = true;
-    setIsLoading(true);
+    if (!silent) setIsLoading(true);
     const qs = require('qs');
     const url = `${API.boongo_url}/work/filter_by_categories?page=${pageToFetch}`;
     const mParams = { type_id: 33, status_id: 17 };
@@ -75,7 +83,7 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
       }
     } finally {
       loadingRef.current = false;
-      setIsLoading(false);
+      if (!silent) setIsLoading(false);
     }
   }, [userInfo?.api_token]);
 
@@ -88,6 +96,13 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
       fetchWorks(page);
     }
   }, [page, fetchWorks]);
+
+  useEffect(() => {
+    if (!isActive) return undefined;
+
+    const interval = setInterval(() => fetchWorks(1, true), AUTO_REFRESH_MS);
+    return () => clearInterval(interval);
+  }, [fetchWorks, isActive]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -130,15 +145,9 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
               progressViewOffset={105}
             />
           }
-          ListEmptyComponent={
-            <EmptyListComponent
-              iconName='script-text-outline'
-              title={t('empty_list.title')}
-              description={t('empty_list.description_news')}
-            />
-          }
+          ListEmptyComponent={isLoading ? <LoadingList COLORS={COLORS} label={t('loading')} /> : <EmptyListComponent iconName='script-text-outline' title={t('empty_list.title')} description={t('empty_list.description_news')} />}
           ListFooterComponent={() =>
-            isLoading ? (
+            isLoading && combinedData.length > 0 ? (
               <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text>
             ) : null
           }
@@ -149,7 +158,7 @@ const News = ({ handleScroll, listRef, contentTopInset }) => {
 };
 
 // Books frame
-const Books = ({ handleScroll, listRef, contentTopInset }) => {
+const Books = ({ handleScroll, isActive, listRef, contentTopInset }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const { userInfo } = useContext(AuthContext);
@@ -161,7 +170,7 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [count, setCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const fallbackListRef = useRef(null);
   const flatListRef = listRef || fallbackListRef;
@@ -193,10 +202,10 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
     fetchCategories();
   }, [fetchCategories]);
 
-  const fetchBooks = useCallback(async (pageToFetch = 1) => {
+  const fetchBooks = useCallback(async (pageToFetch = 1, silent = false) => {
     if (!userInfo?.api_token || loadingRef.current || (pageToFetch > lastPageRef.current && pageToFetch !== 1)) return;
     loadingRef.current = true;
-    setIsLoading(true);
+    if (!silent) setIsLoading(true);
 
     const qs = require('qs');
     const url = `${API.boongo_url}/work/filter_by_categories?page=${pageToFetch}`;
@@ -225,13 +234,20 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
       console.error('Erreur fetchBooks', error);
     } finally {
       loadingRef.current = false;
-      setIsLoading(false);
+      if (!silent) setIsLoading(false);
     }
   }, [userInfo?.api_token, idCat]);
 
   useEffect(() => {
     fetchBooks(page);
   }, [page, idCat, fetchBooks]);
+
+  useEffect(() => {
+    if (!isActive) return undefined;
+
+    const interval = setInterval(() => fetchBooks(1, true), AUTO_REFRESH_MS);
+    return () => clearInterval(interval);
+  }, [fetchBooks, isActive]);
 
   const combinedData = [...books];
   if (ad) {
@@ -292,7 +308,7 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
           windowSize={10}
           contentContainerStyle={[styles.listContent, { paddingTop: contentTopInset }]}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={105} />}
-          ListEmptyComponent={<EmptyListComponent iconName="book-open-page-variant-outline" title={t('empty_list.title')} description={t('empty_list.description_books')} />}
+          ListEmptyComponent={isLoading ? <LoadingList COLORS={COLORS} label={t('loading')} /> : <EmptyListComponent iconName="book-open-page-variant-outline" title={t('empty_list.title')} description={t('empty_list.description_books')} />}
           ListHeaderComponent={
             <FlatList
               data={categories}
@@ -307,56 +323,58 @@ const Books = ({ handleScroll, listRef, contentTopInset }) => {
               renderItem={({ item }) => <CategoryItem item={item} />}
             />
           }
-          ListFooterComponent={() => isLoading ? (<Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text>) : null}
+          ListFooterComponent={() => isLoading && combinedData.length > 0 ? (<Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text>) : null}
         />
       </SafeAreaView>
     </View>
   );
 };
 
-const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, contentTopInset }) => {
+const ProgramWorks = ({ typeId, emptyDescriptionKey, handleScroll, isActive, listRef, contentTopInset }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const { userInfo } = useContext(AuthContext);
+  const [categories, setCategories] = useState([]);
+  const [idCat, setIdCat] = useState(0);
   const [works, setWorks] = useState([]);
   const [ad, setAd] = useState(null);
-  const [typeId, setTypeId] = useState(null);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const fallbackListRef = useRef(null);
   const flatListRef = listRef || fallbackListRef;
   const loadingRef = useRef(false);
   const lastPageRef = useRef(1);
 
-  useEffect(() => {
+  const fetchCategories = useCallback(async () => {
     if (!userInfo?.api_token) return;
-
     const headers = {
       'X-localization': 'fr',
       Authorization: `Bearer ${userInfo.api_token}`,
     };
 
-    const fetchType = async () => {
-      try {
-        const encodedTypeName = encodeURIComponent(typeName);
-        const response = await axios.get(`${API.boongo_url}/type/search/fr/${encodedTypeName}`, { headers });
-        setTypeId(response.data?.data?.id || null);
-      } catch (error) {
-        setTypeId(null);
-        console.error(`Erreur lors de la récupération du type ${typeName}:`, error);
-      }
-    };
+    try {
+      const group = encodeURIComponent('Catégorie pour programme national');
+      const response = await axios.get(`${API.boongo_url}/category/find_by_group/${group}`, { headers });
+      const itemAll = { id: 0, category_name: t('all_f'), category_name_fr: 'Toutes', category_name_en: 'All', category_name_ln: 'Nioso', category_description: null };
 
-    fetchType();
-  }, [typeName, userInfo?.api_token]);
+      setCategories([itemAll, ...(response.data?.data || [])]);
+      setIdCat(itemAll.id);
+    } catch (error) {
+      console.error('Erreur fetchCategories programmes', error);
+    }
+  }, [t, userInfo?.api_token]);
 
-  const fetchWorks = useCallback(async (pageToFetch = 1) => {
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  const fetchWorks = useCallback(async (pageToFetch = 1, silent = false) => {
     if (!userInfo?.api_token || !typeId || loadingRef.current || (pageToFetch > lastPageRef.current && pageToFetch !== 1)) return;
 
     loadingRef.current = true;
-    setIsLoading(true);
+    if (!silent) setIsLoading(true);
     const qs = require('qs');
     const headers = {
       'X-localization': 'fr',
@@ -366,7 +384,7 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, co
     try {
       const response = await axios.post(
         `${API.boongo_url}/work/filter_by_categories?page=${pageToFetch}`,
-        qs.stringify({ type_id: typeId, status_id: 17 }),
+        qs.stringify({ 'categories_ids[0]': idCat, type_id: typeId, status_id: 17 }),
         { headers }
       );
       const data = response.data?.data || [];
@@ -377,18 +395,23 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, co
       lastPageRef.current = nextLastPage;
       setLastPage(nextLastPage);
     } catch (error) {
-      console.error(`Erreur lors de la récupération de ${typeName}:`, error);
+      console.error('Erreur lors de la récupération des programmes:', error);
     } finally {
       loadingRef.current = false;
-      setIsLoading(false);
+      if (!silent) setIsLoading(false);
     }
-  }, [typeId, typeName, userInfo?.api_token]);
+  }, [idCat, typeId, userInfo?.api_token]);
 
   useEffect(() => {
-    if (typeId) {
-      fetchWorks(page);
-    }
-  }, [fetchWorks, page, typeId]);
+    fetchWorks(page);
+  }, [fetchWorks, page]);
+
+  useEffect(() => {
+    if (!isActive) return undefined;
+
+    const interval = setInterval(() => fetchWorks(1, true), AUTO_REFRESH_MS);
+    return () => clearInterval(interval);
+  }, [fetchWorks, isActive]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -401,6 +424,27 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, co
     if (!isLoading && page < lastPage) {
       setPage(currentPage => currentPage + 1);
     }
+  };
+
+  const handleBadgePress = useCallback((id) => {
+    setIdCat(id);
+    setPage(1);
+    setWorks([]);
+    setLastPage(1);
+    lastPageRef.current = 1;
+  }, []);
+
+  const CategoryItem = ({ item }) => {
+    const isSelected = idCat === item.id;
+    return (
+      <TouchableOpacity
+        onPress={() => handleBadgePress(item.id)}
+        activeOpacity={0.78}
+        style={[styles.categoryChip, { backgroundColor: isSelected ? COLORS.primary : COLORS.white, borderColor: isSelected ? COLORS.primary : COLORS.light_secondary }]}
+      >
+        <Text style={[styles.categoryChipText, { color: isSelected ? '#ffffff' : COLORS.black }]}>{item.category_name}</Text>
+      </TouchableOpacity>
+    );
   };
 
   const data = ad ? [...works, { ...ad, id: 'ad', realId: ad.id }] : works;
@@ -421,8 +465,19 @@ const ProgramWorks = ({ typeName, emptyDescriptionKey, handleScroll, listRef, co
         windowSize={10}
         contentContainerStyle={[styles.listContent, { paddingTop: contentTopInset }]}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={105} />}
-        ListEmptyComponent={<EmptyListComponent iconName="school-outline" title={t('empty_list.title')} description={t(emptyDescriptionKey)} />}
-        ListFooterComponent={() => isLoading ? <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text> : null}
+        ListEmptyComponent={isLoading ? <LoadingList COLORS={COLORS} label={t('loading')} /> : <EmptyListComponent iconName="school-outline" title={t('empty_list.title')} description={t(emptyDescriptionKey)} />}
+        ListHeaderComponent={
+          <FlatList
+            data={categories}
+            keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.categoriesList}
+            contentContainerStyle={styles.categoriesContent}
+            renderItem={({ item }) => <CategoryItem item={item} />}
+          />
+        }
+        ListFooterComponent={() => isLoading && data.length > 0 ? <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text> : null}
       />
     </SafeAreaView>
   );
@@ -454,13 +509,13 @@ const HomeScreen = () => {
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'news':
-        return <News handleScroll={handleScroll} listRef={newsListRef} contentTopInset={contentTopInset} />;
+        return <News handleScroll={handleScroll} isActive={index === 0} listRef={newsListRef} contentTopInset={contentTopInset} />;
       case 'books':
-        return <Books handleScroll={handleScroll} listRef={booksListRef} contentTopInset={contentTopInset} />;
+        return <Books handleScroll={handleScroll} isActive={index === 1} listRef={booksListRef} contentTopInset={contentTopInset} />;
       case 'school_program':
-        return <ProgramWorks typeName="Programme scolaire" emptyDescriptionKey="empty_list.description_school_program" handleScroll={handleScroll} listRef={schoolProgramListRef} contentTopInset={contentTopInset} />;
+        return <ProgramWorks typeId={43} emptyDescriptionKey="empty_list.description_school_program" handleScroll={handleScroll} isActive={index === 2} listRef={schoolProgramListRef} contentTopInset={contentTopInset} />;
       case 'academic_program':
-        return <ProgramWorks typeName="Programme académique" emptyDescriptionKey="empty_list.description_academic_program" handleScroll={handleScroll} listRef={academicProgramListRef} contentTopInset={contentTopInset} />;
+        return <ProgramWorks typeId={44} emptyDescriptionKey="empty_list.description_academic_program" handleScroll={handleScroll} isActive={index === 3} listRef={academicProgramListRef} contentTopInset={contentTopInset} />;
       default:
         return null;
     }
@@ -546,12 +601,15 @@ const styles = StyleSheet.create({
   scene: { flex: 1 },
   listShell: { flex: 1 },
   listContent: { paddingBottom: 34 },
+  loadingState: { alignItems: 'center', justifyContent: 'center', minHeight: 280, paddingHorizontal: 24 },
+  loadingLabel: { fontSize: 14, marginTop: 12 },
   homeHeader: { elevation: 8, position: 'absolute', shadowColor: '#172033', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.1, shadowRadius: 8, top: 0, width: '100%', zIndex: 1000 },
   tabBar: { elevation: 0, shadowOpacity: 0 },
   tab: { minHeight: 48, width: 'auto' },
   tabIndicator: { borderRadius: 3, height: 3 },
   tabLabel: { fontSize: 13 },
   categoriesList: { flexGrow: 0, height: 48 },
+  categoriesContent: { alignItems: 'center', paddingHorizontal: 16 },
   categoryChip: { borderRadius: 16, borderWidth: 1, marginRight: 8, paddingHorizontal: 14, paddingVertical: 8 },
   categoryChipText: { fontSize: 13, fontWeight: '700' },
   backToTopButton: { alignItems: 'center', borderRadius: 24, borderWidth: 1, bottom: 24, elevation: 6, height: 48, justifyContent: 'center', position: 'absolute', right: 20, shadowColor: '#172033', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.16, shadowRadius: 6, width: 48, zIndex: 20 },

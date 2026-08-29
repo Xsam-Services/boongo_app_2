@@ -57,7 +57,8 @@
         "title": "Save summaries",
         "title_edit": "Edit the summary",
         "page_number": "Page number",
-        "enter_note": "Enter your note"
+        "enter_note": "Enter your note",
+        "empty": "No notes for this document."
     },
     "chat": {
         "new": "Start a chat",
@@ -69,6 +70,7 @@
     },
     "video_ended": "The video is finished!",
     "success": {
+        "title": "Success",
         "whatsapp": "Whatsapp is open."
     },
     "error": "Error:",
@@ -302,7 +304,9 @@
     },
     "media": {
         "title": "Media reading",
-        "description": "In progress..."
+        "description": "In progress...",
+        "unavailable": "This video is currently unavailable.",
+        "retry": "Try again"
     },
     "navigation": {
         "home": {
