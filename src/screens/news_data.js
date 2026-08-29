@@ -61,6 +61,7 @@ const NewsDataScreen = ({ route, navigation }) => {
   }, [getWork]);
 
   const media = work?.images || [];
+  const coverImage = work?.photo_url || media.find(image => image.type?.alias === 'image_file')?.file_url || media.find(image => image.file_url)?.file_url;
   const owner = work?.user_id ? work.user_owner : work?.organization_owner;
   const ownerName = work?.user_id
     ? [owner?.firstname, owner?.lastname].filter(Boolean).join(' ')
@@ -92,8 +93,8 @@ const NewsDataScreen = ({ route, navigation }) => {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={getWork} />}
       >
         <View style={[styles.articleCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
-          {work?.photo_url ? (
-            <Image source={{ uri: work.photo_url }} style={[styles.cover, { backgroundColor: COLORS.light_secondary }]} resizeMode="cover" />
+          {coverImage ? (
+            <Image source={{ uri: coverImage }} style={[styles.cover, { backgroundColor: COLORS.light_secondary }]} resizeMode="cover" />
           ) : (
             <View style={[styles.cover, styles.coverFallback, { backgroundColor: COLORS.light_primary }]}>
               <Icon name="newspaper-variant-outline" size={42} color={COLORS.primary} />

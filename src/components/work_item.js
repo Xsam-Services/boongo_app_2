@@ -15,6 +15,7 @@ const WorkItemComponent = ({ item }) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const isAd = item.id === 'ad';
+  const workImage = item.photo_url || item.images?.find(image => image.type?.alias === 'image_file')?.file_url || item.images?.find(image => image.file_url)?.file_url;
 
   const openAd = () => {
     if (item.has_promo_code) {
@@ -42,7 +43,7 @@ const WorkItemComponent = ({ item }) => {
 
   return (
     <TouchableOpacity activeOpacity={0.82} style={[styles.card, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]} onPress={details}>
-      {item.photo_url ? <Image source={{ uri: item.photo_url }} style={[styles.image, { backgroundColor: COLORS.light_secondary }]} resizeMode="cover" /> : (
+      {workImage ? <Image source={{ uri: workImage }} style={[styles.image, { backgroundColor: COLORS.light_secondary }]} resizeMode="cover" /> : (
         <View style={[styles.image, styles.imageFallback, { backgroundColor: COLORS.light_primary }]}>
           <Icon name="book-open-page-variant-outline" size={27} color={COLORS.primary} />
         </View>

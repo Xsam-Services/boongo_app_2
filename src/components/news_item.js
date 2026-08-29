@@ -22,6 +22,7 @@ const NewsItemComponent = ({ item }) => {
   const { t } = useTranslation();
   const isAd = item.id === 'ad';
   const organization = item.organization_owner?.org_name || item.organization?.org_name;
+  const workImage = item.photo_url || item.images?.find(image => image.type?.alias === 'image_file')?.file_url || item.images?.find(image => image.file_url)?.file_url;
 
   const openAd = () => {
     if (item.has_promo_code) {
@@ -62,7 +63,7 @@ const NewsItemComponent = ({ item }) => {
           </View>
         </View>
       </View>
-      {item.photo_url ? <Image source={{ uri: item.photo_url }} style={[styles.image, { backgroundColor: COLORS.light_secondary }]} resizeMode="cover" /> : null}
+      {workImage ? <Image source={{ uri: workImage }} style={[styles.image, { backgroundColor: COLORS.light_secondary }]} resizeMode="cover" /> : null}
     </TouchableOpacity>
   );
 };
