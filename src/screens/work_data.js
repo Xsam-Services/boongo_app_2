@@ -202,7 +202,7 @@ const WorkDataScreen = ({ route, navigation }) => {
   };
 
   const renderFiles = () => {
-    if (!canReadFiles) return null;
+    if (!work || !canReadFiles) return null;
 
     return (
       <View style={[styles.filesCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
