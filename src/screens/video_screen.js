@@ -15,19 +15,19 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import HeaderComponent from './header';
 import useColors from '../hooks/useColors';
 
-const isVideoFile = url => ['.mp4', '.mov', '.avi', '.webm', '.mkv'].some(extension => url?.toLowerCase().includes(extension));
+const isVideoFile = url => ['.mp4', '.mov', '.avi', '.webm', '.mkv', '.m3u8', '.mpd'].some(extension => url?.toLowerCase().includes(extension));
 
 const VideoPlayerScreen = ({ route }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
-  const { videoTitle, videoUri } = route.params;
+  const { videoTitle, videoUri, mediaType } = route.params;
   const { width } = Dimensions.get('window');
   const [playing, setPlaying] = useState(false);
   const [imageSize, setImageSize] = useState(null);
   const [imageError, setImageError] = useState(false);
   const youtubeId = getVideoId(videoUri || '').id || videoUri?.match(/(?:embed\/|v=|youtu\.be\/)([^?&/]+)/)?.[1];
   const isYoutube = Boolean(youtubeId) && (videoUri?.includes('youtube.com') || videoUri?.includes('youtu.be'));
-  const isVideo = isYoutube || isVideoFile(videoUri);
+  const isVideo = mediaType === 'video' || isYoutube || isVideoFile(videoUri);
   const [videoState, setVideoState] = useState(isVideo ? 'loading' : 'ready');
   const [videoKey, setVideoKey] = useState(0);
 
@@ -35,10 +35,11 @@ const VideoPlayerScreen = ({ route }) => {
     console.log('VideoPlayer opened:', {
       title: videoTitle,
       url: videoUri,
+      mediaType,
       isYoutube,
       isVideo,
     });
-  }, [isVideo, isYoutube, videoTitle, videoUri]);
+  }, [isVideo, isYoutube, mediaType, videoTitle, videoUri]);
 
   const onYoutubeStateChange = useCallback(state => {
     if (state === 'ended') {

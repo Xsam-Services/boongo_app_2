@@ -212,7 +212,7 @@ const WorkDataScreen = ({ route, navigation }) => {
           <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{t('work.add_files')}</Text>
         </View>
         {work.work_url ? renderFileRow(t('file.external_videos'), [work.work_url], url => (
-          <FileThumbnail key={url} uri={url} type="video" title={t('file.video')} onPress={() => navigation.navigate('VideoPlayer', { videoTitle: work.work_title, videoUri: url })} />
+          <FileThumbnail key={url} uri={url} type="video" title={t('file.video')} onPress={() => navigation.navigate('VideoPlayer', { videoTitle: work.work_title, videoUri: url, mediaType: 'video' })} />
         )) : null}
         {renderFileRow(t('file.documents'), work.documents, (file, index) => (
           <FileThumbnail key={file.id || file.file_url} type="document" title={`${t('file.document')} ${index + 1}`} onPress={() => navigation.navigate('PDFViewer', { docTitle: work.work_title, docUri: file.file_url, curPage: 1 })} />
@@ -221,7 +221,7 @@ const WorkDataScreen = ({ route, navigation }) => {
           <FileThumbnail key={file.id || file.file_url} type="audio" title={`${t('file.audio')} ${index + 1}`} onPress={() => navigation.navigate('Audio', { audioTitle: work.work_title, audioUrl: file.file_url, mediaCover: coverImage, mediaAuthor: work.author })} />
         ))}
         {renderFileRow(`${t('file.photos')} / ${t('file.videos')}`, gallerySources, (file, index) => (
-          <FileThumbnail key={file.id || file.uri} uri={file.uri} type={file.type} title={`${t('file.image')} ${index + 1}`} onPress={() => navigation.navigate('VideoPlayer', { videoTitle: work.work_title, videoUri: file.uri })} />
+          <FileThumbnail key={file.id || file.uri} uri={file.uri} type={file.type} title={`${t('file.image')} ${index + 1}`} onPress={() => navigation.navigate('VideoPlayer', { videoTitle: work.work_title, videoUri: file.uri, mediaType: file.type })} />
         ))}
       </View>
     );
