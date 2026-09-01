@@ -196,7 +196,7 @@ const SearchScreen = () => {
 
             <ScrollView contentContainerStyle={styles.filterContent} showsVerticalScrollIndicator={false}>
               <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{t('search_filter_type_label')}</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterChips}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.edgeToEdgeFilterRow} contentContainerStyle={styles.filterChips}>
                 {types.map(type => {
                   const isSelected = selectedType === type.id.toString();
                   return (
@@ -209,7 +209,7 @@ const SearchScreen = () => {
               </ScrollView>
 
               <Text style={[styles.sectionTitle, styles.categoriesTitle, { color: COLORS.black }]}>{t('search_filter_categories_label')}</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterChips}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.edgeToEdgeFilterRow} contentContainerStyle={styles.filterChips}>
                 {categories.map(category => {
                   const isSelected = selectedCategories.includes(category.id);
                   return (
@@ -260,7 +260,8 @@ const styles = StyleSheet.create({
   filterContent: { paddingBottom: 16 },
   sectionTitle: { fontSize: 15, fontWeight: '700', marginBottom: 10 },
   categoriesTitle: { marginTop: 22 },
-  filterChips: { gap: 8, paddingRight: 20 },
+  edgeToEdgeFilterRow: { marginHorizontal: -20 },
+  filterChips: { gap: 8 },
   filterChip: { alignItems: 'center', borderRadius: 16, borderWidth: 1, flexDirection: 'row', gap: 6, minHeight: 44, paddingHorizontal: 14 },
   filterChipText: { fontSize: 14, fontWeight: '700' },
   applyButton: { alignItems: 'center', borderRadius: 16, flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 6, minHeight: 52 },
