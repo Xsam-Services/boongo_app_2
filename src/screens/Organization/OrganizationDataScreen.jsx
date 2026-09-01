@@ -3,7 +3,7 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, Alert, View, TouchableOpacity, Animated, Dimensions, RefreshControl, TouchableHighlight, FlatList, Text, Image, TextInput, Linking, ScrollView, Modal, ToastAndroid, Platform, Pressable } from 'react-native'
+import { ActivityIndicator, View, TouchableOpacity, Animated, Dimensions, RefreshControl, TouchableHighlight, FlatList, Text, Image, TextInput, Linking, ScrollView, Modal, ToastAndroid, Platform, Pressable } from 'react-native'
 import { SafeAreaView as SafeAreaContextView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { pick, types as docTypes, isErrorWithCode, errorCodes } from '@react-native-documents/picker';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
@@ -46,6 +46,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
   const [formProgramModalVisible, setFormProgramModalVisible] = useState(false);
   const [docProgramModalVisible, setDocProgramModalVisible] = useState(false);
   const [newClass, setNewClass] = useState('');
+  const [programFormError, setProgramFormError] = useState('');
   // Loaders
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -124,10 +125,11 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
   // ================= Add new program =================
   const addNewProgram = async () => {
     if (!newClass.trim() || !files[0]?.uri) {
-      Alert.alert('Programme incomplet', 'Indiquez une classe ou promotion et ajoutez le document PDF du programme.');
+      setProgramFormError('Indiquez une classe ou promotion et ajoutez le document PDF du programme.');
       return;
     }
 
+    setProgramFormError('');
     setIsLoading(true);
 
     const formData = new FormData();
@@ -425,71 +427,43 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
               <Text style={{ color: COLORS.dark, fontSize: 15, lineHeight: 22, marginBottom: 22 }}>Ajoutez une classe et le document du programme scolaire.</Text>
 
               {/* Class */}
+              <Text style={{ color: COLORS.black, fontSize: 14, fontWeight: '800', marginBottom: 8 }}>Classe ou promotion</Text>
               <TextInput
-                style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
-                label={t('program.data.class')}
+                style={[homeStyles.authInput, { backgroundColor: COLORS.white, color: COLORS.black, marginBottom: 22, borderColor: programFormError && !newClass.trim() ? COLORS.danger : COLORS.light_secondary }]}
                 value={newClass}
                 placeholder={t('program.data.class')}
                 placeholderTextColor={COLORS.dark_secondary}
-                onChangeText={setNewClass}
+                onChangeText={(value) => {
+                  setNewClass(value);
+                  if (programFormError) setProgramFormError('');
+                }}
               />
 
               {/* Selected file */}
               {files.length > 0 ? (
-                <>
-                  <FlatList
-                    data={files}
-                    scrollEnabled={false}
-                    nestedScrollEnabled
-                    keyExtractor={(item, index) => index.toString()}
-                    style={{ flexGrow: 0 }}
-                    renderItem={({ item, index }) => {
-                      return (
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: COLORS.light_secondary, borderRadius: PADDING.p01, padding: PADDING.p01, marginVertical: PADDING.p01, }}>
-                          {/* Icon associated with the file */}
-                          <Icon name={getIconName(item.name)} size={22} color={COLORS.black} style={{ marginRight: 8 }} />
-
-                          {/* File name */}
-                          <Text style={{ flex: 1, color: COLORS.black }}>{truncateFileName(item.name)}</Text>
-
-                          {/* Button to delete */}
-                          <TouchableOpacity style={{ backgroundColor: COLORS.danger, padding: 6, borderRadius: PADDING.p07, marginLeft: 8, }}
-                            onPress={() => {
-                              const updatedFiles = [...files];
-                              updatedFiles.splice(index, 1);
-                              setFiles(updatedFiles);
-                            }}
-                          >
-                            <Icon name="close" size={16} color="white" />
-                          </TouchableOpacity>
-                        </View>
-                      )
-                    }}
-                  />
-                </>
-              ) : (
-                <>
-                  {/* Select File */}
-                  <TouchableOpacity
-                    style={[homeStyles.authCancel, {
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      alignSelf: 'center',
-                      width: 230,
-                      borderColor: COLORS.dark_secondary,
-                      marginVertical: PADDING.p03,
-                      paddingVertical: PADDING.p00
-                    }]} onPress={pickFile} disabled={isPicking}>
-                    <Icon name='paperclip' color={COLORS.dark_secondary} size={30} />
-                    <Text style={[homeStyles.authText, { color: COLORS.dark_secondary, marginLeft: PADDING.p01 }]}>{t('program.data.file')}</Text>
+                <View style={{ alignItems: 'center', backgroundColor: COLORS.white, borderColor: COLORS.primary, borderRadius: 18, borderWidth: 1, flexDirection: 'row', marginBottom: 18, minHeight: 74, padding: 14 }}>
+                  <View style={{ alignItems: 'center', backgroundColor: COLORS.light_primary, borderRadius: 14, height: 44, justifyContent: 'center', width: 44 }}>
+                    <Icon name={getIconName(files[0].name)} size={24} color={COLORS.primary} />
+                  </View>
+                  <View style={{ flex: 1, marginLeft: 12 }}>
+                    <Text style={{ color: COLORS.black, fontSize: 14, fontWeight: '800' }} numberOfLines={1}>{truncateFileName(files[0].name)}</Text>
+                    <Text style={{ color: COLORS.primary, fontSize: 12, fontWeight: '700', marginTop: 3 }}>Document PDF prêt à envoyer</Text>
+                  </View>
+                  <TouchableOpacity accessibilityLabel="Retirer le document" style={{ alignItems: 'center', backgroundColor: COLORS.light_secondary, borderRadius: 16, height: 32, justifyContent: 'center', width: 32 }} onPress={() => setFiles([])}>
+                    <Icon name="close" size={18} color={COLORS.black} />
                   </TouchableOpacity>
-                </>
+                </View>
+              ) : (
+                <TouchableOpacity accessibilityLabel={t('program.data.file')} style={{ alignItems: 'center', backgroundColor: COLORS.white, borderColor: programFormError ? COLORS.danger : COLORS.light_secondary, borderRadius: 18, borderStyle: 'dashed', borderWidth: 1.5, justifyContent: 'center', marginBottom: 18, minHeight: 142, padding: 18 }} onPress={pickFile} disabled={isPicking}>
+                  {isPicking ? <ActivityIndicator color={COLORS.primary} /> : <><View style={{ alignItems: 'center', backgroundColor: COLORS.light_primary, borderRadius: 22, height: 44, justifyContent: 'center', width: 44 }}><Icon name='file-upload-outline' color={COLORS.primary} size={24} /></View><Text style={{ color: COLORS.black, fontSize: 15, fontWeight: '800', marginTop: 10 }}>Ajouter le document PDF</Text><Text style={{ color: COLORS.dark, fontSize: 13, marginTop: 4 }}>Touchez pour choisir un fichier</Text></>}
+                </TouchableOpacity>
               )}
 
+              {programFormError ? <View style={{ backgroundColor: COLORS.light_secondary, borderLeftColor: COLORS.danger, borderLeftWidth: 3, borderRadius: 10, marginBottom: 18, padding: 12 }}><Text style={{ color: COLORS.black, fontSize: 13, lineHeight: 19 }}>{programFormError}</Text></View> : null}
+
               {/* Submit */}
-              <Button style={[homeStyles.authButton, { backgroundColor: COLORS.primary }]} onPress={addNewProgram}>
-                <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('send')}</Text>
+              <Button disabled={isLoading} style={[homeStyles.authButton, { backgroundColor: COLORS.primary, opacity: isLoading ? 0.7 : 1 }]} onPress={addNewProgram}>
+                <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{isLoading ? t('loading') : t('send')}</Text>
               </Button>
               </ScrollView>
             </SafeAreaContextView>
