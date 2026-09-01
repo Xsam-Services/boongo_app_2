@@ -8,7 +8,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import Spinner from 'react-native-loading-spinner-overlay';
-import DropDownPicker from 'react-native-dropdown-picker';
 import * as ImagePicker from 'expo-image-picker';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
@@ -46,49 +45,6 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
   const [imageData, setImageData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-
-  // COUNTRIES DATA dropdown
-  const [countriesData, setCountriesData] = useState([]);
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    axios({ method: 'GET', url: 'https://restcountries.com/v3.1/all?fields=cca2,idd,flags,name' })
-      .then((res) => {
-        // On garde une trace des codes téléphoniques uniques
-        const phoneCodes = new Set();
-
-        const countries = Array.isArray(res.data) ? res.data : [];
-        const countryArray = countries.map((country) => {
-          const phoneCodeData = country.idd && country.idd.root ? `${country.idd.root}${country.idd.suffixes ? `${country.idd.suffixes[0]}` : ''}` : '';
-
-          // Vérifier si le code téléphonique existe déjà dans le Set
-          if (phoneCodes.has(phoneCodeData)) {
-            return null; // Si le code existe déjà, ignorer cet élément
-          }
-
-          // Ajouter le code téléphonique dans le Set pour éviter les doublons
-          phoneCodes.add(phoneCodeData);
-
-          return {
-            value: phoneCodeData, // Le code téléphonique est unique
-            label: `${country.cca2} (${phoneCodeData})`, // Affichage "CD (+243)"
-            flag: country.flags.png
-          };
-        }).filter(item => item !== null); // Filtrer les éléments nulls
-
-        // Trie des pays par nom (A-Z)
-        countryArray.sort((a, b) => a.label.localeCompare(b.label));
-
-        setCountriesData(countryArray);
-      })
-      .catch((error) => {
-        console.warn('Impossible de charger les indicatifs pays.', error?.message);
-      });
-  }, []);
-
-  const handleCountryChange = (item) => {
-    setPhoneCode(item.value);
-  };
 
   // =============== Refresh control ===============
   const onRefresh = useCallback(() => {
@@ -295,54 +251,16 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
           </>
         ) : (
           <View style={{ flexDirection: 'row' }}>
-            {/* Phone code  */}
-            <DropDownPicker
-              modalTitle={t('auth.phone_code.title')}
-              disabled={countriesData.length === 0}
-              loading={countriesData.length === 0}
-              modalProps={{
-                presentationStyle: 'fullScreen', // optional
-                animationType: 'slide',
-              }}
-              modalContentContainerStyle={{
-                backgroundColor: COLORS.white,
-                borderTopWidth: 0,
-                borderBottomWidth: 1,
-                borderBottomColor: COLORS.light_secondary,
-              }}
-              closeIconStyle={{
-                tintColor: COLORS.black
-              }}
-              textStyle={{ color: COLORS.black }}
-              placeholderStyle={{ color: COLORS.black }}
-              placeholder={t('auth.phone_code.label')}
-              arrowIconStyle={{ tintColor: COLORS.black }}
-              containerStyle={{ width: '50%', height: 50 }}
-              style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary, borderTopEndRadius: 0, borderBottomEndRadius: 0, borderRightWidth: 0 }]}
-              listMode='MODAL'
-              open={open}
-              value={phoneCode}
-              items={countriesData}
-              setOpen={setOpen}
-              setValue={setPhoneCode}
-              onChangeItem={handleCountryChange}
-              renderListItem={({ item }) => {
-                return (
-                  <TouchableOpacity onPress={() => { handleCountryChange(item); setOpen(false); }} style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
-                    {item.flag ? (
-                      <Image source={{ uri: item.flag }} style={{ width: 20, height: 15, marginRight: 10 }} />
-                    ) : null}
-                    <Text style={{ color: COLORS.black }}>
-                      {item.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              }}
-            />
-
-            {/* Phone number */}
             <TextInput
-              style={[homeStyles.authInput, { color: COLORS.black, width: '50%', height: 50, borderColor: COLORS.light_secondary, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }]}
+              style={[homeStyles.authInput, { color: COLORS.black, width: '32%', height: 50, borderColor: COLORS.light_secondary, borderTopEndRadius: 0, borderBottomEndRadius: 0, borderRightWidth: 0 }]}
+              keyboardType='phone-pad'
+              value={phoneCode || ''}
+              placeholder="+243"
+              placeholderTextColor={COLORS.dark_secondary}
+              onChangeText={setPhoneCode} />
+
+            <TextInput
+              style={[homeStyles.authInput, { color: COLORS.black, width: '68%', height: 50, borderColor: COLORS.light_secondary, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }]}
               keyboardType='phone-pad'
               value={phone}
               placeholder={t('auth.phone')}
