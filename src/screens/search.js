@@ -5,7 +5,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Modal, RefreshControl, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { RadioButton, Checkbox } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
@@ -108,12 +107,6 @@ const SearchScreen = () => {
   };
 
   const hasFilters = Boolean(selectedType) || selectedCategories.length > 0;
-  const selectedTypeName = types.find(type => type.id.toString() === selectedType)?.type_name;
-  const filterGroups = [
-    { id: 'types', label: t('search_filter_type'), value: selectedTypeName || t('all_m') },
-    { id: 'categories', label: t('search_filter_categories'), value: selectedCategories.length ? `${selectedCategories.length} ${t('selected')}` : t('all_f') },
-  ];
-
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: COLORS.light }]} edges={['top', 'bottom']}>
       <HeaderComponent title={t('search')} />
@@ -201,46 +194,32 @@ const SearchScreen = () => {
               </TouchableOpacity>
             </View>
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterOverview}>
-              {filterGroups.map(group => {
-                return (
-                  <View
-                    key={group.id}
-                    style={[styles.filterOverviewCard, { backgroundColor: COLORS.light, borderColor: COLORS.light_secondary }]}
-                  >
-                    <Text style={[styles.filterOverviewLabel, { color: COLORS.dark }]}>{group.label}</Text>
-                    <Text style={[styles.filterOverviewValue, { color: COLORS.black }]} numberOfLines={1}>{group.value}</Text>
-                  </View>
-                );
-              })}
-            </ScrollView>
-
             <ScrollView contentContainerStyle={styles.filterContent} showsVerticalScrollIndicator={false}>
-              <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{t('search_filter_type')}</Text>
-              <View style={styles.optionsList}>
+              <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{t('search_filter_type_label')}</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterChips}>
                 {types.map(type => {
                   const isSelected = selectedType === type.id.toString();
                   return (
-                    <TouchableOpacity key={type.id} style={[styles.option, { backgroundColor: isSelected ? COLORS.light_primary : COLORS.light }]} onPress={() => setSelectedType(isSelected ? null : type.id.toString())}>
-                      <Text style={[styles.optionText, { color: COLORS.black }]}>{type.type_name}</Text>
-                      <RadioButton pointerEvents="none" value={type.id.toString()} status={isSelected ? 'checked' : 'unchecked'} color={COLORS.primary} />
+                    <TouchableOpacity key={type.id} activeOpacity={0.75} style={[styles.filterChip, { backgroundColor: isSelected ? COLORS.primary : COLORS.light, borderColor: isSelected ? COLORS.primary : COLORS.light_secondary }]} onPress={() => setSelectedType(isSelected ? null : type.id.toString())}>
+                      {isSelected ? <Icon name="check" size={16} color="#ffffff" /> : null}
+                      <Text style={[styles.filterChipText, { color: isSelected ? '#ffffff' : COLORS.black }]}>{type.type_name}</Text>
                     </TouchableOpacity>
                   );
                 })}
-              </View>
+              </ScrollView>
 
-              <Text style={[styles.sectionTitle, styles.categoriesTitle, { color: COLORS.black }]}>{t('search_filter_categories')}</Text>
-              <View style={styles.optionsList}>
+              <Text style={[styles.sectionTitle, styles.categoriesTitle, { color: COLORS.black }]}>{t('search_filter_categories_label')}</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterChips}>
                 {categories.map(category => {
                   const isSelected = selectedCategories.includes(category.id);
                   return (
-                    <TouchableOpacity key={category.id} style={[styles.option, { backgroundColor: isSelected ? COLORS.light_primary : COLORS.light }]} onPress={() => handleCategoryToggle(category.id)}>
-                      <Text style={[styles.optionText, { color: COLORS.black }]}>{category.category_name}</Text>
-                      <Checkbox pointerEvents="none" status={isSelected ? 'checked' : 'unchecked'} color={COLORS.primary} />
+                    <TouchableOpacity key={category.id} activeOpacity={0.75} style={[styles.filterChip, { backgroundColor: isSelected ? COLORS.primary : COLORS.light, borderColor: isSelected ? COLORS.primary : COLORS.light_secondary }]} onPress={() => handleCategoryToggle(category.id)}>
+                      {isSelected ? <Icon name="check" size={16} color="#ffffff" /> : null}
+                      <Text style={[styles.filterChipText, { color: isSelected ? '#ffffff' : COLORS.black }]}>{category.category_name}</Text>
                     </TouchableOpacity>
                   );
                 })}
-              </View>
+              </ScrollView>
             </ScrollView>
 
             <TouchableOpacity activeOpacity={0.82} style={[styles.applyButton, { backgroundColor: COLORS.primary }]} onPress={applyFilters}>
@@ -278,16 +257,12 @@ const styles = StyleSheet.create({
   sheetTitle: { fontSize: 21, fontWeight: '700' },
   sheetSubtitle: { fontSize: 13, lineHeight: 18, marginTop: 4, maxWidth: 280 },
   closeButton: { alignItems: 'center', borderRadius: 16, height: 34, justifyContent: 'center', width: 34 },
-  filterOverview: { gap: 10, paddingBottom: 16 },
-  filterOverviewCard: { borderRadius: 15, borderWidth: 1, minWidth: 150, paddingHorizontal: 14, paddingVertical: 11 },
-  filterOverviewLabel: { fontSize: 12, fontWeight: '600' },
-  filterOverviewValue: { fontSize: 14, fontWeight: '800', marginTop: 4 },
   filterContent: { paddingBottom: 16 },
   sectionTitle: { fontSize: 15, fontWeight: '700', marginBottom: 10 },
   categoriesTitle: { marginTop: 22 },
-  optionsList: { gap: 8 },
-  option: { alignItems: 'center', borderRadius: 14, flexDirection: 'row', justifyContent: 'space-between', minHeight: 52, paddingLeft: 14, paddingRight: 4 },
-  optionText: { flex: 1, fontSize: 15, fontWeight: '500' },
+  filterChips: { gap: 8, paddingRight: 20 },
+  filterChip: { alignItems: 'center', borderRadius: 16, borderWidth: 1, flexDirection: 'row', gap: 6, minHeight: 44, paddingHorizontal: 14 },
+  filterChipText: { fontSize: 14, fontWeight: '700' },
   applyButton: { alignItems: 'center', borderRadius: 16, flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 6, minHeight: 52 },
   applyButtonText: { color: '#ffffff', fontSize: 15, fontWeight: '700' },
 });

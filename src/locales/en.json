@@ -193,6 +193,8 @@
     "search_filter_description": "Refine the results by work type or category.",
     "search_filter_type": "Select a type:",
     "search_filter_categories": "Select categories:",
+    "search_filter_type_label": "Work type",
+    "search_filter_categories_label": "Categories",
     "search_filter_apply": "Apply filters",
     "search_start_title": "What are you looking for?",
     "search_start_description": "Enter a title, author, or keyword to explore Boongo works.",
