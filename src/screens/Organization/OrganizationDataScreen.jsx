@@ -310,7 +310,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
         <Icon name='plus' size={27} color="#ffffff" />
       </TouchableOpacity> : null}
 
-      <Animated.ScrollView
+      {headerHeight > 0 ? <Animated.ScrollView
         contentContainerStyle={{ flexGrow: 1, paddingBottom: selectedOrganization.user_id === userInfo.id ? 84 : 24 }}
         ref={scrollViewListRef}
         onScroll={handleScroll}
@@ -469,7 +469,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
             </SafeAreaContextView>
           </Modal>
         </View>
-      </Animated.ScrollView>
+      </Animated.ScrollView> : <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}><ActivityIndicator color={COLORS.primary} size="large" /></View>}
     </View>
   );
 };
