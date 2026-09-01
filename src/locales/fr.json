@@ -196,6 +196,7 @@
     "search_filter_type_label": "Type d’œuvre",
     "search_filter_categories_label": "Catégories",
     "search_filter_apply": "Appliquer les filtres",
+    "search_filter_clear": "Réinitialiser",
     "search_start_title": "Que recherchez-vous ?",
     "search_start_description": "Saisissez un titre, un auteur ou un mot-clé pour explorer les ouvrages Boongo.",
     "search_no_results_title": "Aucun résultat",

@@ -106,6 +106,11 @@ const SearchScreen = () => {
     fetchData(inputValue);
   };
 
+  const clearFilters = () => {
+    setSelectedType(null);
+    setSelectedCategories([]);
+  };
+
   const hasFilters = Boolean(selectedType) || selectedCategories.length > 0;
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: COLORS.light }]} edges={['top', 'bottom']}>
@@ -190,9 +195,12 @@ const SearchScreen = () => {
                 <Text style={[styles.sheetTitle, { color: COLORS.black }]}>{t('search_filter')}</Text>
                 <Text style={[styles.sheetSubtitle, { color: COLORS.dark }]}>{t('search_filter_description')}</Text>
               </View>
-              <TouchableOpacity accessibilityLabel={t('cancel')} style={[styles.closeButton, { backgroundColor: COLORS.light_secondary }]} onPress={() => setShowModal(false)}>
-                <Icon name="close" size={20} color={COLORS.black} />
-              </TouchableOpacity>
+              <View style={styles.sheetActions}>
+                {hasFilters ? <TouchableOpacity accessibilityLabel={t('search_filter_clear')} style={[styles.resetButton, { backgroundColor: COLORS.light }]} onPress={clearFilters}><Text style={[styles.resetButtonText, { color: COLORS.primary }]}>{t('search_filter_clear')}</Text></TouchableOpacity> : null}
+                <TouchableOpacity accessibilityLabel={t('cancel')} style={[styles.closeButton, { backgroundColor: COLORS.light_secondary }]} onPress={() => setShowModal(false)}>
+                  <Icon name="close" size={20} color={COLORS.black} />
+                </TouchableOpacity>
+              </View>
             </View>
 
             <View style={styles.filterContent}>
@@ -255,9 +263,12 @@ const styles = StyleSheet.create({
   filterSheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 10 },
   sheetHandle: { alignSelf: 'center', borderRadius: 3, height: 5, width: 42 },
   sheetHeader: { alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 18, marginTop: 18 },
+  sheetActions: { alignItems: 'center', flexDirection: 'row', gap: 8 },
   sheetTitle: { fontSize: 21, fontWeight: '700' },
   sheetSubtitle: { fontSize: 13, lineHeight: 18, marginTop: 4, maxWidth: 280 },
   closeButton: { alignItems: 'center', borderRadius: 16, height: 34, justifyContent: 'center', width: 34 },
+  resetButton: { alignItems: 'center', borderRadius: 13, justifyContent: 'center', minHeight: 34, paddingHorizontal: 11 },
+  resetButtonText: { fontSize: 12, fontWeight: '800' },
   filterContent: { paddingBottom: 16 },
   sectionTitle: { fontSize: 15, fontWeight: '700', marginBottom: 10 },
   categoriesTitle: { marginTop: 22 },
