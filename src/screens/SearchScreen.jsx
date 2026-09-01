@@ -6,18 +6,19 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Modal, RefreshControl, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 
 import { API } from '../tools/constants';
 import { AuthContext } from '../contexts/AuthContext';
 import WorkItemComponent from '../components/work_item';
-import HeaderComponent from './header';
 import useColors from '../hooks/useColors';
 
 const SearchScreen = () => {
   const COLORS = useColors();
   const { t } = useTranslation();
+  const navigation = useNavigation();
   const { userInfo } = useContext(AuthContext);
   const insets = useSafeAreaInsets();
   const flatListRef = useRef(null);
@@ -114,8 +115,10 @@ const SearchScreen = () => {
   const hasFilters = Boolean(selectedType) || selectedCategories.length > 0;
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: COLORS.light }]} edges={['top', 'bottom']}>
-      <HeaderComponent title={t('search')} />
       <View style={styles.content}>
+        <TouchableOpacity accessibilityLabel="Retour" activeOpacity={0.75} style={[styles.backButton, { backgroundColor: COLORS.light_secondary }]} onPress={() => navigation.goBack()}>
+          <Icon name="chevron-left" size={24} color={COLORS.black} />
+        </TouchableOpacity>
         <View style={[styles.searchCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
           <Icon name="magnify" size={23} color={COLORS.dark} />
           <TextInput
@@ -245,7 +248,8 @@ const SearchScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { flex: 1, paddingHorizontal: 16 },
-  searchCard: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', marginVertical: 16, minHeight: 56, paddingLeft: 16, paddingRight: 7 },
+  backButton: { alignItems: 'center', borderRadius: 18, height: 36, justifyContent: 'center', marginTop: 10, width: 36 },
+  searchCard: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', marginBottom: 16, marginTop: 12, minHeight: 56, paddingLeft: 16, paddingRight: 7 },
   searchInput: { flex: 1, fontSize: 15, marginHorizontal: 11, paddingVertical: 12 },
   submitButton: { alignItems: 'center', borderRadius: 14, height: 42, justifyContent: 'center', marginRight: 6, width: 42 },
   filterButton: { alignItems: 'center', borderRadius: 14, height: 42, justifyContent: 'center', width: 42 },

@@ -12,7 +12,7 @@ import SettingsScreen from '../screens/Account/settings';
 import ProfileScreen from '../screens/profile';
 import AccountScreen from '../screens/Account';
 import NotificationsScreen from '../screens/Account/notifications';
-import SearchScreen from '../screens/search';
+import SearchScreen from '../screens/SearchScreen';
 import OrganizationDataScreen from '../screens/Organization/organization_data';
 import OrganizationSettingsScreen from '../screens/Organization/organization_settings';
 import EstablishmentScreen from '../screens/Organization/Establishment';
