@@ -5,11 +5,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 import { SearchContext } from '../contexts/SearchContext';
+import HeaderComponent from './header';
 import useColors from '../hooks/useColors';
 import { API } from '../tools/constants';
 
@@ -34,7 +35,7 @@ const ResultSection = ({ title, children, COLORS }) => (
 
 const DictionaryScreen = () => {
   const COLORS = useColors();
-  const navigation = useNavigation();
+  const { t } = useTranslation();
   const { searchQuery, setSearchQuery } = useContext(SearchContext);
   const [inputValue, setInputValue] = useState(searchQuery);
   const [loading, setLoading] = useState(false);
@@ -77,7 +78,7 @@ const DictionaryScreen = () => {
           score: responses[6]?.data?.score || null,
         });
       } catch (requestError) {
-        if (isActive) setError('Impossible de charger le dictionnaire pour le moment.');
+        if (isActive) setError(t('dictionary_error'));
       } finally {
         if (isActive) setLoading(false);
       }
@@ -85,7 +86,7 @@ const DictionaryScreen = () => {
 
     fetchData();
     return () => { isActive = false; };
-  }, [searchQuery]);
+  }, [searchQuery, t]);
 
   const submitSearch = () => setSearchQuery(inputValue.trim());
   const clearSearch = () => {
@@ -100,8 +101,8 @@ const DictionaryScreen = () => {
           <View style={[styles.emptyIcon, { backgroundColor: COLORS.light_primary }]}>
             <Icon name="book-alphabet" size={32} color={COLORS.primary} />
           </View>
-          <Text style={[styles.emptyTitle, { color: COLORS.black }]}>Cherche un mot</Text>
-          <Text style={[styles.emptyText, { color: COLORS.dark }]}>Saisis un mot, puis appuie sur la loupe pour voir sa définition, ses synonymes et plus encore.</Text>
+          <Text style={[styles.emptyTitle, { color: COLORS.black }]}>{t('dictionary_start_title')}</Text>
+          <Text style={[styles.emptyText, { color: COLORS.dark }]}>{t('dictionary_start_description')}</Text>
         </View>
       );
     }
@@ -126,36 +127,36 @@ const DictionaryScreen = () => {
       <ScrollView contentContainerStyle={styles.resultsContent} showsVerticalScrollIndicator={false}>
         <View style={[styles.wordCard, { backgroundColor: COLORS.light_primary }]}>
           <Text style={[styles.word, { color: COLORS.dark_primary }]}>{searchQuery}</Text>
-          <Text style={[styles.score, { color: COLORS.dark }]}>Score Scrabble : {score ?? 'Aucun'}</Text>
+          <Text style={[styles.score, { color: COLORS.dark }]}>{t('dictionary_score')}: {score ?? t('dictionary_none')}</Text>
         </View>
 
-        <ResultSection title="Définitions" COLORS={COLORS}>
+        <ResultSection title={t('dictionary_definitions')} COLORS={COLORS}>
           {definitions.length ? definitions.map((definition, index) => (
             <View key={`definition-${index}-${definition.definition}`} style={styles.definitionRow}>
               <Text style={[styles.number, { color: COLORS.primary }]}>{index + 1}</Text>
               <Text style={[styles.resultText, { color: COLORS.black }]}>{definition.nature ? `(${definition.nature}) ` : ''}{definition.definition}</Text>
             </View>
-          )) : <Text style={[styles.emptySection, { color: COLORS.dark }]}>Aucune définition disponible.</Text>}
+          )) : <Text style={[styles.emptySection, { color: COLORS.dark }]}>{t('dictionary_no_definitions')}</Text>}
         </ResultSection>
 
-        <ResultSection title="Synonymes" COLORS={COLORS}>
-          <Text style={[styles.resultText, { color: COLORS.black }]}>{synonyms.length ? synonyms.map(item => item.mot).join(' · ') : 'Aucun synonyme disponible.'}</Text>
+        <ResultSection title={t('dictionary_synonyms')} COLORS={COLORS}>
+          <Text style={[styles.resultText, { color: COLORS.black }]}>{synonyms.length ? synonyms.map(item => item.mot).join(' · ') : t('dictionary_no_synonyms')}</Text>
         </ResultSection>
 
-        <ResultSection title="Antonymes" COLORS={COLORS}>
-          <Text style={[styles.resultText, { color: COLORS.black }]}>{antonyms.length ? antonyms.map(item => item.mot).join(' · ') : 'Aucun antonyme disponible.'}</Text>
+        <ResultSection title={t('dictionary_antonyms')} COLORS={COLORS}>
+          <Text style={[styles.resultText, { color: COLORS.black }]}>{antonyms.length ? antonyms.map(item => item.mot).join(' · ') : t('dictionary_no_antonyms')}</Text>
         </ResultSection>
 
-        <ResultSection title="Expressions" COLORS={COLORS}>
-          {expressions.length ? expressions.map((item, index) => <Text key={`expression-${index}-${item.expression}`} style={[styles.resultText, styles.resultSpacing, { color: COLORS.black }]}>{item.expression} : {item.definition}</Text>) : <Text style={[styles.emptySection, { color: COLORS.dark }]}>Aucune expression disponible.</Text>}
+        <ResultSection title={t('dictionary_expressions')} COLORS={COLORS}>
+          {expressions.length ? expressions.map((item, index) => <Text key={`expression-${index}-${item.expression}`} style={[styles.resultText, styles.resultSpacing, { color: COLORS.black }]}>{item.expression} : {item.definition}</Text>) : <Text style={[styles.emptySection, { color: COLORS.dark }]}>{t('dictionary_no_expressions')}</Text>}
         </ResultSection>
 
-        <ResultSection title="Champ lexical" COLORS={COLORS}>
-          <Text style={[styles.resultText, { color: COLORS.black }]}>{champlexical.length ? champlexical.map(item => item.mot).join(' · ') : 'Aucun mot disponible.'}</Text>
+        <ResultSection title={t('dictionary_lexical_field')} COLORS={COLORS}>
+          <Text style={[styles.resultText, { color: COLORS.black }]}>{champlexical.length ? champlexical.map(item => item.mot).join(' · ') : t('dictionary_no_words')}</Text>
         </ResultSection>
 
-        <ResultSection title="Citations" COLORS={COLORS}>
-          {citations.length ? citations.map((item, index) => <Text key={`citation-${index}-${item.citation}`} style={[styles.resultText, styles.resultSpacing, { color: COLORS.black }]}>« {item.citation} »{item.auteur ? ` (${item.auteur})` : ''}</Text>) : <Text style={[styles.emptySection, { color: COLORS.dark }]}>Aucune citation disponible.</Text>}
+        <ResultSection title={t('dictionary_quotes')} COLORS={COLORS}>
+          {citations.length ? citations.map((item, index) => <Text key={`citation-${index}-${item.citation}`} style={[styles.resultText, styles.resultSpacing, { color: COLORS.black }]}>« {item.citation} »{item.auteur ? ` (${item.auteur})` : ''}</Text>) : <Text style={[styles.emptySection, { color: COLORS.dark }]}>{t('dictionary_no_quotes')}</Text>}
         </ResultSection>
       </ScrollView>
     );
@@ -163,21 +164,16 @@ const DictionaryScreen = () => {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: COLORS.light }]} edges={['top', 'bottom']}>
-      <View style={[styles.header, { backgroundColor: COLORS.white, borderBottomColor: COLORS.dark_light }]}>
-        <TouchableOpacity accessibilityLabel="Retour" style={[styles.iconButton, { backgroundColor: COLORS.light_secondary }]} onPress={() => navigation.goBack()}>
-          <Icon name="chevron-left" size={24} color={COLORS.black} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: COLORS.black }]}>Dictionnaire</Text>
-      </View>
+      <HeaderComponent title={t('dictionary')} />
 
       <View style={styles.content}>
         <View style={[styles.searchCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
           <Icon name="magnify" size={22} color={COLORS.dark} />
           <TextInput
-            accessibilityLabel="Rechercher un mot"
+            accessibilityLabel={t('dictionary_search')}
             autoCapitalize="none"
             autoCorrect={false}
-            placeholder="Rechercher un mot"
+            placeholder={t('dictionary_search')}
             placeholderTextColor={COLORS.dark}
             returnKeyType="search"
             style={[styles.searchInput, { color: COLORS.black }]}
@@ -185,8 +181,8 @@ const DictionaryScreen = () => {
             onChangeText={setInputValue}
             onSubmitEditing={submitSearch}
           />
-          {inputValue ? <TouchableOpacity accessibilityLabel="Effacer" onPress={clearSearch}><Icon name="close-circle" size={21} color={COLORS.dark} /></TouchableOpacity> : null}
-          <TouchableOpacity accessibilityLabel="Rechercher" style={[styles.submitButton, { backgroundColor: COLORS.primary }]} onPress={submitSearch}>
+          {inputValue ? <TouchableOpacity accessibilityLabel={t('clear')} onPress={clearSearch}><Icon name="close-circle" size={21} color={COLORS.dark} /></TouchableOpacity> : null}
+          <TouchableOpacity accessibilityLabel={t('search')} style={[styles.submitButton, { backgroundColor: COLORS.primary }]} onPress={submitSearch}>
             <Icon name="arrow-right" size={20} color="#ffffff" />
           </TouchableOpacity>
         </View>
@@ -198,9 +194,6 @@ const DictionaryScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { alignItems: 'center', borderBottomWidth: StyleSheet.hairlineWidth, flexDirection: 'row', minHeight: 64, paddingHorizontal: 16 },
-  iconButton: { alignItems: 'center', borderRadius: 18, height: 36, justifyContent: 'center', width: 36 },
-  headerTitle: { fontSize: 18, fontWeight: '700', marginLeft: 11 },
   content: { flex: 1, paddingHorizontal: 16 },
   searchCard: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', marginVertical: 16, minHeight: 56, paddingLeft: 16, paddingRight: 7 },
   searchInput: { flex: 1, fontSize: 15, marginHorizontal: 11, paddingVertical: 12 },

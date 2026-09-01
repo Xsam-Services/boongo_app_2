@@ -3,8 +3,8 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { FlatList, Modal, RefreshControl, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator, FlatList, Modal, RefreshControl, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RadioButton, Checkbox } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
@@ -20,11 +20,13 @@ const SearchScreen = () => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const { userInfo } = useContext(AuthContext);
+  const insets = useSafeAreaInsets();
   const flatListRef = useRef(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [datas, setDatas] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const [types, setTypes] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedType, setSelectedType] = useState(null);
@@ -61,6 +63,7 @@ const SearchScreen = () => {
     if (isLoading) return;
 
     setIsLoading(true);
+    setHasSearched(true);
     const qs = require('qs');
     const params = {
       data: searchTerm,
@@ -142,13 +145,20 @@ const SearchScreen = () => {
           onScroll={handleScroll}
           refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} tintColor={COLORS.primary} />}
           ListEmptyComponent={
+            isLoading ? (
+              <View style={styles.loadingState}>
+                <ActivityIndicator size="large" color={COLORS.primary} />
+                <Text style={[styles.loadingLabel, { color: COLORS.dark }]}>{t('loading')}</Text>
+              </View>
+            ) : (
             <View style={[styles.emptyState, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
               <View style={[styles.emptyIcon, { backgroundColor: COLORS.light_primary }]}>
                 <Icon name="magnify" size={30} color={COLORS.primary} />
               </View>
-              <Text style={[styles.emptyTitle, { color: COLORS.black }]}>{t('search_filter')}</Text>
-              <Text style={[styles.emptyDescription, { color: COLORS.dark }]}>{t('search_filter_description')}</Text>
+              <Text style={[styles.emptyTitle, { color: COLORS.black }]}>{hasSearched ? t('search_no_results_title') : t('search_start_title')}</Text>
+              <Text style={[styles.emptyDescription, { color: COLORS.dark }]}>{hasSearched ? t('search_no_results_description') : t('search_start_description')}</Text>
             </View>
+            )
           }
         />
       </View>
@@ -166,7 +176,7 @@ const SearchScreen = () => {
 
       <Modal visible={showModal} animationType="slide" transparent onRequestClose={() => setShowModal(false)}>
         <View style={styles.modalBackdrop}>
-          <View style={[styles.filterSheet, { backgroundColor: COLORS.white }]}>
+          <SafeAreaView edges={['bottom']} style={[styles.filterSheet, { backgroundColor: COLORS.white, paddingBottom: Math.max(insets.bottom, 12) }]}>
             <View style={[styles.sheetHandle, { backgroundColor: COLORS.light_secondary }]} />
             <View style={styles.sheetHeader}>
               <View>
@@ -210,7 +220,7 @@ const SearchScreen = () => {
               <Text style={styles.applyButtonText}>{t('search_filter_apply')}</Text>
               <Icon name="check" size={20} color="#ffffff" />
             </TouchableOpacity>
-          </View>
+          </SafeAreaView>
         </View>
       </Modal>
     </SafeAreaView>
@@ -229,6 +239,8 @@ const styles = StyleSheet.create({
   emptyIcon: { alignItems: 'center', borderRadius: 22, height: 58, justifyContent: 'center', width: 58 },
   emptyTitle: { fontSize: 18, fontWeight: '700', marginTop: 16, textAlign: 'center' },
   emptyDescription: { fontSize: 14, lineHeight: 20, marginTop: 7, textAlign: 'center' },
+  loadingLabel: { fontSize: 14, marginTop: 12 },
+  loadingState: { alignItems: 'center', flex: 1, justifyContent: 'center', paddingBottom: 72 },
   floatingButton: { alignItems: 'center', borderRadius: 24, borderWidth: 1, height: 48, justifyContent: 'center', position: 'absolute', right: 22, width: 48 },
   backToTopButton: { bottom: 30 },
   modalBackdrop: { backgroundColor: 'rgba(18, 26, 36, 0.38)', flex: 1, justifyContent: 'flex-end' },
@@ -244,7 +256,7 @@ const styles = StyleSheet.create({
   optionsList: { gap: 8 },
   option: { alignItems: 'center', borderRadius: 14, flexDirection: 'row', justifyContent: 'space-between', minHeight: 52, paddingLeft: 14, paddingRight: 4 },
   optionText: { flex: 1, fontSize: 15, fontWeight: '500' },
-  applyButton: { alignItems: 'center', borderRadius: 16, flexDirection: 'row', gap: 8, justifyContent: 'center', marginBottom: 22, marginTop: 6, minHeight: 52 },
+  applyButton: { alignItems: 'center', borderRadius: 16, flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 6, minHeight: 52 },
   applyButtonText: { color: '#ffffff', fontSize: 15, fontWeight: '700' },
 });
 
