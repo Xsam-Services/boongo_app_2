@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 15, fontWeight: '700', marginBottom: 10 },
   categoriesTitle: { marginTop: 22 },
   edgeToEdgeFilterRow: { marginHorizontal: -20 },
-  filterChips: { gap: 8 },
+  filterChips: { gap: 8, paddingHorizontal: 20 },
   filterChip: { alignItems: 'center', borderRadius: 16, borderWidth: 1, flexDirection: 'row', gap: 6, minHeight: 44, paddingHorizontal: 14 },
   filterChipText: { fontSize: 14, fontWeight: '700' },
   applyButton: { alignItems: 'center', borderRadius: 16, flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 6, minHeight: 52 },
