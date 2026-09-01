@@ -3,7 +3,7 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { View, TouchableOpacity, Animated, SafeAreaView, Dimensions, RefreshControl, TouchableHighlight, FlatList, Text, Image, TextInput, Linking, ScrollView, Modal, ToastAndroid, Platform, Pressable } from 'react-native'
+import { ActivityIndicator, View, TouchableOpacity, Animated, SafeAreaView, Dimensions, RefreshControl, TouchableHighlight, FlatList, Text, Image, TextInput, Linking, ScrollView, Modal, ToastAndroid, Platform, Pressable } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { pick, types as docTypes, isErrorWithCode, errorCodes } from '@react-native-documents/picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -47,7 +47,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
   const [newClass, setNewClass] = useState('');
   // Loaders
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const scrollViewListRef = listRef || useRef(null);
   // Protect pick execution against multiple clicks on button
@@ -955,10 +955,13 @@ const Books = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
 
   // ================= Get events list =================
   useEffect(() => {
-    if (selectedOrganization && selectedOrganization.id) {
-      fetchBooks(1); // INITIAL LOADING : Call fetchBooks once organization is available
+    if (selectedOrganization?.id) {
+      setPage(1);
+      setBooks([]);
+      setLastPage(1);
+      fetchBooks(1);
     }
-  }, [selectedOrganization]);
+  }, [selectedOrganization?.id, idCat]);
 
   useEffect(() => {
     if (page > 1) {
@@ -989,7 +992,7 @@ const Books = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
       const response = await axios.post(url, qs.stringify(params), { headers });
       const data = response.data.data || [];
 
-      setBooks(prev => (page === 1 ? data : [...prev, ...data]));
+      setBooks(prev => (pageToFetch === 1 ? data : [...prev, ...data]));
       setAd(response.data.ad || null);
       setLastPage(response.data.lastPage || page);
       setCount(response.data.count || 0);
@@ -1034,49 +1037,34 @@ const Books = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
   };
 
   const handleBadgePress = useCallback((id) => {
+    if (id === idCat) return;
     setIdCat(id);
-    setPage(1);
-    setBooks([]);
-    setLastPage(1);
-  }, []);
+  }, [idCat]);
 
   const CategoryItem = ({ item }) => {
     const isSelected = idCat === item.id;
-    const Container = isSelected ? TouchableHighlight : TouchableOpacity;
-
     return (
-      <Container
+      <TouchableOpacity
         key={item.id}
+        activeOpacity={0.75}
         onPress={() => handleBadgePress(item.id)}
-        style={
-          isSelected
-            ? [homeStyles.categoryBadgeSelected, { backgroundColor: COLORS.white }]
-            : [homeStyles.categoryBadge, { backgroundColor: COLORS.info }]
-        }
-        underlayColor={COLORS.light_secondary}
+        style={{ alignItems: 'center', backgroundColor: isSelected ? COLORS.primary : COLORS.white, borderColor: isSelected ? COLORS.primary : COLORS.light_secondary, borderRadius: 16, borderWidth: 1, flexDirection: 'row', minHeight: 40, paddingHorizontal: 14 }}
       >
-        <Text
-          style={
-            isSelected
-              ? [homeStyles.categoryBadgeTextSelected, { color: COLORS.black }]
-              : [homeStyles.categoryBadgeText, { color: 'black' }]
-          }
-        >
-          {item.category_name}
-        </Text>
-      </Container>
+        {isSelected ? <Icon name="check" size={15} color="#ffffff" style={{ marginRight: 5 }} /> : null}
+        <Text style={{ color: isSelected ? '#ffffff' : COLORS.black, fontSize: 13, fontWeight: '800' }}>{item.category_name}</Text>
+      </TouchableOpacity>
     );
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
+    <View style={{ flex: 1, backgroundColor: COLORS.light }}>
       {showBackToTop && (
-        <TouchableOpacity style={[homeStyles.floatingButton, { backgroundColor: COLORS.warning }]} onPress={scrollToTop}>
-          <Icon name='chevron-double-up' size={IMAGE_SIZE.s09} style={{ color: 'black' }} />
+        <TouchableOpacity style={[homeStyles.floatingButton, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary, borderWidth: 1 }]} onPress={scrollToTop}>
+          <Icon name='chevron-up' size={24} color={COLORS.black} />
         </TouchableOpacity>
       )}
-      <TouchableOpacity style={[homeStyles.floatingButton, { bottom: 30, backgroundColor: COLORS.success }]} onPress={() => navigation.navigate('AddWork', { owner: 'organization', ownerId: selectedOrganization.id })}>
-        <Icon name='plus' size={IMAGE_SIZE.s07} style={{ color: 'white' }} />
+      <TouchableOpacity style={[homeStyles.floatingButton, { bottom: 30, backgroundColor: COLORS.primary }]} onPress={() => navigation.navigate('AddWork', { owner: 'organization', ownerId: selectedOrganization.id })}>
+        <Icon name='plus' size={27} color="#ffffff" />
       </TouchableOpacity>
 
       <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
@@ -1093,29 +1081,31 @@ const Books = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
           onEndReached={onEndReached}
           onEndReachedThreshold={0.1}
           scrollEventThrottle={16}
-          contentContainerStyle={{ paddingTop: headerHeight + TAB_BAR_HEIGHT }}
+          contentContainerStyle={{ paddingBottom: 96, paddingHorizontal: 16, paddingTop: headerHeight + TAB_BAR_HEIGHT }}
           windowSize={10}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={headerHeight + TAB_BAR_HEIGHT} />}
           contentInset={{ top: 0 }}
           contentOffset={{ y: 0 }}
-          ListEmptyComponent={<EmptyListComponent iconName="book-open-page-variant-outline" title={t('empty_list.title')} description={t('empty_list.description_establishment_books')} />}
+          ListEmptyComponent={isLoading ? <View style={{ alignItems: 'center', justifyContent: 'center', minHeight: 280 }}><ActivityIndicator size="large" color={COLORS.primary} /><Text style={{ color: COLORS.dark, fontSize: 14, marginTop: 12 }}>{t('loading')}</Text></View> : <EmptyListComponent iconName="book-open-page-variant-outline" title={t('empty_list.title')} description={t('empty_list.description_establishment_books')} />}
           ListHeaderComponent={
-            <>
+            <View style={{ marginBottom: 16 }}>
+              <Text style={{ color: COLORS.black, fontSize: 15, fontWeight: '800', marginBottom: 10 }}>{t('work.categories')}</Text>
               <FlatList
                 data={categories}
                 keyExtractor={item => item.id.toString()}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                style={{ height: 40, flexGrow: 0 }}
+                style={{ flexGrow: 0, marginHorizontal: -16 }}
                 contentContainerStyle={{
                   alignItems: 'center',
-                  paddingHorizontal: PADDING.p00,
+                  gap: 8,
+                  paddingHorizontal: 16,
                 }}
                 renderItem={({ item }) => <CategoryItem item={item} />}
               />
-            </>
+            </View>
           }
-          ListFooterComponent={() => isLoading ? (<Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01, }} >{t('loading')}</Text>) : null}
+          ListFooterComponent={() => isLoading && books.length ? (<Text style={{ color: COLORS.dark, textAlign: 'center', padding: 16 }} >{t('loading')}</Text>) : null}
         />
 
       </SafeAreaView>
