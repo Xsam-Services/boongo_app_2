@@ -110,7 +110,7 @@ const HeaderComponent = ({ title }) => {
           {title ? <Text style={[styles.title, { color: COLORS.black }]} numberOfLines={1}>{title}</Text> : null}
         </View>
         <View style={styles.rightActions}>
-          {route.name !== 'OrganizationSettings' && route.name !== 'Notifications' && route.name !== 'Language' && route.name !== 'Search' ? (
+          {route.name !== 'OrganizationSettings' && route.name !== 'Notifications' && route.name !== 'Language' && route.name !== 'Search' && route.name !== 'Dictionary' ? (
             route.name === 'Settings' ? (
               <HeaderButton accessibilityLabel="Langue" onPress={() => navigation.navigate('Language')} COLORS={COLORS}>
                 <MaterialCommunityIcons name="translate" size={20} color={COLORS.black} />

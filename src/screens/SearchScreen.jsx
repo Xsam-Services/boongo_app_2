@@ -3,28 +3,30 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { FlatList, Modal, RefreshControl, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { RadioButton, Checkbox } from 'react-native-paper';
+import { ActivityIndicator, FlatList, Modal, RefreshControl, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 
 import { API } from '../tools/constants';
 import { AuthContext } from '../contexts/AuthContext';
 import WorkItemComponent from '../components/work_item';
-import HeaderComponent from './header';
 import useColors from '../hooks/useColors';
 
 const SearchScreen = () => {
   const COLORS = useColors();
   const { t } = useTranslation();
+  const navigation = useNavigation();
   const { userInfo } = useContext(AuthContext);
+  const insets = useSafeAreaInsets();
   const flatListRef = useRef(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [datas, setDatas] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const [types, setTypes] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedType, setSelectedType] = useState(null);
@@ -61,6 +63,7 @@ const SearchScreen = () => {
     if (isLoading) return;
 
     setIsLoading(true);
+    setHasSearched(true);
     const qs = require('qs');
     const params = {
       data: searchTerm,
@@ -104,12 +107,18 @@ const SearchScreen = () => {
     fetchData(inputValue);
   };
 
-  const hasFilters = Boolean(selectedType) || selectedCategories.length > 0;
+  const clearFilters = () => {
+    setSelectedType(null);
+    setSelectedCategories([]);
+  };
 
+  const hasFilters = Boolean(selectedType) || selectedCategories.length > 0;
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: COLORS.light }]} edges={['top', 'bottom']}>
-      <HeaderComponent title={t('search')} />
       <View style={styles.content}>
+        <TouchableOpacity accessibilityLabel="Retour" activeOpacity={0.75} style={[styles.backButton, { backgroundColor: COLORS.light_secondary }]} onPress={() => navigation.goBack()}>
+          <Icon name="chevron-left" size={24} color={COLORS.black} />
+        </TouchableOpacity>
         <View style={[styles.searchCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
           <Icon name="magnify" size={23} color={COLORS.dark} />
           <TextInput
@@ -122,6 +131,14 @@ const SearchScreen = () => {
             onChangeText={setInputValue}
             onSubmitEditing={() => fetchData(inputValue)}
           />
+          <TouchableOpacity
+            accessibilityLabel={t('search')}
+            activeOpacity={0.75}
+            style={[styles.submitButton, { backgroundColor: COLORS.primary }]}
+            onPress={() => fetchData(inputValue)}
+          >
+            <Icon name="arrow-right" size={20} color="#ffffff" />
+          </TouchableOpacity>
           <TouchableOpacity
             accessibilityLabel={t('search_filter')}
             activeOpacity={0.75}
@@ -140,15 +157,23 @@ const SearchScreen = () => {
           contentContainerStyle={datas.length ? styles.results : styles.emptyResults}
           keyboardShouldPersistTaps="handled"
           onScroll={handleScroll}
+          showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} tintColor={COLORS.primary} />}
           ListEmptyComponent={
+            isLoading ? (
+              <View style={styles.loadingState}>
+                <ActivityIndicator size="large" color={COLORS.primary} />
+                <Text style={[styles.loadingLabel, { color: COLORS.dark }]}>{t('loading')}</Text>
+              </View>
+            ) : (
             <View style={[styles.emptyState, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
               <View style={[styles.emptyIcon, { backgroundColor: COLORS.light_primary }]}>
                 <Icon name="magnify" size={30} color={COLORS.primary} />
               </View>
-              <Text style={[styles.emptyTitle, { color: COLORS.black }]}>{t('search_filter')}</Text>
-              <Text style={[styles.emptyDescription, { color: COLORS.dark }]}>{t('search_filter_description')}</Text>
+              <Text style={[styles.emptyTitle, { color: COLORS.black }]}>{hasSearched ? t('search_no_results_title') : t('search_start_title')}</Text>
+              <Text style={[styles.emptyDescription, { color: COLORS.dark }]}>{hasSearched ? t('search_no_results_description') : t('search_start_description')}</Text>
             </View>
+            )
           }
         />
       </View>
@@ -166,51 +191,54 @@ const SearchScreen = () => {
 
       <Modal visible={showModal} animationType="slide" transparent onRequestClose={() => setShowModal(false)}>
         <View style={styles.modalBackdrop}>
-          <View style={[styles.filterSheet, { backgroundColor: COLORS.white }]}>
+          <SafeAreaView edges={['bottom']} style={[styles.filterSheet, { backgroundColor: COLORS.white, paddingBottom: Math.max(insets.bottom, 12) }]}>
             <View style={[styles.sheetHandle, { backgroundColor: COLORS.light_secondary }]} />
             <View style={styles.sheetHeader}>
               <View>
                 <Text style={[styles.sheetTitle, { color: COLORS.black }]}>{t('search_filter')}</Text>
                 <Text style={[styles.sheetSubtitle, { color: COLORS.dark }]}>{t('search_filter_description')}</Text>
               </View>
-              <TouchableOpacity accessibilityLabel={t('cancel')} style={[styles.closeButton, { backgroundColor: COLORS.light_secondary }]} onPress={() => setShowModal(false)}>
-                <Icon name="close" size={20} color={COLORS.black} />
-              </TouchableOpacity>
+              <View style={styles.sheetActions}>
+                {hasFilters ? <TouchableOpacity accessibilityLabel={t('search_filter_clear')} style={[styles.resetButton, { backgroundColor: COLORS.light }]} onPress={clearFilters}><Text style={[styles.resetButtonText, { color: COLORS.primary }]}>{t('search_filter_clear')}</Text></TouchableOpacity> : null}
+                <TouchableOpacity accessibilityLabel={t('cancel')} style={[styles.closeButton, { backgroundColor: COLORS.light_secondary }]} onPress={() => setShowModal(false)}>
+                  <Icon name="close" size={20} color={COLORS.black} />
+                </TouchableOpacity>
+              </View>
             </View>
 
-            <ScrollView contentContainerStyle={styles.filterContent} showsVerticalScrollIndicator={false}>
-              <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{t('search_filter_type')}</Text>
-              <View style={styles.optionsList}>
+            <View style={styles.filterContent}>
+              <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{t('search_filter_type_label')}</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.edgeToEdgeFilterRow} contentContainerStyle={styles.filterChips}>
                 {types.map(type => {
                   const isSelected = selectedType === type.id.toString();
                   return (
-                    <TouchableOpacity key={type.id} style={[styles.option, { backgroundColor: isSelected ? COLORS.light_primary : COLORS.light }]} onPress={() => setSelectedType(isSelected ? null : type.id.toString())}>
-                      <Text style={[styles.optionText, { color: COLORS.black }]}>{type.type_name}</Text>
-                      <RadioButton pointerEvents="none" value={type.id.toString()} status={isSelected ? 'checked' : 'unchecked'} color={COLORS.primary} />
+                    <TouchableOpacity key={type.id} activeOpacity={0.75} style={[styles.filterChip, { backgroundColor: isSelected ? COLORS.primary : COLORS.light, borderColor: isSelected ? COLORS.primary : COLORS.light_secondary }]} onPress={() => setSelectedType(isSelected ? null : type.id.toString())}>
+                      {isSelected ? <Icon name="check" size={16} color="#ffffff" /> : null}
+                      <Text style={[styles.filterChipText, { color: isSelected ? '#ffffff' : COLORS.black }]}>{type.type_name}</Text>
                     </TouchableOpacity>
                   );
                 })}
-              </View>
+              </ScrollView>
 
-              <Text style={[styles.sectionTitle, styles.categoriesTitle, { color: COLORS.black }]}>{t('search_filter_categories')}</Text>
-              <View style={styles.optionsList}>
+              <Text style={[styles.sectionTitle, styles.categoriesTitle, { color: COLORS.black }]}>{t('search_filter_categories_label')}</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.edgeToEdgeFilterRow} contentContainerStyle={styles.filterChips}>
                 {categories.map(category => {
                   const isSelected = selectedCategories.includes(category.id);
                   return (
-                    <TouchableOpacity key={category.id} style={[styles.option, { backgroundColor: isSelected ? COLORS.light_primary : COLORS.light }]} onPress={() => handleCategoryToggle(category.id)}>
-                      <Text style={[styles.optionText, { color: COLORS.black }]}>{category.category_name}</Text>
-                      <Checkbox pointerEvents="none" status={isSelected ? 'checked' : 'unchecked'} color={COLORS.primary} />
+                    <TouchableOpacity key={category.id} activeOpacity={0.75} style={[styles.filterChip, { backgroundColor: isSelected ? COLORS.primary : COLORS.light, borderColor: isSelected ? COLORS.primary : COLORS.light_secondary }]} onPress={() => handleCategoryToggle(category.id)}>
+                      {isSelected ? <Icon name="check" size={16} color="#ffffff" /> : null}
+                      <Text style={[styles.filterChipText, { color: isSelected ? '#ffffff' : COLORS.black }]}>{category.category_name}</Text>
                     </TouchableOpacity>
                   );
                 })}
-              </View>
-            </ScrollView>
+              </ScrollView>
+            </View>
 
             <TouchableOpacity activeOpacity={0.82} style={[styles.applyButton, { backgroundColor: COLORS.primary }]} onPress={applyFilters}>
               <Text style={styles.applyButtonText}>{t('search_filter_apply')}</Text>
               <Icon name="check" size={20} color="#ffffff" />
             </TouchableOpacity>
-          </View>
+          </SafeAreaView>
         </View>
       </Modal>
     </SafeAreaView>
@@ -220,8 +248,10 @@ const SearchScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { flex: 1, paddingHorizontal: 16 },
-  searchCard: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', marginVertical: 16, minHeight: 56, paddingLeft: 16, paddingRight: 7 },
+  backButton: { alignItems: 'center', borderRadius: 18, height: 36, justifyContent: 'center', marginTop: 10, width: 36 },
+  searchCard: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', marginBottom: 16, marginTop: 12, minHeight: 56, paddingLeft: 16, paddingRight: 7 },
   searchInput: { flex: 1, fontSize: 15, marginHorizontal: 11, paddingVertical: 12 },
+  submitButton: { alignItems: 'center', borderRadius: 14, height: 42, justifyContent: 'center', marginRight: 6, width: 42 },
   filterButton: { alignItems: 'center', borderRadius: 14, height: 42, justifyContent: 'center', width: 42 },
   results: { paddingBottom: 34 },
   emptyResults: { flexGrow: 1, justifyContent: 'center', paddingBottom: 72 },
@@ -229,22 +259,28 @@ const styles = StyleSheet.create({
   emptyIcon: { alignItems: 'center', borderRadius: 22, height: 58, justifyContent: 'center', width: 58 },
   emptyTitle: { fontSize: 18, fontWeight: '700', marginTop: 16, textAlign: 'center' },
   emptyDescription: { fontSize: 14, lineHeight: 20, marginTop: 7, textAlign: 'center' },
+  loadingLabel: { fontSize: 14, marginTop: 12 },
+  loadingState: { alignItems: 'center', flex: 1, justifyContent: 'center', paddingBottom: 72 },
   floatingButton: { alignItems: 'center', borderRadius: 24, borderWidth: 1, height: 48, justifyContent: 'center', position: 'absolute', right: 22, width: 48 },
   backToTopButton: { bottom: 30 },
   modalBackdrop: { backgroundColor: 'rgba(18, 26, 36, 0.38)', flex: 1, justifyContent: 'flex-end' },
-  filterSheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, maxHeight: '82%', paddingHorizontal: 20, paddingTop: 10 },
+  filterSheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 10 },
   sheetHandle: { alignSelf: 'center', borderRadius: 3, height: 5, width: 42 },
   sheetHeader: { alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 18, marginTop: 18 },
+  sheetActions: { alignItems: 'center', flexDirection: 'row', gap: 8 },
   sheetTitle: { fontSize: 21, fontWeight: '700' },
   sheetSubtitle: { fontSize: 13, lineHeight: 18, marginTop: 4, maxWidth: 280 },
   closeButton: { alignItems: 'center', borderRadius: 16, height: 34, justifyContent: 'center', width: 34 },
+  resetButton: { alignItems: 'center', borderRadius: 13, justifyContent: 'center', minHeight: 34, paddingHorizontal: 11 },
+  resetButtonText: { fontSize: 12, fontWeight: '800' },
   filterContent: { paddingBottom: 16 },
   sectionTitle: { fontSize: 15, fontWeight: '700', marginBottom: 10 },
   categoriesTitle: { marginTop: 22 },
-  optionsList: { gap: 8 },
-  option: { alignItems: 'center', borderRadius: 14, flexDirection: 'row', justifyContent: 'space-between', minHeight: 52, paddingLeft: 14, paddingRight: 4 },
-  optionText: { flex: 1, fontSize: 15, fontWeight: '500' },
-  applyButton: { alignItems: 'center', borderRadius: 16, flexDirection: 'row', gap: 8, justifyContent: 'center', marginBottom: 22, marginTop: 6, minHeight: 52 },
+  edgeToEdgeFilterRow: { marginHorizontal: -20 },
+  filterChips: { gap: 8, paddingHorizontal: 20 },
+  filterChip: { alignItems: 'center', borderRadius: 16, borderWidth: 1, flexDirection: 'row', gap: 6, minHeight: 44, paddingHorizontal: 14 },
+  filterChipText: { fontSize: 14, fontWeight: '700' },
+  applyButton: { alignItems: 'center', borderRadius: 16, flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 6, minHeight: 52 },
   applyButtonText: { color: '#ffffff', fontSize: 15, fontWeight: '700' },
 });
 
