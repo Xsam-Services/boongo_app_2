@@ -209,7 +209,7 @@ const WorkDataScreen = ({ route, navigation }) => {
       <View style={[styles.filesCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
         <View style={styles.sectionHeading}>
           <Icon name="folder-multiple-outline" size={21} color={COLORS.primary} />
-          <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{t('work.add_files')}</Text>
+          <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{t('work.associated_files')}</Text>
         </View>
         {work.work_url ? renderFileRow(t('file.external_videos'), [work.work_url], url => (
           <FileThumbnail key={url} uri={url} type="video" title={t('file.video')} onPress={() => navigation.navigate('VideoPlayer', { videoTitle: work.work_title, videoUri: url, mediaType: 'video' })} />

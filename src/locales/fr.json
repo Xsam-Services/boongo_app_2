@@ -155,6 +155,7 @@
         "category": "Catégorie : ",
         "consultation_price": "Consultation",
         "add_files": "Associer des fichiers",
+        "associated_files": "Fichiers associés",
         "selected_files": "Fichiers sélectionnés :",
         "max_files": "Limite de {{ count }} fichiers atteinte. Certains fichiers ont été ignorés."
     },
