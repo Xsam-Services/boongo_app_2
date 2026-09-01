@@ -183,6 +183,7 @@
     "have_account": "Vous avez déjà un compte ?",
     "no_account": "Vous n’avez pas de compte ?",
     "select_date": "Sélectionner la date",
+    "selected": "sélectionnée(s)",
     "search": "Rechercher",
     "clear": "Effacer",
     "search_result": "Résultats avec « {{ query }} »",

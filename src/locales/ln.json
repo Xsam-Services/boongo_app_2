@@ -183,6 +183,7 @@
     "have_account": "Ozali déjà na compte?",
     "no_account": "Ozali na compte te?",
     "select_date": "Pona mokolo",
+    "selected": "eponami",
     "search": "Luka",
     "clear": "Longola",
     "search_result": "Ba résultats na « {{ query }} »",

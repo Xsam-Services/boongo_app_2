@@ -31,7 +31,6 @@ const SearchScreen = () => {
   const [categories, setCategories] = useState([]);
   const [selectedType, setSelectedType] = useState(null);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [activeFilterGroup, setActiveFilterGroup] = useState('types');
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -109,9 +108,10 @@ const SearchScreen = () => {
   };
 
   const hasFilters = Boolean(selectedType) || selectedCategories.length > 0;
+  const selectedTypeName = types.find(type => type.id.toString() === selectedType)?.type_name;
   const filterGroups = [
-    { id: 'types', label: t('search_filter_type'), count: selectedType ? 1 : 0 },
-    { id: 'categories', label: t('search_filter_categories'), count: selectedCategories.length },
+    { id: 'types', label: t('search_filter_type'), value: selectedTypeName || t('all_m') },
+    { id: 'categories', label: t('search_filter_categories'), value: selectedCategories.length ? `${selectedCategories.length} ${t('selected')}` : t('all_f') },
   ];
 
   return (
@@ -201,27 +201,24 @@ const SearchScreen = () => {
               </TouchableOpacity>
             </View>
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterTabs}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterOverview}>
               {filterGroups.map(group => {
-                const isActive = activeFilterGroup === group.id;
                 return (
-                  <TouchableOpacity
+                  <View
                     key={group.id}
-                    activeOpacity={0.75}
-                    style={[styles.filterTab, { backgroundColor: isActive ? COLORS.primary : COLORS.light, borderColor: isActive ? COLORS.primary : COLORS.light_secondary }]}
-                    onPress={() => setActiveFilterGroup(group.id)}
+                    style={[styles.filterOverviewCard, { backgroundColor: COLORS.light, borderColor: COLORS.light_secondary }]}
                   >
-                    <Text style={[styles.filterTabText, { color: isActive ? '#ffffff' : COLORS.black }]}>{group.label}</Text>
-                    {group.count ? <View style={[styles.filterCount, { backgroundColor: isActive ? 'rgba(255,255,255,0.22)' : COLORS.light_primary }]}><Text style={[styles.filterCountText, { color: isActive ? '#ffffff' : COLORS.primary }]}>{group.count}</Text></View> : null}
-                  </TouchableOpacity>
+                    <Text style={[styles.filterOverviewLabel, { color: COLORS.dark }]}>{group.label}</Text>
+                    <Text style={[styles.filterOverviewValue, { color: COLORS.black }]} numberOfLines={1}>{group.value}</Text>
+                  </View>
                 );
               })}
             </ScrollView>
 
             <ScrollView contentContainerStyle={styles.filterContent} showsVerticalScrollIndicator={false}>
-              <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{activeFilterGroup === 'types' ? t('search_filter_type') : t('search_filter_categories')}</Text>
+              <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{t('search_filter_type')}</Text>
               <View style={styles.optionsList}>
-                {activeFilterGroup === 'types' ? types.map(type => {
+                {types.map(type => {
                   const isSelected = selectedType === type.id.toString();
                   return (
                     <TouchableOpacity key={type.id} style={[styles.option, { backgroundColor: isSelected ? COLORS.light_primary : COLORS.light }]} onPress={() => setSelectedType(isSelected ? null : type.id.toString())}>
@@ -229,7 +226,12 @@ const SearchScreen = () => {
                       <RadioButton pointerEvents="none" value={type.id.toString()} status={isSelected ? 'checked' : 'unchecked'} color={COLORS.primary} />
                     </TouchableOpacity>
                   );
-                }) : categories.map(category => {
+                })}
+              </View>
+
+              <Text style={[styles.sectionTitle, styles.categoriesTitle, { color: COLORS.black }]}>{t('search_filter_categories')}</Text>
+              <View style={styles.optionsList}>
+                {categories.map(category => {
                   const isSelected = selectedCategories.includes(category.id);
                   return (
                     <TouchableOpacity key={category.id} style={[styles.option, { backgroundColor: isSelected ? COLORS.light_primary : COLORS.light }]} onPress={() => handleCategoryToggle(category.id)}>
@@ -276,13 +278,13 @@ const styles = StyleSheet.create({
   sheetTitle: { fontSize: 21, fontWeight: '700' },
   sheetSubtitle: { fontSize: 13, lineHeight: 18, marginTop: 4, maxWidth: 280 },
   closeButton: { alignItems: 'center', borderRadius: 16, height: 34, justifyContent: 'center', width: 34 },
-  filterTabs: { gap: 8, paddingBottom: 16 },
-  filterTab: { alignItems: 'center', borderRadius: 14, borderWidth: 1, flexDirection: 'row', gap: 8, minHeight: 42, paddingHorizontal: 14 },
-  filterTabText: { fontSize: 14, fontWeight: '700' },
-  filterCount: { alignItems: 'center', borderRadius: 10, height: 20, justifyContent: 'center', minWidth: 20, paddingHorizontal: 5 },
-  filterCountText: { fontSize: 11, fontWeight: '800' },
+  filterOverview: { gap: 10, paddingBottom: 16 },
+  filterOverviewCard: { borderRadius: 15, borderWidth: 1, minWidth: 150, paddingHorizontal: 14, paddingVertical: 11 },
+  filterOverviewLabel: { fontSize: 12, fontWeight: '600' },
+  filterOverviewValue: { fontSize: 14, fontWeight: '800', marginTop: 4 },
   filterContent: { paddingBottom: 16 },
   sectionTitle: { fontSize: 15, fontWeight: '700', marginBottom: 10 },
+  categoriesTitle: { marginTop: 22 },
   optionsList: { gap: 8 },
   option: { alignItems: 'center', borderRadius: 14, flexDirection: 'row', justifyContent: 'space-between', minHeight: 52, paddingLeft: 14, paddingRight: 4 },
   optionText: { flex: 1, fontSize: 15, fontWeight: '500' },
