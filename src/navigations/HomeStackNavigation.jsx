@@ -13,7 +13,7 @@ import ProfileScreen from '../screens/profile';
 import AccountScreen from '../screens/Account';
 import NotificationsScreen from '../screens/Account/notifications';
 import SearchScreen from '../screens/SearchScreen';
-import OrganizationDataScreen from '../screens/Organization/organization_data';
+import OrganizationDataScreen from '../screens/Organization/OrganizationDataScreen';
 import OrganizationSettingsScreen from '../screens/Organization/organization_settings';
 import EstablishmentScreen from '../screens/Organization/EstablishmentScreen';
 import AddEstablishmentScreen from '../screens/Organization/Establishment/add_establishment';
