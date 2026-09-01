@@ -29,6 +29,7 @@ const TAB_BAR_HEIGHT = 48;
 const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
   // =============== Colors ===============
   const COLORS = useColors();
+  const insets = useSafeAreaInsets();
   // =============== Language ===============
   const { t } = useTranslation();
   // =============== Get contexts ===============
@@ -369,7 +370,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
 
                   {/* Modal to see program details */}
                   <Modal visible={docProgramModalVisible} animationType='slide' onRequestClose={() => setDocProgramModalVisible(false)}>
-                    <SafeAreaContextView style={{ flex: 1, backgroundColor: COLORS.light }} edges={['top', 'bottom']}>
+                    <SafeAreaContextView style={{ backgroundColor: COLORS.light, flex: 1, paddingBottom: insets.bottom + 12, paddingTop: insets.top + 12 }} edges={[]}>
                       <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', padding: 16 }}>
                         <Text style={{ color: COLORS.black, flex: 1, fontSize: 18, fontWeight: '800' }} numberOfLines={1}>{selectedProgram.class}</Text>
                         <TouchableOpacity accessibilityLabel="Fermer" style={{ alignItems: 'center', backgroundColor: COLORS.light_secondary, borderRadius: 20, height: 40, justifyContent: 'center', width: 40 }} onPress={() => setDocProgramModalVisible(false)}>
