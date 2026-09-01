@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   filterContent: { paddingBottom: 16 },
   sectionTitle: { fontSize: 15, fontWeight: '700', marginBottom: 10 },
   categoriesTitle: { marginTop: 22 },
-  edgeToEdgeFilterRow: { marginHorizontal: -20 },
+  edgeToEdgeFilterRow: { marginRight: -20 },
   filterChips: { gap: 8 },
   filterChip: { alignItems: 'center', borderRadius: 16, borderWidth: 1, flexDirection: 'row', gap: 6, minHeight: 44, paddingHorizontal: 14 },
   filterChipText: { fontSize: 14, fontWeight: '700' },
