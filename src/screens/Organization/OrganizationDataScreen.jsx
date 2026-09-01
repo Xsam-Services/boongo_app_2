@@ -3,10 +3,10 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, View, TouchableOpacity, Animated, SafeAreaView, Dimensions, RefreshControl, TouchableHighlight, FlatList, Text, Image, TextInput, Linking, ScrollView, Modal, ToastAndroid, Platform, Pressable } from 'react-native'
+import { ActivityIndicator, Alert, View, TouchableOpacity, Animated, Dimensions, RefreshControl, TouchableHighlight, FlatList, Text, Image, TextInput, Linking, ScrollView, Modal, ToastAndroid, Platform, Pressable } from 'react-native'
 import { SafeAreaView as SafeAreaContextView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { pick, types as docTypes, isErrorWithCode, errorCodes } from '@react-native-documents/picker';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'react-native-paper';
 import { TabBar, TabView } from 'react-native-tab-view';
@@ -122,6 +122,11 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
 
   // ================= Add new program =================
   const addNewProgram = async () => {
+    if (!newClass.trim() || !files[0]?.uri) {
+      Alert.alert('Programme incomplet', 'Indiquez une classe ou promotion et ajoutez le document PDF du programme.');
+      return;
+    }
+
     setIsLoading(true);
 
     const formData = new FormData();
@@ -325,15 +330,19 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
             renderItem={({ item }) => <ProgramItem item={item} />}
           />
 
-          {selectedProgram ? (
+          {selectedProgram?.files?.[0]?.file_url ? (
             <>
               {refreshing ? (
                 <Text style={{ fontSize: TEXT_SIZE.paragraph, color: COLORS.black, textAlign: 'center', marginTop: PADDING.p05 }}>{t('loading')}</Text>
               ) : (
                 <>
                   {/* Program details */}
-                  <View style={{ flexDirection: 'row', padding: PADDING.p03 }}>
-                    <View style={{ width: 160 }}>
+                  <View style={{ backgroundColor: COLORS.white, borderColor: COLORS.light_secondary, borderRadius: 20, borderWidth: 1, margin: 16, overflow: 'hidden' }}>
+                    <View style={{ padding: 16 }}>
+                      <Text style={{ color: COLORS.primary, fontSize: 13, fontWeight: '800', marginBottom: 6 }}>PROGRAMME {selectedProgram.course_year?.year || course_year}</Text>
+                      <Text style={{ color: COLORS.black, fontSize: 22, fontWeight: '800' }}>{selectedProgram.class}</Text>
+                    </View>
+                    <View style={{ height: 260 }}>
                       <Pdf
                         trustAllCerts={false}
                         source={{ uri: selectedProgram.files[0].file_url, cache: true }}
@@ -350,26 +359,25 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
                           console.log(`Link pressed: ${uri}`);
                         }}
                         page={pdfPage}
-                        style={{ flex: 1, width: '100%', height: 230 }} />
+                        style={{ flex: 1, width: '100%' }} />
                     </View>
-
-                    <View style={{ flexShrink: 1, marginLeft: PADDING.p01, marginTop: PADDING.p05 }}>
-                      <Text style={{ fontSize: TEXT_SIZE.title, color: COLORS.black, textAlign: 'left' }}>{t('program.title', { class: selectedProgram.class, course_year: selectedProgram.course_year.year })}</Text>
-                      <TouchableOpacity style={homeStyles.linkIcon} onPress={() => setDocProgramModalVisible(true)}>
-                        <Text style={[homeStyles.link, { color: COLORS.link_color }]}>{t('see_details')} </Text>
-                        <Icon name='dock-window' size={IMAGE_SIZE.s05} color={COLORS.link_color} />
-                      </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity accessibilityLabel={t('see_details')} style={{ alignItems: 'center', borderTopColor: COLORS.light_secondary, borderTopWidth: 1, flexDirection: 'row', justifyContent: 'center', minHeight: 52 }} onPress={() => setDocProgramModalVisible(true)}>
+                      <Text style={{ color: COLORS.primary, fontSize: 15, fontWeight: '800', marginRight: 6 }}>{t('see_details')}</Text>
+                      <Icon name='arrow-top-right' size={19} color={COLORS.primary} />
+                    </TouchableOpacity>
                   </View>
 
                   {/* Modal to see program details */}
-                  <Modal visible={docProgramModalVisible} animationType='slide'>
-                    <SafeAreaView contentContainerStyle={{ flexGrow: 1, padding: PADDING.p05, backgroundColor: COLORS.white }}>
-                      <TouchableOpacity style={{ position: 'absolute', right: PADDING.p01, top: PADDING.p01, zIndex: 10, width: 37, height: 37, backgroundColor: 'rgba(200,200,200,0.5)', padding: 2.6, borderRadius: 37 / 2 }} onPress={() => setDocProgramModalVisible(false)}>
-                        <Icon name='close' size={IMAGE_SIZE.s07} color='black' />
-                      </TouchableOpacity>
+                  <Modal visible={docProgramModalVisible} animationType='slide' onRequestClose={() => setDocProgramModalVisible(false)}>
+                    <SafeAreaContextView style={{ flex: 1, backgroundColor: COLORS.light }} edges={['top', 'bottom']}>
+                      <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', padding: 16 }}>
+                        <Text style={{ color: COLORS.black, flex: 1, fontSize: 18, fontWeight: '800' }} numberOfLines={1}>{selectedProgram.class}</Text>
+                        <TouchableOpacity accessibilityLabel="Fermer" style={{ alignItems: 'center', backgroundColor: COLORS.light_secondary, borderRadius: 20, height: 40, justifyContent: 'center', width: 40 }} onPress={() => setDocProgramModalVisible(false)}>
+                          <Icon name='close' size={22} color={COLORS.black} />
+                        </TouchableOpacity>
+                      </View>
 
-                      <View style={{ height: Dimensions.get('window').height - 5, justifyContent: 'flex-start', alignItems: 'center' }}>
+                      <View style={{ flex: 1, marginHorizontal: 16, marginBottom: 16, overflow: 'hidden', borderRadius: 18 }}>
                         <Pdf
                           trustAllCerts={false}
                           source={{ uri: selectedProgram.files[0].file_url, cache: true }}
@@ -387,9 +395,9 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
                             console.log(`Link pressed: ${uri}`);
                           }}
                           page={pdfPage}
-                          style={{ flex: 1, width: Dimensions.get('window').width, height: Dimensions.get('window').height, }} />
+                          style={{ flex: 1, width: '100%' }} />
                       </View>
-                    </SafeAreaView>
+                    </SafeAreaContextView>
                   </Modal>
                 </>
               )}
@@ -578,6 +586,7 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
     if (isLoading || pageToFetch > lastPage || !selectedOrganization?.id) return;
 
     if (selectedOrganization && selectedOrganization.id) {
+      setIsLoading(true);
       try {
         const response = await axios.get(`${API.boongo_url}/event/find_by_organization/${organization_id}?page=${pageToFetch}`, { headers: { 'Content-Type': 'multipart/form-data', 'X-localization': 'fr', 'Authorization': `Bearer ${userInfo.api_token}` } });
 
@@ -711,7 +720,7 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
       )}
       {selectedOrganization.user_id === userInfo.id ? <TouchableOpacity accessibilityLabel={t('event.create')} style={[homeStyles.floatingButton, { bottom: 30, backgroundColor: COLORS.primary }]} onPress={() => setFormEventModalVisible(true)}><Icon name='plus' size={27} color="#ffffff" /></TouchableOpacity> : null}
 
-      <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
+      <SafeAreaContextView style={{ flex: 1 }} edges={['bottom']}>
         {/* Events list */}
         <View style={{ flex: 1 }}>
           {/* Events List */}
@@ -732,7 +741,7 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={headerHeight + TAB_BAR_HEIGHT} />}
             contentInset={{ top: 0 }}
             contentOffset={{ y: 0 }}
-            ListEmptyComponent={<EmptyListComponent iconName='calendar-outline' title={t('empty_list.title')} description={selectedOrganization && selectedOrganization.type && selectedOrganization.type.alias ? (selectedOrganization.type.alias === 'government_organization' ? t('empty_list.description_government_events') : t('empty_list.description_establishment_events')) : '...'} />}
+            ListEmptyComponent={isLoading ? <View style={{ alignItems: 'center', paddingTop: 80 }}><ActivityIndicator color={COLORS.primary} size="large" /></View> : <EmptyListComponent iconName='calendar-outline' title={t('empty_list.title')} description={selectedOrganization && selectedOrganization.type && selectedOrganization.type.alias ? (selectedOrganization.type.alias === 'government_organization' ? t('empty_list.description_government_events') : t('empty_list.description_establishment_events')) : '...'} />}
             ListFooterComponent={() => isLoading && events.length ? <Text style={{ color: COLORS.dark, textAlign: 'center', padding: 16 }}>{t('loading')}</Text> : null}
           />
         </View>
@@ -872,7 +881,7 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
           </ScrollView>
           </SafeAreaContextView>
         </Modal>
-      </SafeAreaView>
+      </SafeAreaContextView>
     </View>
   );
 };
@@ -1071,7 +1080,7 @@ const Books = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
         <Icon name='plus' size={27} color="#ffffff" />
       </TouchableOpacity>
 
-      <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
+      <SafeAreaContextView style={{ flex: 1 }} edges={['bottom']}>
         {/* Books List */}
         <Animated.FlatList
           ref={flatListRef}
@@ -1112,7 +1121,7 @@ const Books = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
           ListFooterComponent={() => isLoading && books.length ? (<Text style={{ color: COLORS.dark, textAlign: 'center', padding: 16 }} >{t('loading')}</Text>) : null}
         />
 
-      </SafeAreaView>
+      </SafeAreaContextView>
     </View>
   );
 };
@@ -1359,7 +1368,7 @@ const Teach = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
           <Icon name='chevron-double-up' size={IMAGE_SIZE.s09} style={{ color: 'black' }} />
         </TouchableOpacity>
       )}
-      <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
+      <SafeAreaContextView style={{ flex: 1 }} edges={['bottom']}>
         {/* Events list */}
         <View style={[homeStyles.cardEmpty, { height: Dimensions.get('window').height, marginLeft: 0, paddingHorizontal: 2 }]}>
           {/* Events List */}
@@ -1513,7 +1522,7 @@ const Teach = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
           </ScrollView>
           </SafeAreaContextView>
         </Modal>
-      </SafeAreaView>
+      </SafeAreaContextView>
     </View>
   );
 };
@@ -1644,12 +1653,7 @@ const OrganizationDataScreen = () => {
     setIndex(newIndex);
   };
 
-  // ================= Get current organization =================
-  useEffect(() => {
-    getOrganization();
-  }, []); // <-- CORRECTION : une seule fois au montage
-
-  const getOrganization = () => {
+  const getOrganization = useCallback(() => {
     const config = {
       method: 'GET',
       url: `${API.boongo_url}/organization/${organization_id}`,
@@ -1670,7 +1674,10 @@ const OrganizationDataScreen = () => {
       .catch(error => {
         console.log(error);
       });
-  };
+  }, [organization_id, userInfo.api_token]);
+
+  // Refresh the header when returning from organization settings.
+  useFocusEffect(getOrganization);
 
   // Custom "TabBar"
   const renderTabBar = (props) => (

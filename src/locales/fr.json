@@ -232,7 +232,7 @@
     "expand": "Etendre",
     "cut": "Couper",
     "report": "Signaler",
-    "change_organization": "Modifier organization",
+    "change_organization": "Modifier l’organisation",
     "program": {
         "title": "Programme de {{ class }} pour {{ course_year }}",
         "data": {

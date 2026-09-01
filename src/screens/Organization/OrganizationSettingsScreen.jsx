@@ -185,22 +185,11 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
       const text = await response.text();
       const json = JSON.parse(text);
 
-      // Reset all after success
-      setOrgName('');
-      setOrgAcronym('');
-      setOrgDescription('');
-      setIdNumber('');
-      setAddress('');
-      setPhone('');
-      setEmail('');
-      setPOBox('');
-      setLegalStatus('');
-      setYearOfCreation('');
-      setWebsiteURL('');
-      setImageData('');
+      if (!response.ok || json.success === false) {
+        throw new Error(json.message || 'La modification de l’organisation a échoué.');
+      }
 
-      console.log(json);
-      navigation.navigate('OrganizationData', { organization_id: json.data.id });
+      navigation.goBack();
 
     } catch (error) {
       console.error('Error:', error);
