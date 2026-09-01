@@ -133,8 +133,8 @@ const OrganizationListScreen = ({ typeId, navigationTitle, detailType, addRoute,
             onSubmitEditing={searchOrganizations}
           />
           {inputValue ? <TouchableOpacity accessibilityLabel={t('clear')} onPress={clearSearch}><Icon name="close-circle" size={20} color={COLORS.dark} /></TouchableOpacity> : null}
-          <TouchableOpacity accessibilityLabel={t('search')} style={[styles.searchSubmit, { backgroundColor: COLORS.primary }]} onPress={searchOrganizations}>
-            <Icon name="arrow-right" size={20} color="#ffffff" />
+          <TouchableOpacity accessibilityLabel={t('search')} disabled={isLoading} style={[styles.searchSubmit, { backgroundColor: COLORS.primary, opacity: isLoading ? 0.75 : 1 }]} onPress={searchOrganizations}>
+            {isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : <Icon name="arrow-right" size={20} color="#ffffff" />}
           </TouchableOpacity>
         </View>
 
