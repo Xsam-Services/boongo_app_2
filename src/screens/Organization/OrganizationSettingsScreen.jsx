@@ -2,7 +2,7 @@
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-import React, { useState, useContext, useEffect, useCallback, useEffectEvent } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { View, Text, TextInput, ScrollView, Image, TouchableOpacity, Dimensions, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from 'react-native-paper';
@@ -96,7 +96,7 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
   }, []);
 
   // =============== Get current organization ===============
-  const getOrganization = useEffectEvent(() => {
+  const getOrganization = useCallback(() => {
     const config = {
       method: 'GET',
       url: `${API.boongo_url}/organization/${organization_id}`,
@@ -130,11 +130,11 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
         console.log(error);
         setLoading(false);
       });
-  });
+  }, [organization_id, userInfo.api_token]);
 
   useEffect(() => {
     getOrganization();
-  }, []);
+  }, [getOrganization]);
 
   // =============== Handle Image Picker ===============
   const imagePick = async () => {
