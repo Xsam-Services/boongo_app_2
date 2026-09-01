@@ -22,9 +22,9 @@ import AddGovernmentScreen from '../screens/Organization/Government/AddGovernmen
 import EventScreen from '../screens/Organization/event_data';
 import QuizScreen from '../screens/Organization/quiz';
 import AddWorkScreen from '../screens/add_work';
-import BookScreen from '../screens/Organization/book';
-import JournalScreen from '../screens/Organization/journal';
-import MappingScreen from '../screens/Organization/mapping';
+import BookScreen from '../screens/Organization/BookScreen';
+import JournalScreen from '../screens/Organization/JournalScreen';
+import MappingScreen from '../screens/Organization/MappingScreen';
 import MediaScreen from '../screens/media';
 import WorkDataScreen from '../screens/work_data';
 import NewsDataScreen from '../screens/news_data';
