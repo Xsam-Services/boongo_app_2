@@ -194,7 +194,7 @@ const SearchScreen = () => {
               </TouchableOpacity>
             </View>
 
-            <ScrollView contentContainerStyle={styles.filterContent} showsVerticalScrollIndicator={false}>
+            <View style={styles.filterContent}>
               <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{t('search_filter_type_label')}</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.edgeToEdgeFilterRow} contentContainerStyle={styles.filterChips}>
                 {types.map(type => {
@@ -220,7 +220,7 @@ const SearchScreen = () => {
                   );
                 })}
               </ScrollView>
-            </ScrollView>
+            </View>
 
             <TouchableOpacity activeOpacity={0.82} style={[styles.applyButton, { backgroundColor: COLORS.primary }]} onPress={applyFilters}>
               <Text style={styles.applyButtonText}>{t('search_filter_apply')}</Text>
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   floatingButton: { alignItems: 'center', borderRadius: 24, borderWidth: 1, height: 48, justifyContent: 'center', position: 'absolute', right: 22, width: 48 },
   backToTopButton: { bottom: 30 },
   modalBackdrop: { backgroundColor: 'rgba(18, 26, 36, 0.38)', flex: 1, justifyContent: 'flex-end' },
-  filterSheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, maxHeight: '82%', paddingHorizontal: 20, paddingTop: 10 },
+  filterSheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 10 },
   sheetHandle: { alignSelf: 'center', borderRadius: 3, height: 5, width: 42 },
   sheetHeader: { alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 18, marginTop: 18 },
   sheetTitle: { fontSize: 21, fontWeight: '700' },
