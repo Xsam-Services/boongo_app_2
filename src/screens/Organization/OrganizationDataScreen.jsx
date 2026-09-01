@@ -51,6 +51,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [isProgramSelectionLoading, setIsProgramSelectionLoading] = useState(false);
   const programsLoadingRef = useRef(false);
   const scrollViewListRef = listRef || useRef(null);
   // Protect pick execution against multiple clicks on button
@@ -180,7 +181,9 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
   };
 
   const handleBadgeClick = async (programId) => {
-    setRefreshing(true);
+    if (programId === selectedProgram?.id || isProgramSelectionLoading) return;
+
+    setIsProgramSelectionLoading(true);
 
     try {
       const response = await axios.get(`${API.boongo_url}/program/${programId}`, {
@@ -192,11 +195,10 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
       });
 
       setSelectedProgram(response.data.data);
-      setRefreshing(false);
     } catch (error) {
       console.error('Error fetching program details:', error);
     } finally {
-      setRefreshing(false);
+      setIsProgramSelectionLoading(false);
     }
   };
 
@@ -330,7 +332,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
               paddingHorizontal: PADDING.p00,
             }}
             renderItem={({ item }) => <ProgramItem item={item} />}
-            ListFooterComponent={refreshing ? <View style={{ justifyContent: 'center', paddingHorizontal: 12 }}><ActivityIndicator color={COLORS.primary} size="small" /></View> : null}
+            ListFooterComponent={isProgramSelectionLoading ? <View style={{ justifyContent: 'center', paddingHorizontal: 12 }}><ActivityIndicator color={COLORS.primary} size="small" /></View> : null}
           />
 
           {selectedProgram?.files?.[0]?.file_url ? (
