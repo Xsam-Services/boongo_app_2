@@ -149,6 +149,7 @@ const SearchScreen = () => {
           contentContainerStyle={datas.length ? styles.results : styles.emptyResults}
           keyboardShouldPersistTaps="handled"
           onScroll={handleScroll}
+          showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} tintColor={COLORS.primary} />}
           ListEmptyComponent={
             isLoading ? (
