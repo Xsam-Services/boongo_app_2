@@ -191,7 +191,6 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
         },
       });
 
-      setSelectedProgram(null);
       setSelectedProgram(response.data.data);
       setRefreshing(false);
     } catch (error) {
@@ -331,13 +330,11 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
               paddingHorizontal: PADDING.p00,
             }}
             renderItem={({ item }) => <ProgramItem item={item} />}
+            ListFooterComponent={refreshing ? <View style={{ justifyContent: 'center', paddingHorizontal: 12 }}><ActivityIndicator color={COLORS.primary} size="small" /></View> : null}
           />
 
           {selectedProgram?.files?.[0]?.file_url ? (
             <>
-              {refreshing ? (
-                <Text style={{ fontSize: TEXT_SIZE.paragraph, color: COLORS.black, textAlign: 'center', marginTop: PADDING.p05 }}>{t('loading')}</Text>
-              ) : (
                 <>
                   {/* Program details */}
                   <View style={{ backgroundColor: COLORS.white, borderColor: COLORS.light_secondary, borderRadius: 20, borderWidth: 1, margin: 16, overflow: 'hidden' }}>
@@ -403,7 +400,6 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
                     </SafeAreaContextView>
                   </Modal>
                 </>
-              )}
             </>
 
           ) : (
