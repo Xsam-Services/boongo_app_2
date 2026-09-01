@@ -2,8 +2,9 @@
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-import React, { useState, useContext, useEffect, useCallback } from 'react';
+import React, { useState, useContext, useEffect, useCallback, useEffectEvent } from 'react';
 import { View, Text, TextInput, ScrollView, Image, TouchableOpacity, Dimensions, RefreshControl } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -95,11 +96,7 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
   }, []);
 
   // =============== Get current organization ===============
-  useEffect(() => {
-    getOrganization();
-  }, []);
-
-  const getOrganization = () => {
+  const getOrganization = useEffectEvent(() => {
     const config = {
       method: 'GET',
       url: `${API.boongo_url}/organization/${organization_id}`,
@@ -133,7 +130,11 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
         console.log(error);
         setLoading(false);
       });
-  };
+  });
+
+  useEffect(() => {
+    getOrganization();
+  }, []);
 
   // =============== Handle Image Picker ===============
   const imagePick = async () => {
@@ -209,18 +210,16 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.white }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.light }} edges={['top', 'bottom']}>
       {/* Spinner */}
       <Spinner visible={isLoading} />
 
       {/* Loader */}
-      <View style={{ paddingTop: PADDING.p01 }}>
-        <HeaderComponent />
-      </View>
+      <HeaderComponent title={t('change_organization')} />
 
-      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingVertical: PADDING.p10, paddingHorizontal: PADDING.p10 }} refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} />}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: PADDING.p10, paddingHorizontal: PADDING.p05, paddingTop: PADDING.p05 }} refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} />}>
         {/* Title */}
-        <Text style={[homeStyles.authTitle, { fontSize: 25, color: COLORS.black, textAlign: 'center', marginTop: 0, marginBottom: PADDING.p12 }]}>{t('change_organization')}</Text>
+        <Text style={{ color: COLORS.dark, fontSize: 15, lineHeight: 22, marginBottom: PADDING.p05, textAlign: 'center' }}>Mettez a jour les informations visibles sur votre organisation.</Text>
 
         {/* Logo image */}
         <View style={{ alignItems: 'center', marginVertical: PADDING.p01 }}>
@@ -408,11 +407,11 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
           autoCapitalize='none' />
 
         {/* Submit */}
-        <Button style={[homeStyles.authButton, { backgroundColor: COLORS.success }]} onPress={handleSubmit}>
+        <Button style={[homeStyles.authButton, { backgroundColor: COLORS.primary }]} onPress={handleSubmit}>
           <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('update')}</Text>
         </Button>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

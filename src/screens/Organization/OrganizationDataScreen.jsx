@@ -4,7 +4,7 @@
  */
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, View, TouchableOpacity, Animated, SafeAreaView, Dimensions, RefreshControl, TouchableHighlight, FlatList, Text, Image, TextInput, Linking, ScrollView, Modal, ToastAndroid, Platform, Pressable } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView as SafeAreaContextView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { pick, types as docTypes, isErrorWithCode, errorCodes } from '@react-native-documents/picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -403,18 +403,17 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
           )}
 
           {/* Modal to add a program */}
-          <Modal visible={formProgramModalVisible} animationType='slide'>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.white, padding: 20 }}>
+          <Modal visible={formProgramModalVisible} animationType='slide' onRequestClose={() => setFormProgramModalVisible(false)}>
+            <SafeAreaContextView style={{ flex: 1, backgroundColor: COLORS.light }} edges={['top', 'bottom']}>
+              <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 36 }} keyboardShouldPersistTaps="handled">
               {/* Close modal */}
-              <TouchableOpacity style={{ position: 'absolute', right: PADDING.p01, top: PADDING.p01, zIndex: 10, width: 37, height: 37, backgroundColor: 'rgba(200,200,200,0.5)', padding: 2.6, borderRadius: 37 / 2 }} onPress={() => setFormProgramModalVisible(false)}>
-                <Icon name='close' size={IMAGE_SIZE.s07} color='black' />
+              <TouchableOpacity accessibilityLabel="Fermer" style={{ alignItems: 'center', alignSelf: 'flex-end', backgroundColor: COLORS.light_secondary, borderRadius: 22, height: 44, justifyContent: 'center', width: 44 }} onPress={() => setFormProgramModalVisible(false)}>
+                <Icon name='close' size={24} color={COLORS.black} />
               </TouchableOpacity>
 
               {/* Brand / Title */}
-              <View style={[homeStyles.authlogo, { marginTop: PADDING.p05 }]}>
-                <LogoText width={200} height={48} />
-              </View>
-              <Text style={[homeStyles.authTitle, { fontSize: 21, fontWeight: '300', color: COLORS.black, textAlign: 'center' }]}>{t('program.data.title', { course_year: course_year })}</Text>
+              <Text style={{ color: COLORS.black, fontSize: 25, fontWeight: '800', marginBottom: 8, marginTop: 18 }}>{t('program.data.title', { course_year: course_year })}</Text>
+              <Text style={{ color: COLORS.dark, fontSize: 15, lineHeight: 22, marginBottom: 22 }}>Ajoutez une classe et le document du programme scolaire.</Text>
 
               {/* Class */}
               <TextInput
@@ -480,10 +479,11 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
               )}
 
               {/* Submit */}
-              <Button style={[homeStyles.authButton, { backgroundColor: COLORS.success }]} onPress={addNewProgram}>
+              <Button style={[homeStyles.authButton, { backgroundColor: COLORS.primary }]} onPress={addNewProgram}>
                 <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('send')}</Text>
               </Button>
-            </View>
+              </ScrollView>
+            </SafeAreaContextView>
           </Modal>
         </View>
       </Animated.ScrollView>
@@ -738,18 +738,19 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
         </View>
 
         {/* Modal to add an event */}
-        <Modal animationType='slide' transparent={true} visible={formEventModalVisible} onRequestClose={() => setFormEventModalVisible(false)}>
-          <ScrollView style={{ flex: 1, backgroundColor: COLORS.white }}>
+        <Modal animationType='slide' transparent={false} visible={formEventModalVisible} onRequestClose={() => setFormEventModalVisible(false)}>
+          <SafeAreaContextView style={{ flex: 1, backgroundColor: COLORS.light }} edges={['top', 'bottom']}>
+          <ScrollView contentContainerStyle={{ paddingBottom: 36 }} keyboardShouldPersistTaps="handled">
             {/* Close modal */}
-            <TouchableOpacity style={{ position: 'absolute', right: PADDING.p01, top: PADDING.p01, zIndex: 10, width: 37, height: 37, backgroundColor: 'rgba(200,200,200,0.5)', padding: 2.6, borderRadius: 37 / 2 }} onPress={() => setFormEventModalVisible(false)}>
-              <Icon name='close' size={IMAGE_SIZE.s07} color='black' />
+            <TouchableOpacity accessibilityLabel="Fermer" style={{ alignItems: 'center', backgroundColor: COLORS.light_secondary, borderRadius: 22, height: 44, justifyContent: 'center', marginRight: 20, marginTop: 12, marginLeft: 'auto', width: 44 }} onPress={() => setFormEventModalVisible(false)}>
+              <Icon name='close' size={24} color={COLORS.black} />
             </TouchableOpacity>
 
             {/* Brand / Title */}
-            <View style={[homeStyles.authlogo, { marginTop: PADDING.p15 }]}>
-              <LogoText width={200} height={48} />
+            <View style={{ paddingHorizontal: 20 }}>
+              <Text style={{ color: COLORS.black, fontSize: 25, fontWeight: '800', marginTop: 14 }}>{t('event.create')}</Text>
+              <Text style={{ color: COLORS.dark, fontSize: 15, lineHeight: 22, marginTop: 6 }}>Partagez les informations essentielles de votre evenement.</Text>
             </View>
-            <Text style={[homeStyles.authTitle, { fontSize: 21, fontWeight: '300', color: COLORS.black, textAlign: 'center' }]}>{t('event.create')}</Text>
 
             {/* Event cover */}
             <View style={{ position: 'relative', width: Dimensions.get('window').width, marginVertical: PADDING.p01 }}>
@@ -864,11 +865,12 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
               </View>
 
               {/* Submit */}
-              <Button style={[homeStyles.authButton, { backgroundColor: COLORS.success }]} onPress={handleAddEvent}>
+              <Button style={[homeStyles.authButton, { backgroundColor: COLORS.primary }]} onPress={handleAddEvent}>
                 <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('send')}</Text>
               </Button>
             </View>
           </ScrollView>
+          </SafeAreaContextView>
         </Modal>
       </SafeAreaView>
     </View>
@@ -1388,18 +1390,19 @@ const Teach = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
         </View>
 
         {/* Modal to add an event */}
-        <Modal animationType='slide' transparent={true} visible={formEventModalVisible} onRequestClose={() => setFormEventModalVisible(false)}>
-          <ScrollView style={{ flex: 1, backgroundColor: COLORS.white }}>
+        <Modal animationType='slide' transparent={false} visible={formEventModalVisible} onRequestClose={() => setFormEventModalVisible(false)}>
+          <SafeAreaContextView style={{ flex: 1, backgroundColor: COLORS.light }} edges={['top', 'bottom']}>
+          <ScrollView contentContainerStyle={{ paddingBottom: 36 }} keyboardShouldPersistTaps="handled">
             {/* Close modal */}
-            <TouchableOpacity style={{ position: 'absolute', right: PADDING.p01, top: PADDING.p01, zIndex: 10, width: 37, height: 37, backgroundColor: 'rgba(200,200,200,0.5)', padding: 2.6, borderRadius: 37 / 2 }} onPress={() => setFormEventModalVisible(false)}>
-              <Icon name='close' size={IMAGE_SIZE.s07} color='black' />
+            <TouchableOpacity accessibilityLabel="Fermer" style={{ alignItems: 'center', backgroundColor: COLORS.light_secondary, borderRadius: 22, height: 44, justifyContent: 'center', marginRight: 20, marginTop: 12, marginLeft: 'auto', width: 44 }} onPress={() => setFormEventModalVisible(false)}>
+              <Icon name='close' size={24} color={COLORS.black} />
             </TouchableOpacity>
 
             {/* Brand / Title */}
-            <View style={[homeStyles.authlogo, { marginTop: PADDING.p15 }]}>
-              <LogoText width={200} height={48} />
+            <View style={{ paddingHorizontal: 20 }}>
+              <Text style={{ color: COLORS.black, fontSize: 25, fontWeight: '800', marginTop: 14 }}>{t('event.create')}</Text>
+              <Text style={{ color: COLORS.dark, fontSize: 15, lineHeight: 22, marginTop: 6 }}>Partagez les informations essentielles de votre evenement.</Text>
             </View>
-            <Text style={[homeStyles.authTitle, { fontSize: 21, fontWeight: '300', color: COLORS.black, textAlign: 'center' }]}>{t('event.create')}</Text>
 
             {/* Event cover */}
             <View style={{ position: 'relative', width: Dimensions.get('window').width, marginVertical: PADDING.p01 }}>
@@ -1503,11 +1506,12 @@ const Teach = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
               </View>
 
               {/* Submit */}
-              <Button style={[homeStyles.authButton, { backgroundColor: COLORS.success }]} onPress={handleAddEvent}>
+              <Button style={[homeStyles.authButton, { backgroundColor: COLORS.primary }]} onPress={handleAddEvent}>
                 <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('send')}</Text>
               </Button>
             </View>
           </ScrollView>
+          </SafeAreaContextView>
         </Modal>
       </SafeAreaView>
     </View>
