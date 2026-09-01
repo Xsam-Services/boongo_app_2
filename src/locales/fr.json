@@ -189,7 +189,7 @@
     "search_dictionary": "Rechercher dans le dictionnaire",
     "search_description": "Rechercher sur Boongo",
     "search_filter": "Rechercher et filtrer",
-    "search_filter_description": "Avec le bouton vert, vous pouvez filtrer vos résultats.",
+    "search_filter_description": "Affinez les résultats par type d’œuvre ou par catégorie.",
     "search_filter_type": "Sélectionner un type:",
     "search_filter_categories": "Sélectionner des catégories:",
     "search_filter_apply": "Appliquer les filtres",

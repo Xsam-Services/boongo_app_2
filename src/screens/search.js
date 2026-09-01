@@ -126,6 +126,14 @@ const SearchScreen = () => {
             onSubmitEditing={() => fetchData(inputValue)}
           />
           <TouchableOpacity
+            accessibilityLabel={t('search')}
+            activeOpacity={0.75}
+            style={[styles.submitButton, { backgroundColor: COLORS.primary }]}
+            onPress={() => fetchData(inputValue)}
+          >
+            <Icon name="arrow-right" size={20} color="#ffffff" />
+          </TouchableOpacity>
+          <TouchableOpacity
             accessibilityLabel={t('search_filter')}
             activeOpacity={0.75}
             style={[styles.filterButton, { backgroundColor: hasFilters ? COLORS.primary : COLORS.light_secondary }]}
@@ -232,6 +240,7 @@ const styles = StyleSheet.create({
   content: { flex: 1, paddingHorizontal: 16 },
   searchCard: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', marginVertical: 16, minHeight: 56, paddingLeft: 16, paddingRight: 7 },
   searchInput: { flex: 1, fontSize: 15, marginHorizontal: 11, paddingVertical: 12 },
+  submitButton: { alignItems: 'center', borderRadius: 14, height: 42, justifyContent: 'center', marginRight: 6, width: 42 },
   filterButton: { alignItems: 'center', borderRadius: 14, height: 42, justifyContent: 'center', width: 42 },
   results: { paddingBottom: 34 },
   emptyResults: { flexGrow: 1, justifyContent: 'center', paddingBottom: 72 },
