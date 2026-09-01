@@ -319,11 +319,10 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
               paddingHorizontal: PADDING.p00,
             }}
             renderItem={({ item }) => <ProgramItem item={item} />}
-            ListFooterComponent={
-              <TouchableOpacity style={{ width: 32, height: 32, backgroundColor: COLORS.primary, padding: 2.5, borderRadius: 37 / 2 }} onPress={() => setFormProgramModalVisible(true)}>
-                <Icon name='plus' size={28} color='black' />
-              </TouchableOpacity>
-            }
+            ListFooterComponent={selectedOrganization.user_id === userInfo.id ? <TouchableOpacity accessibilityLabel={t('add')} style={{ alignItems: 'center', backgroundColor: COLORS.primary, borderRadius: 16, flexDirection: 'row', height: 40, justifyContent: 'center', marginLeft: 8, paddingHorizontal: 13 }} onPress={() => setFormProgramModalVisible(true)}>
+              <Icon name='plus' size={18} color="#ffffff" />
+              <Text style={{ color: '#ffffff', fontSize: 13, fontWeight: '800', marginLeft: 5 }}>{t('add')}</Text>
+            </TouchableOpacity> : null}
           />
 
           {selectedProgram ? (
@@ -1546,6 +1545,7 @@ const OrganizationDataScreen = () => {
   const { organization_id, type } = route.params;
   // =============== Get data ===============
   const [selectedOrganization, setSelectedOrganization] = useState({});
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   const scheduleListRef = useRef(null);
   const eventListRef = useRef(null);
@@ -1701,7 +1701,10 @@ const OrganizationDataScreen = () => {
             <View style={{ flex: 1, marginLeft: 13 }}>
               <Text style={{ color: COLORS.black, fontSize: 19, fontWeight: '800', lineHeight: 24 }} numberOfLines={2}>{selectedOrganization.org_name || '...'}</Text>
               {selectedOrganization.org_acronym ? <Text style={{ color: COLORS.primary, fontSize: 13, fontWeight: '700', marginTop: 3 }} numberOfLines={1}>{selectedOrganization.org_acronym}</Text> : null}
-              {selectedOrganization.org_description ? <Text style={{ color: COLORS.dark, fontSize: 13, lineHeight: 18, marginTop: 6 }} numberOfLines={2}>{selectedOrganization.org_description}</Text> : null}
+              {selectedOrganization.org_description ? <>
+                <Text style={{ color: COLORS.dark, fontSize: 13, lineHeight: 18, marginTop: 6 }} numberOfLines={isDescriptionExpanded ? undefined : 2}>{selectedOrganization.org_description}</Text>
+                <TouchableOpacity accessibilityLabel={isDescriptionExpanded ? t('see_less') : t('see_more')} onPress={() => setIsDescriptionExpanded(previous => !previous)}><Text style={{ color: COLORS.primary, fontSize: 12, fontWeight: '800', marginTop: 5 }}>{isDescriptionExpanded ? t('see_less') : t('see_more')}</Text></TouchableOpacity>
+              </> : null}
             </View>
           </View>
           {(selectedOrganization.website_url || selectedOrganization.email || selectedOrganization.phone) ? <View style={{ flexDirection: 'row', gap: 8, marginTop: 14 }}>
