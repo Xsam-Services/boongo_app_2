@@ -413,7 +413,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
 
           {/* Modal to add a program */}
           <Modal visible={formProgramModalVisible} animationType='slide' onRequestClose={() => setFormProgramModalVisible(false)}>
-            <SafeAreaContextView style={{ flex: 1, backgroundColor: COLORS.light }} edges={['top', 'bottom']}>
+            <SafeAreaContextView style={{ backgroundColor: COLORS.light, flex: 1, paddingBottom: insets.bottom + 12, paddingTop: insets.top + 12 }} edges={[]}>
               <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 36 }} keyboardShouldPersistTaps="handled">
               {/* Close modal */}
               <TouchableOpacity accessibilityLabel="Fermer" style={{ alignItems: 'center', alignSelf: 'flex-end', backgroundColor: COLORS.light_secondary, borderRadius: 22, height: 44, justifyContent: 'center', width: 44 }} onPress={() => setFormProgramModalVisible(false)}>
