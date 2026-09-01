@@ -57,7 +57,8 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
         // On garde une trace des codes téléphoniques uniques
         const phoneCodes = new Set();
 
-        const countryArray = res.data.map((country) => {
+        const countries = Array.isArray(res.data) ? res.data : [];
+        const countryArray = countries.map((country) => {
           const phoneCodeData = country.idd && country.idd.root ? `${country.idd.root}${country.idd.suffixes ? `${country.idd.suffixes[0]}` : ''}` : '';
 
           // Vérifier si le code téléphonique existe déjà dans le Set
@@ -81,7 +82,7 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
         setCountriesData(countryArray);
       })
       .catch((error) => {
-        console.log(error);
+        console.warn('Impossible de charger les indicatifs pays.', error?.message);
       });
   }, []);
 
