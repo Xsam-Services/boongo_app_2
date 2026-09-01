@@ -133,7 +133,7 @@ const NewsDataScreen = ({ route, navigation }) => {
 
         {media.length ? (
           <View style={styles.mediaSection}>
-            <Text style={[styles.mediaTitle, { color: COLORS.black }]}>{t('work.add_files')}</Text>
+            <Text style={[styles.mediaTitle, { color: COLORS.black }]}>{t('work.associated_files')}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.mediaList}>
               {media.map(item => {
                 const isVideo = item.is_video;

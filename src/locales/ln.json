@@ -155,6 +155,7 @@
         "category": "Catégorie : ",
         "consultation_price": "Kotala",
         "add_files": "Tia na ba fichiers",
+        "associated_files": "Ba fichiers ekangami",
         "selected_files": "Ba fichiers otie :",
         "max_files": "Limite ya {{ count }} fichiers ekoki. Ba fichiers misusu ekoti te."
     },
