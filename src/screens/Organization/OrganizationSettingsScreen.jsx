@@ -4,11 +4,12 @@
  */
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { View, Text, TextInput, ScrollView, Image, TouchableOpacity, Dimensions, RefreshControl } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import Spinner from 'react-native-loading-spinner-overlay';
 import DropDownPicker from 'react-native-dropdown-picker';
-import ImagePicker from 'react-native-image-crop-picker';
+import * as ImagePicker from 'expo-image-picker';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
@@ -56,7 +57,8 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
         // On garde une trace des codes téléphoniques uniques
         const phoneCodes = new Set();
 
-        const countryArray = res.data.map((country) => {
+        const countries = Array.isArray(res.data) ? res.data : [];
+        const countryArray = countries.map((country) => {
           const phoneCodeData = country.idd && country.idd.root ? `${country.idd.root}${country.idd.suffixes ? `${country.idd.suffixes[0]}` : ''}` : '';
 
           // Vérifier si le code téléphonique existe déjà dans le Set
@@ -80,7 +82,7 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
         setCountriesData(countryArray);
       })
       .catch((error) => {
-        console.log(error);
+        console.warn('Impossible de charger les indicatifs pays.', error?.message);
       });
   }, []);
 
@@ -95,11 +97,7 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
   }, []);
 
   // =============== Get current organization ===============
-  useEffect(() => {
-    getOrganization();
-  }, []);
-
-  const getOrganization = () => {
+  const getOrganization = useCallback(() => {
     const config = {
       method: 'GET',
       url: `${API.boongo_url}/organization/${organization_id}`,
@@ -133,20 +131,22 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
         console.log(error);
         setLoading(false);
       });
-  };
+  }, [organization_id, userInfo.api_token]);
+
+  useEffect(() => {
+    getOrganization();
+  }, [getOrganization]);
 
   // =============== Handle Image Picker ===============
-  const imagePick = () => {
-    ImagePicker.openPicker({
-      width: 700,
-      height: 700,
-      cropping: true,
-      includeBase64: true
-    }).then(image => {
-      setImageData(`data:${image.mime};base64,${image.data}`);
-    }).catch(error => {
-      console.log(`${error}`);
-    });
+  const imagePick = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], base64: true, mediaTypes: ['images'], quality: 0.8 });
+    if (!result.canceled && result.assets[0]?.base64) {
+      const asset = result.assets[0];
+      setImageData(`data:${asset.mimeType || 'image/jpeg'};base64,${asset.base64}`);
+    }
   };
 
   // =============== Handle Form Submit ===============
@@ -186,22 +186,11 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
       const text = await response.text();
       const json = JSON.parse(text);
 
-      // Reset all after success
-      setOrgName('');
-      setOrgAcronym('');
-      setOrgDescription('');
-      setIdNumber('');
-      setAddress('');
-      setPhone('');
-      setEmail('');
-      setPOBox('');
-      setLegalStatus('');
-      setYearOfCreation('');
-      setWebsiteURL('');
-      setImageData('');
+      if (!response.ok || json.success === false) {
+        throw new Error(json.message || 'La modification de l’organisation a échoué.');
+      }
 
-      console.log(json);
-      navigation.navigate('OrganizationData', { organization_id: json.data.id });
+      navigation.goBack();
 
     } catch (error) {
       console.error('Error:', error);
@@ -211,18 +200,16 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.white }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.light }} edges={['top', 'bottom']}>
       {/* Spinner */}
       <Spinner visible={isLoading} />
 
       {/* Loader */}
-      <View style={{ paddingTop: PADDING.p01 }}>
-        <HeaderComponent />
-      </View>
+      <HeaderComponent title={t('change_organization')} />
 
-      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingVertical: PADDING.p10, paddingHorizontal: PADDING.p10 }} refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} />}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: PADDING.p10, paddingHorizontal: PADDING.p05, paddingTop: PADDING.p05 }} refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} />}>
         {/* Title */}
-        <Text style={[homeStyles.authTitle, { fontSize: 25, color: COLORS.black, textAlign: 'center', marginTop: 0, marginBottom: PADDING.p12 }]}>{t('change_organization')}</Text>
+        <Text style={{ color: COLORS.dark, fontSize: 15, lineHeight: 22, marginBottom: PADDING.p05, textAlign: 'center' }}>Mettez a jour les informations visibles sur votre organisation.</Text>
 
         {/* Logo image */}
         <View style={{ alignItems: 'center', marginVertical: PADDING.p01 }}>
@@ -266,7 +253,7 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
           onContentSizeChange={(e) =>
             setInputDescHeight(e.nativeEvent.contentSize.height)
           }
-          style={[homeStyles.authInput, { height: Math.max(40, inputDescHeight), color: COLORS.black, borderColor: COLORS.light_secondary }]}
+          style={[homeStyles.authInput, { height: Math.max(120, inputDescHeight), color: COLORS.black, borderColor: COLORS.light_secondary, textAlignVertical: 'top' }]}
           value={orgDescription || ''}
           placeholder={t('navigation.establishment.data.description')}
           placeholderTextColor={COLORS.dark_secondary}
@@ -288,7 +275,7 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
           onContentSizeChange={(e) =>
             setInputAddrHeight(e.nativeEvent.contentSize.height)
           }
-          style={[homeStyles.authInput, { height: Math.max(40, inputAddrHeight), color: COLORS.black, borderColor: COLORS.light_secondary }]}
+          style={[homeStyles.authInput, { height: Math.max(96, inputAddrHeight), color: COLORS.black, borderColor: COLORS.light_secondary, textAlignVertical: 'top' }]}
           value={address || ''}
           placeholder={t('navigation.establishment.data.address')}
           placeholderTextColor={COLORS.dark_secondary}
@@ -410,11 +397,11 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
           autoCapitalize='none' />
 
         {/* Submit */}
-        <Button style={[homeStyles.authButton, { backgroundColor: COLORS.success }]} onPress={handleSubmit}>
+        <Button style={[homeStyles.authButton, { backgroundColor: COLORS.primary }]} onPress={handleSubmit}>
           <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('update')}</Text>
         </Button>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

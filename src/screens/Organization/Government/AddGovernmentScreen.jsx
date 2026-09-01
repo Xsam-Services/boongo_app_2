@@ -4,12 +4,13 @@
  */
 import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TextInput, ScrollView, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Spinner from 'react-native-loading-spinner-overlay';
 import DropDownPicker from 'react-native-dropdown-picker';
-import ImagePicker from 'react-native-image-crop-picker';
+import * as ImagePicker from 'expo-image-picker';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { AuthContext } from '../../../contexts/AuthContext';
@@ -17,8 +18,9 @@ import { API, PADDING, WEB } from '../../../tools/constants';
 import LogoText from '../../../../assets/img/brand.svg';
 import useColors from '../../../hooks/useColors';
 import homeStyles from '../../style';
+import HeaderComponent from '../../header';
 
-const AddEstablishmentScreen = () => {
+const AddGovernmentScreen = () => {
   // =============== Colors ===============
   const COLORS = useColors();
   // =============== Navigation ===============
@@ -88,17 +90,15 @@ const AddEstablishmentScreen = () => {
   };
 
   // =============== Handle Image Picker ===============
-  const imagePick = () => {
-    ImagePicker.openPicker({
-      width: 700,
-      height: 700,
-      cropping: true,
-      includeBase64: true
-    }).then(image => {
-      setImageData(`data:${image.mime};base64,${image.data}`);
-    }).catch(error => {
-      console.log(`${error}`);
-    });
+  const imagePick = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], base64: true, mediaTypes: ['images'], quality: 0.8 });
+    if (!result.canceled && result.assets[0]?.base64) {
+      const asset = result.assets[0];
+      setImageData(`data:${asset.mimeType || 'image/jpeg'};base64,${asset.base64}`);
+    }
   };
 
   // =============== Handle Form Submit ===============
@@ -118,7 +118,7 @@ const AddEstablishmentScreen = () => {
     formData.append('legal_status', legalStatus || '');
     formData.append('year_of_creation', yearOfCreation || '');
     formData.append('website_url', websiteURL || '');
-    formData.append('type_id', 34);
+    formData.append('type_id', 35);
     formData.append('status_id', 6);
     formData.append('user_id', userInfo.id);
     formData.append('image_64', imageData || null);
@@ -153,7 +153,7 @@ const AddEstablishmentScreen = () => {
       setImageData('');
 
       console.log(json);
-      navigation.navigate('OrganizationData', { organization_id: json.data.id, type: 'establishment' });
+      navigation.navigate('OrganizationData', { organization_id: json.data.id, type: 'government' });
 
     } catch (error) {
       console.error('Error:', error);
@@ -163,16 +163,16 @@ const AddEstablishmentScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.white }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.light }} edges={['top', 'bottom']}>
+      <HeaderComponent title={t('navigation.government.new')} />
       <Spinner visible={isLoading} />
 
-      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingVertical: PADDING.p10, paddingHorizontal: PADDING.p10 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: PADDING.p10, paddingHorizontal: PADDING.p05, paddingTop: PADDING.p05 }}>
         {/* Brand / Title */}
         <View style={homeStyles.authlogo}>
           <LogoText width={200} height={48} />
         </View>
-        <Text style={[homeStyles.authTitle, { color: COLORS.black, textAlign: 'center', marginBottom: PADDING.p02 }]}>{t('navigation.establishment.new')}</Text>
-        <Text style={{ color: COLORS.black, textAlign: 'center', fontWeight: '300', marginBottom: PADDING.p12, paddingHorizontal: PADDING.p05 }}>{t('navigation.establishment.publishing_info')}</Text>
+        <Text style={{ color: COLORS.dark, fontSize: 15, lineHeight: 22, textAlign: 'center', marginBottom: PADDING.p05, paddingHorizontal: PADDING.p05 }}>{t('navigation.government.publishing_info')}</Text>
 
         {/* Logo image */}
         <View style={{ alignItems: 'center', marginVertical: PADDING.p01 }}>
@@ -183,69 +183,69 @@ const AddEstablishmentScreen = () => {
         </View>
 
         {/* Organization name
-        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.establishment.data.name')}</Text> */}
+        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.government.data.name')}</Text> */}
         <TextInput
           style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
           value={orgName || ''}
-          placeholder={t('navigation.establishment.data.name')}
+          placeholder={t('navigation.government.data.name')}
           placeholderTextColor={COLORS.dark_secondary}
           onChangeText={setOrgName} />
 
         {/* Acronym
-        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.establishment.data.acronym')}</Text> */}
+        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.government.data.acronym')}</Text> */}
         <TextInput
           style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
           value={orgAcronym || ''}
-          placeholder={t('navigation.establishment.data.acronym')}
+          placeholder={t('navigation.government.data.acronym')}
           placeholderTextColor={COLORS.dark_secondary}
           onChangeText={setOrgAcronym} />
 
         {/* Legal status
-        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.establishment.data.legal_status')}</Text> */}
+        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.government.data.legal_status')}</Text> */}
         <TextInput
           style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
           value={legalStatus || ''}
-          placeholder={t('navigation.establishment.data.legal_status')}
+          placeholder={t('navigation.government.data.legal_status')}
           placeholderTextColor={COLORS.dark_secondary}
           onChangeText={setLegalStatus} />
 
         {/* Description
-        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.establishment.data.description')}</Text> */}
+        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.government.data.description')}</Text> */}
         <TextInput
           multiline
           onContentSizeChange={(e) =>
             setInputDescHeight(e.nativeEvent.contentSize.height)
           }
-          style={[homeStyles.authInput, { height: Math.max(40, inputDescHeight), color: COLORS.black, borderColor: COLORS.light_secondary }]}
+          style={[homeStyles.authInput, { height: Math.max(120, inputDescHeight), color: COLORS.black, borderColor: COLORS.light_secondary, textAlignVertical: 'top' }]}
           value={orgDescription || ''}
-          placeholder={t('navigation.establishment.data.description')}
+          placeholder={t('navigation.government.data.description')}
           placeholderTextColor={COLORS.dark_secondary}
           onChangeText={setOrgDescription} />
 
         {/* ID number
-        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.establishment.data.id_number')}</Text> */}
+        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.government.data.id_number')}</Text> */}
         <TextInput
           style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
           value={idNumber || ''}
-          placeholder={t('navigation.establishment.data.id_number')}
+          placeholder={t('navigation.government.data.id_number')}
           placeholderTextColor={COLORS.dark_secondary}
           onChangeText={setIdNumber} />
 
         {/* Address
-        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.establishment.data.address')}</Text> */}
+        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.government.data.address')}</Text> */}
         <TextInput
           multiline
           onContentSizeChange={(e) =>
             setInputAddrHeight(e.nativeEvent.contentSize.height)
           }
-          style={[homeStyles.authInput, { height: Math.max(40, inputAddrHeight), color: COLORS.black, borderColor: COLORS.light_secondary }]}
+          style={[homeStyles.authInput, { height: Math.max(96, inputAddrHeight), color: COLORS.black, borderColor: COLORS.light_secondary, textAlignVertical: 'top' }]}
           value={address || ''}
-          placeholder={t('navigation.establishment.data.address')}
+          placeholder={t('navigation.government.data.address')}
           placeholderTextColor={COLORS.dark_secondary}
           onChangeText={setAddress} />
 
         {/* Phone
-        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.establishment.data.phone')}</Text> */}
+        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.government.data.phone')}</Text> */}
         <View style={{ flexDirection: 'row' }}>
           {/* Phone code  */}
           <DropDownPicker
@@ -303,11 +303,11 @@ const AddEstablishmentScreen = () => {
         </View>
 
         {/* Email
-        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.establishment.data.email')}</Text> */}
+        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.government.data.email')}</Text> */}
         <TextInput
           style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
           value={email || ''}
-          placeholder={t('navigation.establishment.data.email')}
+          placeholder={t('navigation.government.data.email')}
           placeholderTextColor={COLORS.dark_secondary}
           onChangeText={text => setEmail(text.toLowerCase())}
           autoCapitalize='none' />
@@ -315,45 +315,46 @@ const AddEstablishmentScreen = () => {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View style={{ width: (Dimensions.get('window').width / 2) - 48 }}>
             {/* P.O. box
-            <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.establishment.data.p_o_box')}</Text> */}
+            <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.government.data.p_o_box')}</Text> */}
             <TextInput
               style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
               value={p_o_box || ''}
-              placeholder={t('navigation.establishment.data.p_o_box')}
+              placeholder={t('navigation.government.data.p_o_box')}
               placeholderTextColor={COLORS.dark_secondary}
               onChangeText={setPOBox} />
           </View>
           <View style={{ width: (Dimensions.get('window').width / 2) - 10 }}>
             {/* Year of creation
-            <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.establishment.data.year_of_creation')}</Text> */}
+            <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.government.data.year_of_creation')}</Text> */}
             <TextInput
+              multiline={false}
               keyboardType='numeric'
               maxLength={4}
               style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
               value={yearOfCreation || ''}
-              placeholder={t('navigation.establishment.data.year_of_creation')}
+              placeholder={t('navigation.government.data.year_of_creation')}
               placeholderTextColor={COLORS.dark_secondary}
               onChangeText={setYearOfCreation} />
           </View>
         </View>
 
         {/* Website URL
-        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.establishment.data.website_url')}</Text> */}
+        <Text style={[homeStyles.authText, { color: COLORS.dark_secondary }]}>{t('navigation.government.data.website_url')}</Text> */}
         <TextInput
           style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
           value={websiteURL || ''}
-          placeholder={t('navigation.establishment.data.website_url')}
+          placeholder={t('navigation.government.data.website_url')}
           placeholderTextColor={COLORS.dark_secondary}
           onChangeText={text => setWebsiteURL(text.toLowerCase())}
           autoCapitalize='none' />
 
         {/* Submit */}
-        <Button style={[homeStyles.authButton, { backgroundColor: COLORS.success }]} onPress={handleSubmit}>
+        <Button style={[homeStyles.authButton, { backgroundColor: COLORS.primary }]} onPress={handleSubmit}>
           <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('publish')}</Text>
         </Button>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
-export default AddEstablishmentScreen;
+export default AddGovernmentScreen;
