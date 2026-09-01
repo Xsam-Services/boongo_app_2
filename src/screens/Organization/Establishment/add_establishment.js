@@ -9,7 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Spinner from 'react-native-loading-spinner-overlay';
 import DropDownPicker from 'react-native-dropdown-picker';
-import ImagePicker from 'react-native-image-crop-picker';
+import * as ImagePicker from 'expo-image-picker';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { AuthContext } from '../../../contexts/AuthContext';
@@ -88,17 +88,15 @@ const AddEstablishmentScreen = () => {
   };
 
   // =============== Handle Image Picker ===============
-  const imagePick = () => {
-    ImagePicker.openPicker({
-      width: 700,
-      height: 700,
-      cropping: true,
-      includeBase64: true
-    }).then(image => {
-      setImageData(`data:${image.mime};base64,${image.data}`);
-    }).catch(error => {
-      console.log(`${error}`);
-    });
+  const imagePick = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], base64: true, mediaTypes: ['images'], quality: 0.8 });
+    if (!result.canceled && result.assets[0]?.base64) {
+      const asset = result.assets[0];
+      setImageData(`data:${asset.mimeType || 'image/jpeg'};base64,${asset.base64}`);
+    }
   };
 
   // =============== Handle Form Submit ===============
@@ -216,7 +214,7 @@ const AddEstablishmentScreen = () => {
           onContentSizeChange={(e) =>
             setInputDescHeight(e.nativeEvent.contentSize.height)
           }
-          style={[homeStyles.authInput, { height: Math.max(40, inputDescHeight), color: COLORS.black, borderColor: COLORS.light_secondary }]}
+          style={[homeStyles.authInput, { height: Math.max(120, inputDescHeight), color: COLORS.black, borderColor: COLORS.light_secondary, textAlignVertical: 'top' }]}
           value={orgDescription || ''}
           placeholder={t('navigation.establishment.data.description')}
           placeholderTextColor={COLORS.dark_secondary}
@@ -238,7 +236,7 @@ const AddEstablishmentScreen = () => {
           onContentSizeChange={(e) =>
             setInputAddrHeight(e.nativeEvent.contentSize.height)
           }
-          style={[homeStyles.authInput, { height: Math.max(40, inputAddrHeight), color: COLORS.black, borderColor: COLORS.light_secondary }]}
+          style={[homeStyles.authInput, { height: Math.max(96, inputAddrHeight), color: COLORS.black, borderColor: COLORS.light_secondary, textAlignVertical: 'top' }]}
           value={address || ''}
           placeholder={t('navigation.establishment.data.address')}
           placeholderTextColor={COLORS.dark_secondary}

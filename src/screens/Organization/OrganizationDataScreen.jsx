@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'react-native-paper';
 import { TabBar, TabView } from 'react-native-tab-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import ImagePicker from 'react-native-image-crop-picker';
+import * as ImagePicker from 'expo-image-picker';
 import Pdf from 'react-native-pdf';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
@@ -604,17 +604,15 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
   };
 
   // =============== Handle Image Picker ===============
-  const imagePick = () => {
-    ImagePicker.openPicker({
-      width: 700,
-      height: 700,
-      cropping: true,
-      includeBase64: true
-    }).then(image => {
-      setImageData(`data:${image.mime};base64,${image.data}`);
-    }).catch(error => {
-      console.log(`${error}`);
-    });
+  const imagePick = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], base64: true, mediaTypes: ['images'], quality: 0.8 });
+    if (!result.canceled && result.assets[0]?.base64) {
+      const asset = result.assets[0];
+      setImageData(`data:${asset.mimeType || 'image/jpeg'};base64,${asset.base64}`);
+    }
   };
 
   // =============== Format Datetime ===============
@@ -778,7 +776,7 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
                 onContentSizeChange={(e) =>
                   setInputDescHeight(e.nativeEvent.contentSize.height)
                 }
-                style={[homeStyles.authInput, { height: Math.max(40, inputDescHeight), color: COLORS.black, borderColor: COLORS.light_secondary }]}
+                style={[homeStyles.authInput, { height: Math.max(120, inputDescHeight), color: COLORS.black, borderColor: COLORS.light_secondary, textAlignVertical: 'top' }]}
                 value={eventDescription}
                 placeholder={t('event.data.event_description')}
                 placeholderTextColor={COLORS.dark_secondary}
@@ -1239,17 +1237,15 @@ const Teach = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
   };
 
   // =============== Handle Image Picker ===============
-  const imagePick = () => {
-    ImagePicker.openPicker({
-      width: 700,
-      height: 700,
-      cropping: true,
-      includeBase64: true
-    }).then(image => {
-      setImageData(`data:${image.mime};base64,${image.data}`);
-    }).catch(error => {
-      console.log(`${error}`);
-    });
+  const imagePick = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], base64: true, mediaTypes: ['images'], quality: 0.8 });
+    if (!result.canceled && result.assets[0]?.base64) {
+      const asset = result.assets[0];
+      setImageData(`data:${asset.mimeType || 'image/jpeg'};base64,${asset.base64}`);
+    }
   };
 
   // =============== Format Datetime ===============
@@ -1430,7 +1426,7 @@ const Teach = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
                 onContentSizeChange={(e) =>
                   setInputDescHeight(e.nativeEvent.contentSize.height)
                 }
-                style={[homeStyles.authInput, { height: Math.max(40, inputDescHeight), color: COLORS.black, borderColor: COLORS.light_secondary }]}
+                style={[homeStyles.authInput, { height: Math.max(120, inputDescHeight), color: COLORS.black, borderColor: COLORS.light_secondary, textAlignVertical: 'top' }]}
                 value={eventDescription}
                 placeholder={t('event.data.event_description')}
                 placeholderTextColor={COLORS.dark_secondary}
