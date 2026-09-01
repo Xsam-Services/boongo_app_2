@@ -3,7 +3,8 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { View, TouchableOpacity, Animated, SafeAreaView, Dimensions, RefreshControl, TouchableHighlight, FlatList, Text, Image, StatusBar, TextInput, Linking, ScrollView, Modal, ToastAndroid, Platform, Pressable } from 'react-native'
+import { View, TouchableOpacity, Animated, SafeAreaView, Dimensions, RefreshControl, TouchableHighlight, FlatList, Text, Image, TextInput, Linking, ScrollView, Modal, ToastAndroid, Platform, Pressable } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { pick, types as docTypes, isErrorWithCode, errorCodes } from '@react-native-documents/picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -1532,6 +1533,7 @@ const Teach = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
 const OrganizationDataScreen = () => {
   // =============== Colors ===============
   const COLORS = useColors();
+  const insets = useSafeAreaInsets();
   // =============== Language ===============
   const { t } = useTranslation();
   // =============== Navigation ===============
@@ -1683,73 +1685,28 @@ const OrganizationDataScreen = () => {
   // Custom "TabBar"
   const renderTabBar = (props) => (
     <>
-      <Animated.View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)} style={{ transform: [{ translateY: headerTranslateY }], zIndex: 1000, position: 'absolute', top: 0, width: '100%', backgroundColor: COLORS.white, paddingTop: 20 }}>
-        {/* Status bar */}
-        <StatusBar barStyle='dark-content' backgroundColor={COLORS.warning} />
-
-        {/* Content */}
-        <View style={{ backgroundColor: COLORS.white }}>
-          {/* Top buttons */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', position: 'absolute', left: 7, top: -10, zIndex: 10, width: Dimensions.get('window').width - 20 }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon name='chevron-left' size={37} color={COLORS.black} />
+      <Animated.View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)} style={{ backgroundColor: COLORS.light, paddingTop: insets.top + 10, position: 'absolute', top: 0, transform: [{ translateY: headerTranslateY }], width: '100%', zIndex: 1000 }}>
+        <View style={{ backgroundColor: COLORS.white, borderBottomLeftRadius: 28, borderBottomRightRadius: 28, padding: 16 }}>
+          <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <TouchableOpacity accessibilityLabel="Retour" style={{ alignItems: 'center', backgroundColor: COLORS.light_secondary, borderRadius: 18, height: 36, justifyContent: 'center', width: 36 }} onPress={() => navigation.goBack()}>
+              <Icon name='chevron-left' size={24} color={COLORS.black} />
             </TouchableOpacity>
-            {selectedOrganization.user_id === userInfo.id && (
-              <TouchableOpacity onPress={() => navigation.navigate('OrganizationSettings', { organization_id: organization_id })}>
-                <Icon name='cog-outline' size={28} color={COLORS.black} />
-              </TouchableOpacity>
-            )}
+            {selectedOrganization.user_id === userInfo.id ? <TouchableOpacity accessibilityLabel="Paramètres de l’organisation" style={{ alignItems: 'center', backgroundColor: COLORS.light_secondary, borderRadius: 18, height: 36, justifyContent: 'center', width: 36 }} onPress={() => navigation.navigate('OrganizationSettings', { organization_id })}>
+              <Icon name='cog-outline' size={20} color={COLORS.black} />
+            </TouchableOpacity> : <View style={{ height: 36, width: 36 }} />}
           </View>
-
-          {/* Profile / Cover */}
-          <View style={{ flexDirection: 'column', width: Dimensions.get('window').width, justifyContent: 'flex-start', alignItems: 'flex-start', paddingTop: PADDING.p02, paddingHorizontal: PADDING.p02 }}>
-            <Image style={{ width: 160, height: 160, borderRadius: PADDING.p04, borderWidth: 3, borderColor: COLORS.light_secondary, alignSelf: 'center' }} source={{ uri: selectedOrganization.cover_url || `${WEB.boongo_url}/assets/img/banner-organization.png` }} />
-            <View style={{ flexDirection: 'column', width: '100%', justifyContent: 'center', paddingTop: PADDING.p01 }}>
-              <Text style={{ fontSize: 25, fontWeight: '500', color: COLORS.black, textAlign: 'center' }}>{`${selectedOrganization.org_name || '...'}`}</Text>
-              {selectedOrganization.org_acronym &&
-                <Text style={{ fontSize: 13, fontWeight: '400', color: COLORS.black, textAlign: 'center', marginTop: 8 }}>
-                  {selectedOrganization.org_acronym}
-                </Text>
-              }
-              {selectedOrganization.org_description &&
-                <Text style={{ fontSize: 14, fontWeight: '400', color: COLORS.dark_secondary, textAlign: 'center', marginTop: 8 }}>
-                  {selectedOrganization.org_description}
-                </Text>
-              }
-              {selectedOrganization.website_url &&
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', marginTop: 8 }}>
-                  <Icon name='web' size={16} color={COLORS.black} style={{ marginTop: 1, marginRight: PADDING.p00 }} />
-                  <Text style={{ fontSize: 13, fontWeight: '400', color: COLORS.link_color, textAlign: 'center' }} onPress={() => Linking.openURL(selectedOrganization.website_url)}>
-                    {selectedOrganization.website_url}
-                  </Text>
-                </View>
-              }
-              {selectedOrganization.email &&
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', marginTop: 8 }}>
-                  <Icon name='email' size={16} color={COLORS.black} style={{ marginTop: 1, marginRight: PADDING.p00 }} />
-                  <Text style={{ fontSize: 13, fontWeight: '400', color: COLORS.black, textAlign: 'center' }}>
-                    {selectedOrganization.email}
-                  </Text>
-                </View>
-              }
-              {selectedOrganization.phone &&
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', marginTop: 8 }}>
-                  <Icon name='phone' size={16} color={COLORS.black} style={{ marginTop: 1, marginRight: PADDING.p00 }} />
-                  <Text style={{ fontSize: 13, fontWeight: '400', color: COLORS.black, textAlign: 'center' }}>
-                    {selectedOrganization.phone}
-                  </Text>
-                </View>
-              }
-              {selectedOrganization.address &&
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', marginTop: 8 }}>
-                  <Icon name='map-marker' size={16} color={COLORS.black} style={{ marginTop: 1, marginRight: PADDING.p00 }} />
-                  <Text style={{ fontSize: 13, fontWeight: '400', color: COLORS.black, textAlign: 'center' }}>
-                    {selectedOrganization.address}
-                  </Text>
-                </View>
-              }
+          <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 14 }}>
+            <Image style={{ backgroundColor: COLORS.light_primary, borderColor: COLORS.light_secondary, borderRadius: 18, borderWidth: 1, height: 78, width: 78 }} source={{ uri: selectedOrganization.cover_url || `${WEB.boongo_url}/assets/img/banner-organization.png` }} />
+            <View style={{ flex: 1, marginLeft: 13 }}>
+              <Text style={{ color: COLORS.black, fontSize: 19, fontWeight: '800', lineHeight: 24 }} numberOfLines={2}>{selectedOrganization.org_name || '...'}</Text>
+              {selectedOrganization.org_acronym ? <Text style={{ color: COLORS.primary, fontSize: 13, fontWeight: '700', marginTop: 3 }} numberOfLines={1}>{selectedOrganization.org_acronym}</Text> : null}
+              {selectedOrganization.org_description ? <Text style={{ color: COLORS.dark, fontSize: 13, lineHeight: 18, marginTop: 6 }} numberOfLines={2}>{selectedOrganization.org_description}</Text> : null}
             </View>
           </View>
+          {(selectedOrganization.website_url || selectedOrganization.email || selectedOrganization.phone) ? <View style={{ flexDirection: 'row', gap: 8, marginTop: 14 }}>
+            {selectedOrganization.website_url ? <TouchableOpacity style={{ alignItems: 'center', backgroundColor: COLORS.light_primary, borderRadius: 13, flexDirection: 'row', gap: 6, minHeight: 34, paddingHorizontal: 11 }} onPress={() => Linking.openURL(selectedOrganization.website_url)}><Icon name='web' size={16} color={COLORS.primary} /><Text style={{ color: COLORS.primary, fontSize: 12, fontWeight: '800' }} numberOfLines={1}>Site web</Text></TouchableOpacity> : null}
+            {selectedOrganization.email ? <View style={{ alignItems: 'center', backgroundColor: COLORS.light, borderRadius: 13, flexDirection: 'row', gap: 6, minHeight: 34, paddingHorizontal: 11 }}><Icon name='email-outline' size={16} color={COLORS.dark} /><Text style={{ color: COLORS.dark, fontSize: 12, fontWeight: '700' }} numberOfLines={1}>{selectedOrganization.email}</Text></View> : null}
+          </View> : null}
         </View>
       </Animated.View>
       <Animated.View
@@ -1760,17 +1717,17 @@ const OrganizationDataScreen = () => {
           zIndex: 999,
           width: '100%',
           height: TAB_BAR_HEIGHT,
-          backgroundColor: COLORS.white,
+          backgroundColor: COLORS.light,
         }}>
         <TabBar
           {...props}
           scrollEnabled
-          style={{ backgroundColor: COLORS.white, borderBottomWidth: 0, elevation: 0, shadowOpacity: 0 }}
-          indicatorStyle={{ backgroundColor: COLORS.black }}
+          style={{ backgroundColor: COLORS.light, borderBottomWidth: 0, elevation: 0, shadowOpacity: 0 }}
+          indicatorStyle={{ backgroundColor: COLORS.primary, height: 3 }}
           tabStyle={{ width: 140 }}
           labelStyle={{ flexShrink: 1 }}
-          activeColor={COLORS.black}
-          inactiveColor={COLORS.dark_secondary}
+          activeColor={COLORS.primary}
+          inactiveColor={COLORS.dark}
         />
       </Animated.View>
     </>
