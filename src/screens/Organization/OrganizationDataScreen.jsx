@@ -47,8 +47,9 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
   const [newClass, setNewClass] = useState('');
   // Loaders
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const programsLoadingRef = useRef(false);
   const scrollViewListRef = listRef || useRef(null);
   // Protect pick execution against multiple clicks on button
   const [files, setFiles] = useState([]);
@@ -56,7 +57,8 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
   // Current course year
   const currentYear = new Date().getFullYear();
   const currentMonthNumber = new Date().getMonth() + 1;
-  const course_year = (currentMonthNumber >= 8 ? `${currentYear}-${currentYear + 1}` : `${currentYear - 1}-${currentYear}`);
+  const courseStartYear = currentMonthNumber >= 8 ? currentYear : currentYear - 1;
+  const course_year = `${courseStartYear}-${courseStartYear + 1}`;
 
   // ================= Get current organization =================
   useEffect(() => {
@@ -86,27 +88,35 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
     }
   }, [selectedOrganization]); // ✅ Ici, c’est correct : on attend que l’organisation soit chargée
 
-  const fetchPrograms = async () => {
-    if (!selectedOrganization.id || isLoaded) return;
+  const fetchPrograms = async (force = false) => {
+    if (!selectedOrganization.id || (!force && isLoaded) || programsLoadingRef.current) return;
+
+    programsLoadingRef.current = true;
+    setIsLoading(true);
 
     try {
-      const response = await axios.get(
-        `${API.boongo_url}/program/find_all_by_year_and_organization/${course_year}/${organization_id}`,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'X-localization': 'fr',
-            'Authorization': `Bearer ${userInfo.api_token}`,
-          },
-        }
-      );
+      const headers = {
+        'X-localization': 'fr',
+        'X-user-id': userInfo.id,
+        Authorization: `Bearer ${userInfo.api_token}`,
+      };
+      const response = await axios.get(`${API.boongo_url}/program/find_all_by_year_and_organization/${course_year}/${organization_id}`, { headers }).catch(error => {
+        if (error.response?.status === 404) return null;
+        throw error;
+      });
 
-      setPrograms(response.data.data);
-      setSelectedProgram(response.data.data[0]);
+      const programData = response?.data?.data || [];
+      setPrograms(programData);
+      setSelectedProgram(programData[0] || null);
       setIsLoaded(true);
     } catch (error) {
-      console.error('Error fetching programs:', error);
+      console.error('Unable to fetch organization programs:', error);
+      setPrograms([]);
+      setSelectedProgram(null);
       setIsLoaded(false);
+    } finally {
+      programsLoadingRef.current = false;
+      setIsLoading(false);
     }
   };
 
@@ -137,7 +147,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
         }
       );
 
-      await fetchPrograms();
+      await fetchPrograms(true);
       setSelectedProgram(response.data.data);
       setFormProgramModalVisible(false);
     } catch (error) {
@@ -152,7 +162,8 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
     setRefreshing(true);
     setIsLoaded(false);
     setPrograms([]);
-    await fetchPrograms();
+    programsLoadingRef.current = false;
+    await fetchPrograms(true);
     setRefreshing(false);
   };
 
