@@ -691,33 +691,31 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
   // =============== Event item ===============
   const EventItemComponent = ({ item }) => {
     return (
-      <TouchableOpacity onPress={() => { navigation.navigate('Event', { event_id: item.id }) }} style={{ flexDirection: 'row', alignItems: 'center', padding: PADDING.p03, backgroundColor: COLORS.white }}>
-        <Image source={{ uri: item.cover_url }} style={{ width: IMAGE_SIZE.s13, height: IMAGE_SIZE.s13, borderRadius: PADDING.p00, marginRight: PADDING.p03, borderWidth: 1, borderColor: COLORS.light_secondary }} />
+      <TouchableOpacity activeOpacity={0.78} onPress={() => { navigation.navigate('Event', { event_id: item.id }) }} style={{ alignItems: 'center', backgroundColor: COLORS.white, borderColor: COLORS.light_secondary, borderRadius: 20, borderWidth: 1, flexDirection: 'row', marginBottom: 10, minHeight: 96, padding: 12 }}>
+        <Image source={{ uri: item.cover_url }} style={{ backgroundColor: COLORS.light_primary, borderRadius: 14, height: 64, marginRight: 12, width: 64 }} />
         <View style={{ flex: 1 }}>
-          <Text numberOfLines={1} style={{ color: COLORS.black, fontSize: TEXT_SIZE.paragraph, fontWeight: '500' }}>{`${item.event_title}`}</Text>
-          <Text numberOfLines={2} style={{ color: COLORS.dark_secondary }}>{`${item.event_description}`}</Text>
+          <Text numberOfLines={2} style={{ color: COLORS.black, fontSize: 16, fontWeight: '800', lineHeight: 21 }}>{item.event_title}</Text>
+          <Text numberOfLines={2} style={{ color: COLORS.dark, fontSize: 13, lineHeight: 18, marginTop: 4 }}>{item.event_description}</Text>
         </View>
-        <Icon name="chevron-right" size={IMAGE_SIZE.s05} color={COLORS.black} />
+        <Icon name="chevron-right" size={23} color={COLORS.dark} />
       </TouchableOpacity>
     );
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.light_secondary }}>
+    <View style={{ flex: 1, backgroundColor: COLORS.light }}>
       <Spinner visible={isLoading} />
 
       {showBackToTop && (
-        <TouchableOpacity style={[homeStyles.floatingButton, { backgroundColor: COLORS.warning }]} onPress={scrollToTop}>
-          <Icon name='chevron-double-up' size={IMAGE_SIZE.s09} style={{ color: 'black' }} />
+        <TouchableOpacity style={[homeStyles.floatingButton, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary, borderWidth: 1, bottom: selectedOrganization.user_id === userInfo.id ? 94 : 30 }]} onPress={scrollToTop}>
+          <Icon name='chevron-up' size={24} color={COLORS.black} />
         </TouchableOpacity>
       )}
-      <TouchableOpacity style={[homeStyles.floatingButton, { bottom: 30, backgroundColor: COLORS.primary }]} onPress={() => setFormEventModalVisible(true)}>
-        <Icon name='plus' size={IMAGE_SIZE.s07} style={{ color: 'white' }} />
-      </TouchableOpacity>
+      {selectedOrganization.user_id === userInfo.id ? <TouchableOpacity accessibilityLabel={t('event.create')} style={[homeStyles.floatingButton, { bottom: 30, backgroundColor: COLORS.primary }]} onPress={() => setFormEventModalVisible(true)}><Icon name='plus' size={27} color="#ffffff" /></TouchableOpacity> : null}
 
       <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
         {/* Events list */}
-        <View style={[homeStyles.cardEmpty, { height: Dimensions.get('window').height, marginLeft: 0, paddingHorizontal: 2 }]}>
+        <View style={{ flex: 1 }}>
           {/* Events List */}
           <Animated.FlatList
             ref={flatListRef}
@@ -731,17 +729,13 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
             onEndReached={onEndReached}
             onEndReachedThreshold={0.1}
             scrollEventThrottle={16}
-            contentContainerStyle={{ paddingTop: headerHeight + TAB_BAR_HEIGHT }}
+            contentContainerStyle={{ paddingBottom: 96, paddingHorizontal: 16, paddingTop: headerHeight + TAB_BAR_HEIGHT }}
             windowSize={10}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={headerHeight + TAB_BAR_HEIGHT} />}
             contentInset={{ top: 0 }}
             contentOffset={{ y: 0 }}
             ListEmptyComponent={<EmptyListComponent iconName='calendar-outline' title={t('empty_list.title')} description={selectedOrganization && selectedOrganization.type && selectedOrganization.type.alias ? (selectedOrganization.type.alias === 'government_organization' ? t('empty_list.description_government_events') : t('empty_list.description_establishment_events')) : '...'} />}
-            ListFooterComponent={() =>
-              isLoading ? (
-                <Text style={{ color: COLORS.black, textAlign: 'center', padding: PADDING.p01 }}>{t('loading')}</Text>
-              ) : null
-            }
+            ListFooterComponent={() => isLoading && events.length ? <Text style={{ color: COLORS.dark, textAlign: 'center', padding: 16 }}>{t('loading')}</Text> : null}
           />
         </View>
 
@@ -1367,11 +1361,6 @@ const Teach = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
           <Icon name='chevron-double-up' size={IMAGE_SIZE.s09} style={{ color: 'black' }} />
         </TouchableOpacity>
       )}
-      {/* <TouchableOpacity style={[homeStyles.floatingButton, { bottom: 30, backgroundColor: COLORS.primary }]} onPress={() => setFormEventModalVisible(true)}> */}
-      <TouchableOpacity style={[homeStyles.floatingButton, { bottom: 30, backgroundColor: COLORS.primary }]} onPress={() => { ToastAndroid.show('Boongo Teach sera bientôt disponible', ToastAndroid.LONG) }}>
-        <Icon name='plus' size={IMAGE_SIZE.s07} style={{ color: 'white' }} />
-      </TouchableOpacity>
-
       <SafeAreaView contentContainerStyle={{ flexGrow: 1 }}>
         {/* Events list */}
         <View style={[homeStyles.cardEmpty, { height: Dimensions.get('window').height, marginLeft: 0, paddingHorizontal: 2 }]}>
