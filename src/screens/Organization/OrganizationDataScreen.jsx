@@ -291,15 +291,19 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
 
       {showBackToTop && (
         <TouchableOpacity
-          style={[homeStyles.floatingButton, { bottom: 30, backgroundColor: COLORS.warning }]}
+          style={[homeStyles.floatingButton, { bottom: selectedOrganization.user_id === userInfo.id ? 94 : 30, backgroundColor: COLORS.white, borderColor: COLORS.light_secondary, borderWidth: 1 }]}
           onPress={scrollToTop}
         >
-          <Icon name="chevron-double-up" size={IMAGE_SIZE.s09} style={{ color: 'black' }} />
+          <Icon name="chevron-up" size={24} color={COLORS.black} />
         </TouchableOpacity>
       )}
 
+      {selectedOrganization.user_id === userInfo.id ? <TouchableOpacity accessibilityLabel={t('add')} style={[homeStyles.floatingButton, { bottom: 30, backgroundColor: COLORS.primary }]} onPress={() => setFormProgramModalVisible(true)}>
+        <Icon name='plus' size={27} color="#ffffff" />
+      </TouchableOpacity> : null}
+
       <Animated.ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: selectedOrganization.user_id === userInfo.id ? 84 : 24 }}
         ref={scrollViewListRef}
         onScroll={handleScroll}
         showsVerticalScrollIndicator={false}
@@ -319,10 +323,6 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
               paddingHorizontal: PADDING.p00,
             }}
             renderItem={({ item }) => <ProgramItem item={item} />}
-            ListFooterComponent={selectedOrganization.user_id === userInfo.id ? <TouchableOpacity accessibilityLabel={t('add')} style={{ alignItems: 'center', backgroundColor: COLORS.primary, borderRadius: 16, flexDirection: 'row', height: 40, justifyContent: 'center', marginLeft: 8, paddingHorizontal: 13 }} onPress={() => setFormProgramModalVisible(true)}>
-              <Icon name='plus' size={18} color="#ffffff" />
-              <Text style={{ color: '#ffffff', fontSize: 13, fontWeight: '800', marginLeft: 5 }}>{t('add')}</Text>
-            </TouchableOpacity> : null}
           />
 
           {selectedProgram ? (
