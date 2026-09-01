@@ -7,7 +7,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import HomeScreen from '../screens/Home/HomeScreen';
 import LanguageScreen from '../screens/language';
-import DictionaryScreen from '../screens/dictionary';
+import DictionaryScreen from '../screens/DictionaryScreen';
 import SettingsScreen from '../screens/Account/settings';
 import ProfileScreen from '../screens/profile';
 import AccountScreen from '../screens/Account';

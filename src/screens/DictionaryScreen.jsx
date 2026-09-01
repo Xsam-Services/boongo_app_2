@@ -5,12 +5,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 
 import { SearchContext } from '../contexts/SearchContext';
-import HeaderComponent from './header';
 import useColors from '../hooks/useColors';
 import { API } from '../tools/constants';
 
@@ -36,6 +36,7 @@ const ResultSection = ({ title, children, COLORS }) => (
 const DictionaryScreen = () => {
   const COLORS = useColors();
   const { t } = useTranslation();
+  const navigation = useNavigation();
   const { searchQuery, setSearchQuery } = useContext(SearchContext);
   const [inputValue, setInputValue] = useState(searchQuery);
   const [loading, setLoading] = useState(false);
@@ -164,9 +165,16 @@ const DictionaryScreen = () => {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: COLORS.light }]} edges={['top', 'bottom']}>
-      <HeaderComponent title={t('dictionary')} />
-
       <View style={styles.content}>
+        <View style={styles.contextHeader}>
+          <TouchableOpacity accessibilityLabel="Retour" activeOpacity={0.75} style={[styles.backButton, { backgroundColor: COLORS.light_secondary }]} onPress={() => navigation.goBack()}>
+            <Icon name="chevron-left" size={24} color={COLORS.black} />
+          </TouchableOpacity>
+          <View style={[styles.dictionaryBadge, { backgroundColor: COLORS.light_primary }]}>
+            <Icon name="book-alphabet" size={18} color={COLORS.primary} />
+            <Text style={[styles.dictionaryTitle, { color: COLORS.black }]}>{t('dictionary')}</Text>
+          </View>
+        </View>
         <View style={[styles.searchCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
           <Icon name="magnify" size={22} color={COLORS.dark} />
           <TextInput
@@ -195,7 +203,11 @@ const DictionaryScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { flex: 1, paddingHorizontal: 16 },
-  searchCard: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', marginVertical: 16, minHeight: 56, paddingLeft: 16, paddingRight: 7 },
+  contextHeader: { alignItems: 'center', flexDirection: 'row', gap: 10, marginTop: 10 },
+  backButton: { alignItems: 'center', borderRadius: 18, height: 36, justifyContent: 'center', width: 36 },
+  dictionaryBadge: { alignItems: 'center', borderRadius: 18, flexDirection: 'row', gap: 8, minHeight: 36, paddingHorizontal: 13 },
+  dictionaryTitle: { fontSize: 14, fontWeight: '800' },
+  searchCard: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', marginBottom: 16, marginTop: 12, minHeight: 56, paddingLeft: 16, paddingRight: 7 },
   searchInput: { flex: 1, fontSize: 15, marginHorizontal: 11, paddingVertical: 12 },
   submitButton: { alignItems: 'center', borderRadius: 14, height: 42, justifyContent: 'center', marginLeft: 8, width: 42 },
   emptyState: { alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: 28, paddingBottom: 64 },
