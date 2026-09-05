@@ -18,7 +18,7 @@ const OrganizationCard = ({ item, onPress, COLORS }) => {
   return (
     <TouchableOpacity activeOpacity={0.78} style={[styles.organizationCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]} onPress={onPress}>
       <View style={[styles.coverFrame, { backgroundColor: COLORS.light_primary }]}>
-        {item.cover_url && !hasImageError ? <Image source={{ uri: item.cover_url }} style={styles.cover} resizeMode="cover" onError={() => setHasImageError(true)} /> : <Icon name="domain" size={28} color={COLORS.primary} />}
+        {item.cover_url && !hasImageError ? <Image source={{ uri: item.cover_url }} style={[styles.cover, styles.editorialSurface]} resizeMode="contain" onError={() => setHasImageError(true)} /> : <Icon name="domain" size={28} color={COLORS.primary} />}
       </View>
       <View style={styles.organizationCopy}>
         <Text style={[styles.organizationName, { color: COLORS.black }]} numberOfLines={2}>{item.org_name}</Text>
@@ -170,6 +170,7 @@ const styles = StyleSheet.create({
   organizationCard: { alignItems: 'center', borderRadius: 20, borderWidth: 1, flexDirection: 'row', minHeight: 96, padding: 12 },
   coverFrame: { alignItems: 'center', borderRadius: 14, height: 64, justifyContent: 'center', overflow: 'hidden', width: 64 },
   cover: { height: '100%', width: '100%' },
+  editorialSurface: { backgroundColor: '#ffffff' },
   organizationCopy: { flex: 1, marginHorizontal: 12 },
   organizationName: { fontSize: 16, fontWeight: '800', lineHeight: 21 },
   organizationDescription: { fontSize: 13, lineHeight: 18, marginTop: 4 },

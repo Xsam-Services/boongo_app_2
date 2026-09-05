@@ -26,7 +26,7 @@ const MapItem = ({ item }) => {
 
   return (
     <TouchableOpacity activeOpacity={0.82} onPress={() => navigation.navigate('WorkData', { itemId: item.id })} style={[styles.mapCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
-      {imageUrl ? <Image source={{ uri: imageUrl }} style={[styles.mapImage, { backgroundColor: COLORS.light_secondary }]} resizeMode="cover" /> : (
+      {imageUrl ? <Image source={{ uri: imageUrl }} style={[styles.mapImage, styles.editorialSurface]} resizeMode="contain" /> : (
         <View style={[styles.mapImage, styles.mapFallback, { backgroundColor: COLORS.light_primary }]}>
           <Icon name="map-outline" size={42} color={COLORS.primary} />
         </View>
@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
   errorText: { fontSize: 15, lineHeight: 21, marginTop: 12, textAlign: 'center' },
   mapCard: { borderRadius: 22, borderWidth: 1, marginBottom: 12, marginHorizontal: 16, overflow: 'hidden' },
   mapImage: { height: 210, width: '100%' },
+  editorialSurface: { backgroundColor: '#ffffff' },
   mapFallback: { alignItems: 'center', justifyContent: 'center' },
   mapFooter: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', padding: 14 },
   mapTitle: { flex: 1, fontSize: 16, fontWeight: '800', lineHeight: 21, marginRight: 12 },

@@ -14,7 +14,7 @@ const FileThumbnail = ({ uri, type, title, onPress }) => {
     return (
         <TouchableOpacity style={[styles.container, {backgroundColor: COLORS.black}]} onPress={onPress}>
             {isImageOrVideo ? (
-                <Image source={{ uri }} style={styles.thumbnail} resizeMode="cover" />
+                <Image source={{ uri }} style={[styles.thumbnail, styles.editorialSurface]} resizeMode="contain" />
             ) : (
                 <View style={[styles.thumbnail, styles.iconWrapper, { backgroundColor: (type === 'audio' ? COLORS.primary : COLORS.success) }]}>
                     <Icon name={type === 'audio' ? 'music' : 'file-document'} size={30} color='white' />
@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
     thumbnail: {
         width: 80, height: 80,
     },
+    editorialSurface: { backgroundColor: '#ffffff' },
     iconWrapper: {
         justifyContent: 'center', alignItems: 'center',
     },

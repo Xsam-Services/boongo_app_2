@@ -17,6 +17,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import { API } from '../tools/constants';
 import useColors from '../hooks/useColors';
 import HeaderComponent from './header';
+import ContentImage from '../components/content_image';
 
 const getLanguage = () => RNLocalize.getLocales()[0]?.languageCode || 'fr';
 
@@ -97,7 +98,7 @@ const NewsDataScreen = ({ route, navigation }) => {
       >
         <View style={[styles.articleCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
           {coverImage ? (
-            <Image source={{ uri: coverImage }} style={[styles.cover, { backgroundColor: COLORS.light_secondary }]} resizeMode="cover" />
+            <ContentImage source={{ uri: coverImage }} style={styles.cover} />
           ) : (
             <View style={[styles.cover, styles.coverFallback, { backgroundColor: COLORS.light_primary }]}>
               <Icon name="newspaper-variant-outline" size={42} color={COLORS.primary} />
@@ -139,7 +140,7 @@ const NewsDataScreen = ({ route, navigation }) => {
                 const isVideo = item.is_video;
                 return (
                   <TouchableOpacity key={item.id} style={[styles.mediaTile, { backgroundColor: COLORS.dark_secondary }]} onPress={() => setSelectedMediaIndex(media.indexOf(item))} activeOpacity={0.8}>
-                    {!isVideo && item.file_url ? <Image source={{ uri: item.file_url }} style={styles.mediaImage} resizeMode="cover" /> : null}
+                    {!isVideo && item.file_url ? <Image source={{ uri: item.file_url }} style={[styles.mediaImage, styles.editorialSurface]} resizeMode="contain" /> : null}
                     {isVideo ? <Icon name="play-circle" size={42} color="#ffffff" /> : null}
                   </TouchableOpacity>
                 );
@@ -193,6 +194,7 @@ const styles = StyleSheet.create({
   content: { padding: 16, paddingBottom: 36 },
   articleCard: { borderRadius: 24, borderWidth: 1, overflow: 'hidden' },
   cover: { height: 238, width: '100%' },
+  editorialSurface: { backgroundColor: '#ffffff' },
   coverFallback: { alignItems: 'center', justifyContent: 'center' },
   articleBody: { padding: 18 },
   categoryPill: { alignItems: 'center', alignSelf: 'flex-start', borderRadius: 14, flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 6 },

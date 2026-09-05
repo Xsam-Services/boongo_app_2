@@ -63,7 +63,7 @@ const NewsItemComponent = ({ item }) => {
           </View>
         </View>
       </View>
-      {workImage ? <Image source={{ uri: workImage }} style={[styles.image, { backgroundColor: COLORS.light_secondary }]} resizeMode="cover" /> : null}
+      {workImage ? <Image source={{ uri: workImage }} style={[styles.image, styles.editorialSurface]} resizeMode="contain" /> : null}
     </TouchableOpacity>
   );
 };
@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
   detailLink: { alignItems: 'center', flexDirection: 'row', gap: 5 },
   detailText: { fontSize: 12, fontWeight: '800' },
   image: { borderRadius: 14, height: 96, width: 92 },
+  editorialSurface: { backgroundColor: '#ffffff' },
   adCard: { borderRadius: 20, flexDirection: 'row', marginBottom: 10, marginHorizontal: 16, minHeight: 116, overflow: 'hidden', padding: 12 },
   adImage: { borderRadius: 14, height: 92, marginRight: 12, width: 86 },
   adContent: { flex: 1, justifyContent: 'center' },

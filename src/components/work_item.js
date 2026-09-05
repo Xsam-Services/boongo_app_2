@@ -43,7 +43,7 @@ const WorkItemComponent = ({ item }) => {
 
   return (
     <TouchableOpacity activeOpacity={0.82} style={[styles.card, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]} onPress={details}>
-      {workImage ? <Image source={{ uri: workImage }} style={[styles.image, { backgroundColor: COLORS.light_secondary }]} resizeMode="cover" /> : (
+      {workImage ? <Image source={{ uri: workImage }} style={[styles.image, styles.editorialSurface]} resizeMode="contain" /> : (
         <View style={[styles.image, styles.imageFallback, { backgroundColor: COLORS.light_primary }]}>
           <Icon name="book-open-page-variant-outline" size={27} color={COLORS.primary} />
         </View>
@@ -66,6 +66,7 @@ const WorkItemComponent = ({ item }) => {
 const styles = StyleSheet.create({
   card: { borderRadius: 20, borderWidth: 1, flexDirection: 'row', marginBottom: 10, marginHorizontal: 16, minHeight: 150, overflow: 'hidden', padding: 14 },
   image: { borderRadius: 15, height: 120, width: 88 },
+  editorialSurface: { backgroundColor: '#ffffff' },
   imageFallback: { alignItems: 'center', justifyContent: 'center' },
   copy: { flex: 1, justifyContent: 'space-between', marginLeft: 13 },
   title: { fontSize: 16, fontWeight: '800', lineHeight: 21 },
