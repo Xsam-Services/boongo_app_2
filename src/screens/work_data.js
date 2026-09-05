@@ -18,6 +18,7 @@ import { API, PHONE } from '../tools/constants';
 import useColors from '../hooks/useColors';
 import HeaderComponent from './header';
 import FileThumbnail from '../components/file_thumbnail';
+import ContentImage from '../components/content_image';
 
 const getLanguage = () => RNLocalize.getLocales()[0]?.languageCode || 'fr';
 const isVideoFile = url => ['.mp4', '.mov', '.avi', '.webm', '.mkv'].some(extension => url?.toLowerCase().includes(extension));
@@ -276,7 +277,7 @@ const WorkDataScreen = ({ route, navigation }) => {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchWork} />}
       >
         <View style={[styles.heroCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
-          {coverImage ? <Image source={{ uri: coverImage }} style={[styles.cover, { backgroundColor: COLORS.light_secondary }]} resizeMode="cover" /> : (
+          {coverImage ? <ContentImage source={{ uri: coverImage }} style={styles.cover} /> : (
             <View style={[styles.cover, styles.coverFallback, { backgroundColor: COLORS.light_primary }]}>
               <Icon name="book-open-page-variant-outline" size={46} color={COLORS.primary} />
             </View>

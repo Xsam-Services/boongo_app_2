@@ -23,7 +23,7 @@ const AudioScreen = ({ route }) => {
       </View>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={[styles.artCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
-          {mediaCover ? <Image source={{ uri: mediaCover }} style={[styles.artwork, { backgroundColor: COLORS.light_primary }]} resizeMode="cover" /> : (
+          {mediaCover ? <Image source={{ uri: mediaCover }} style={[styles.artwork, styles.editorialSurface]} resizeMode="contain" /> : (
             <View style={[styles.artwork, styles.artworkFallback, { backgroundColor: COLORS.light_primary }]}><Icon name="music-note" size={62} color={COLORS.primary} /></View>
           )}
           <Text style={[styles.title, { color: COLORS.black }]} numberOfLines={2}>{audioTitle}</Text>
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
   content: { padding: 16, paddingBottom: 36 },
   artCard: { alignItems: 'center', borderRadius: 24, borderWidth: 1, padding: 22 },
   artwork: { borderRadius: 20, height: 230, width: 230 },
+  editorialSurface: { backgroundColor: '#ffffff' },
   artworkFallback: { alignItems: 'center', justifyContent: 'center' },
   title: { fontSize: 22, fontWeight: '800', lineHeight: 29, marginTop: 18, textAlign: 'center' },
   author: { fontSize: 14, marginTop: 5, textAlign: 'center' },

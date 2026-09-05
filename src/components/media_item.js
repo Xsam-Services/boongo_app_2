@@ -54,7 +54,7 @@ const MediaItemComponent = ({ item }) => {
 
   return (
     <TouchableOpacity activeOpacity={0.84} style={[styles.card, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]} onPress={openDetails}>
-      {imageUri ? <Image source={{ uri: imageUri }} style={[styles.cover, { backgroundColor: COLORS.light_secondary }]} resizeMode="cover" /> : (
+      {imageUri ? <Image source={{ uri: imageUri }} style={[styles.cover, styles.editorialSurface]} resizeMode="contain" /> : (
         <View style={[styles.cover, styles.coverFallback, { backgroundColor: COLORS.light_primary }]}>
           <Icon name="play-circle-outline" size={34} color={COLORS.primary} />
         </View>
@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
   card: { borderRadius: 20, borderWidth: 1, flexDirection: 'row', marginBottom: 10, marginHorizontal: 16, minHeight: 142, overflow: 'hidden', padding: 12 },
   copy: { flex: 1, justifyContent: 'space-between', marginLeft: 13 },
   cover: { borderRadius: 15, height: 116, width: 88 },
+  editorialSurface: { backgroundColor: '#ffffff' },
   coverFallback: { alignItems: 'center', justifyContent: 'center' },
   description: { fontSize: 13, lineHeight: 18, marginTop: 5 },
   favoriteButton: { alignItems: 'center', borderRadius: 17, height: 34, justifyContent: 'center', width: 34 },
