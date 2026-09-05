@@ -1,13 +1,19 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
+import { toImageSource } from '../tools/image_source';
 
-const ContentImage = ({ source, style, ...imageProps }) => (
-  <View style={[styles.frame, style]}>
-    <Image source={source} style={styles.backdrop} resizeMode="cover" blurRadius={22} />
-    <View style={styles.backdropTint} />
-    <Image source={source} style={styles.image} resizeMode="contain" {...imageProps} />
-  </View>
-);
+const ContentImage = ({ source, style, ...imageProps }) => {
+  const safeSource = toImageSource(source);
+  if (!safeSource) return null;
+
+  return (
+    <View style={[styles.frame, style]}>
+      <Image source={safeSource} style={styles.backdrop} resizeMode="cover" blurRadius={22} />
+      <View style={styles.backdropTint} />
+      <Image source={safeSource} style={styles.image} resizeMode="contain" {...imageProps} />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   frame: { overflow: 'hidden', position: 'relative' },

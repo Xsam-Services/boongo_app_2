@@ -18,6 +18,7 @@ import { API } from '../tools/constants';
 import useColors from '../hooks/useColors';
 import HeaderComponent from './header';
 import ContentImage from '../components/content_image';
+import { sanitizeImageUri } from '../tools/image_source';
 
 const getLanguage = () => RNLocalize.getLocales()[0]?.languageCode || 'fr';
 
@@ -64,13 +65,13 @@ const NewsDataScreen = ({ route, navigation }) => {
   }, [getWork]);
 
   const media = work?.images || [];
-  const coverImage = work?.photo_url || media.find(image => image.type?.alias === 'image_file')?.file_url || media.find(image => image.file_url)?.file_url;
+  const coverImage = sanitizeImageUri(work?.photo_url || media.find(image => image.type?.alias === 'image_file')?.file_url || media.find(image => image.file_url)?.file_url);
   const selectedMedia = selectedMediaIndex === null ? null : media[selectedMediaIndex];
   const owner = work?.user_id ? work.user_owner : work?.organization_owner;
   const ownerName = work?.user_id
     ? [owner?.firstname, owner?.lastname].filter(Boolean).join(' ')
     : owner?.org_name;
-  const ownerImage = work?.user_id ? owner?.avatar_url : owner?.cover_url;
+  const ownerImage = sanitizeImageUri(work?.user_id ? owner?.avatar_url : owner?.cover_url);
 
   const openOwner = () => {
     if (!owner?.id) return;
