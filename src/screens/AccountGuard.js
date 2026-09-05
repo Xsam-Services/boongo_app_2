@@ -3,15 +3,14 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import useColors from './../hooks/useColors';
 import homeStyles from './../screens/style';
 import { PADDING, TEXT_SIZE } from './../tools/constants';
-import { Divider } from 'react-native-paper';
 import LogoText from './../../assets/img/brand.svg';
-import FooterComponent from './../screens/footer';
 
 const AccountGuard = ({ userInfo, changeStatus, logout, children }) => {
     // =============== Colors ===============
@@ -66,45 +65,17 @@ const AccountGuard = ({ userInfo, changeStatus, logout, children }) => {
     const content = getContent();
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.white, paddingHorizontal: 50 }}>
+        <SafeAreaView style={[styles.screen, { backgroundColor: COLORS.white }]} edges={['top', 'bottom']}>
             {/* Brand / Title */}
-            <View style={[homeStyles.authlogo, { marginBottom: PADDING.p18 }]}>
-                <LogoText width={200} height={48} />
+            <View style={styles.brand}>
+                <LogoText width={156} height={38} />
             </View>
+            <View style={[styles.card, { backgroundColor: COLORS.light_primary, borderColor: COLORS.light_secondary }]}><View style={[styles.iconSurface, { backgroundColor: COLORS.light_danger }]}><Icon name={content.icon} color={COLORS.danger} size={38} /></View><Text style={[styles.title, { color: COLORS.black }]}>{content.title}</Text><Text style={[styles.message, { color: COLORS.dark }]}>{content.message}</Text>{content.button && <TouchableOpacity style={[styles.primary, { backgroundColor: COLORS.primary }]} onPress={() => changeStatus(userInfo?.id, 3)}><Icon name="shield-check-outline" size={20} color="#ffffff" /><Text style={styles.primaryText}>{t('auth.status.disabled.link2')}</Text></TouchableOpacity>}<TouchableOpacity style={[styles.secondary, { borderColor: COLORS.light_secondary }]} onPress={logout}><Icon name="logout" size={19} color={COLORS.dark} /><Text style={[styles.secondaryText, { color: COLORS.dark }]}>{t('logout')}</Text></TouchableOpacity></View>
 
-            {/* Message Content */}
-            <Icon name={content.icon} color={COLORS.danger} size={100} style={{ alignSelf: 'center', marginBottom: PADDING.p02 }} />
-
-            <Text style={{ fontSize: TEXT_SIZE.header, fontWeight: 'bold', color: COLORS.danger, marginBottom: PADDING.p02, textAlign: 'center' }}>
-                {content.title}
-            </Text>
-
-            <Text style={{ fontSize: TEXT_SIZE.paragraph, color: COLORS.black, textAlign: 'center', marginBottom: 30 }}>
-                {content.message}
-            </Text>
-
-            {content.button && (
-                <TouchableOpacity
-                    style={[homeStyles.authButton, { backgroundColor: COLORS.primary, paddingVertical: PADDING.p02 }]}
-                    onPress={() => { changeStatus(userInfo?.id, 3); }}
-                >
-                    <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('auth.status.disabled.link2')}</Text>
-                </TouchableOpacity>
-            )}
-
-            {/* Logout */}
-            <TouchableOpacity
-                style={[homeStyles.authButton, { backgroundColor: COLORS.white, paddingVertical: PADDING.p02, borderWidth: 1, borderColor: COLORS.primary }]}
-                onPress={logout}
-            >
-                <Text style={[homeStyles.authButtonText, { color: COLORS.primary }]}>{t('logout')}</Text>
-            </TouchableOpacity>
-
-            {/* Copyright */}
-            <Divider style={[homeStyles.authDivider, { backgroundColor: COLORS.light_secondary }]} />
-            <FooterComponent color={COLORS.dark_secondary} />
-        </View>
+        </SafeAreaView>
     );
 }
 
 export default AccountGuard;
+
+const styles = StyleSheet.create({ screen: { alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: 28 }, brand: { marginBottom: 42 }, card: { borderRadius: 28, borderWidth: 1, padding: 24, width: '100%' }, iconSurface: { alignItems: 'center', alignSelf: 'center', borderRadius: 28, height: 56, justifyContent: 'center', width: 56 }, title: { fontSize: 25, fontWeight: '800', marginTop: 18, textAlign: 'center' }, message: { fontSize: 15, lineHeight: 23, marginTop: 10, textAlign: 'center' }, primary: { alignItems: 'center', borderRadius: 16, flexDirection: 'row', justifyContent: 'center', marginTop: 24, minHeight: 54 }, primaryText: { color: '#ffffff', fontSize: 14, fontWeight: '800', marginLeft: 8 }, secondary: { alignItems: 'center', borderRadius: 16, borderWidth: 1, flexDirection: 'row', justifyContent: 'center', marginTop: 10, minHeight: 52 }, secondaryText: { fontSize: 14, fontWeight: '800', marginLeft: 8 } });

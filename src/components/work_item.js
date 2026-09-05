@@ -66,7 +66,7 @@ const WorkItemComponent = ({ item }) => {
 const styles = StyleSheet.create({
   card: { borderRadius: 20, borderWidth: 1, flexDirection: 'row', marginBottom: 10, marginHorizontal: 16, minHeight: 150, overflow: 'hidden', padding: 14 },
   image: { borderRadius: 15, height: 120, width: 88 },
-  editorialSurface: { backgroundColor: '#ffffff' },
+  editorialSurface: { backgroundColor: '#2a2a2d' },
   imageFallback: { alignItems: 'center', justifyContent: 'center' },
   copy: { flex: 1, justifyContent: 'space-between', marginLeft: 13 },
   title: { fontSize: 16, fontWeight: '800', lineHeight: 21 },

@@ -43,7 +43,7 @@ const AccountAvatar = ({ uri, COLORS }) => {
   );
 };
 
-const HeaderComponent = ({ title, hideSearch = false }) => {
+const HeaderComponent = ({ title, hideSearch = false, accountActions = false }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -54,7 +54,7 @@ const HeaderComponent = ({ title, hideSearch = false }) => {
   const isAccount = route.name === 'Account';
   const displayName = [userInfo?.firstname, userInfo?.lastname].filter(Boolean).join(' ') || userInfo?.username;
 
-  if (isAccount) {
+  if (isAccount && title !== 'Mon espace') {
     return (
       <>
         <StatusBar barStyle={COLORS.bar_style} backgroundColor={COLORS.white} />
@@ -110,6 +110,16 @@ const HeaderComponent = ({ title, hideSearch = false }) => {
           {title ? <Text style={[styles.title, { color: COLORS.black }]} numberOfLines={1}>{title}</Text> : null}
         </View>
         <View style={styles.rightActions}>
+          {accountActions ? (
+            <>
+              <HeaderButton accessibilityLabel="Notifications" onPress={() => navigation.navigate('Notifications')} COLORS={COLORS}>
+                <MaterialCommunityIcons name="bell-outline" size={20} color={COLORS.black} />
+              </HeaderButton>
+              <HeaderButton accessibilityLabel="Paramètres" onPress={() => navigation.navigate('Settings')} COLORS={COLORS}>
+                <MaterialCommunityIcons name="cog-outline" size={20} color={COLORS.black} />
+              </HeaderButton>
+            </>
+          ) : null}
           {!hideSearch && route.name !== 'OrganizationSettings' && route.name !== 'Notifications' && route.name !== 'Language' && route.name !== 'Search' && route.name !== 'Dictionary' && route.name !== 'Establishment' && route.name !== 'Government' && route.name !== 'AddEstablishment' && route.name !== 'AddGovernment' && route.name !== 'AddWork' ? (
             route.name === 'Settings' ? (
               <HeaderButton accessibilityLabel="Langue" onPress={() => navigation.navigate('Language')} COLORS={COLORS}>

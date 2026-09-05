@@ -3,7 +3,7 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useContext, useEffect, useState } from 'react'
-import { Text, TouchableOpacity, View, TextInput, ScrollView, Platform, Image, StyleSheet } from 'react-native';
+import { Alert, Text, TouchableOpacity, View, TextInput, ScrollView, Platform, Image, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
@@ -499,29 +499,24 @@ const SettingsScreen = () => {
           </View>
 
           {/* Submit */}
-          <Button style={[homeStyles.authButton, { backgroundColor: COLORS.primary, marginTop: 16 }]} onPress={() => {
+          <TouchableOpacity style={[styles.saveAction, { backgroundColor: COLORS.primary }]} onPress={() => {
             update(userInfo.id, firstname, lastname, surname, gender, birthdate, city, address_1, address_2, p_o_box, email, phone, username, password, confirm_password, country, currency, null, organization);
             navigation.navigate('Account');
           }}>
-            <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('update')}</Text>
-          </Button>
+            <Icon name="check" size={21} color="#ffffff" /><Text style={styles.saveActionText}>{t('update')}</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Account management */}
         <View style={[styles.formCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
-          {/* Disable account */}
-          <Button style={[homeStyles.authButton, { backgroundColor: COLORS.warning, marginVertical: PADDING.p00 }]} onPress={() => {
-            changeStatus(userInfo.id, 4);
-            navigation.navigate('HomeStack');
-          }}>
-            <Text style={[homeStyles.authButtonText, { color: 'black' }]}>{t('auth.status.disabled.link1')}</Text>
-          </Button>
-          <Button style={[homeStyles.authButton, { backgroundColor: COLORS.danger, marginVertical: PADDING.p00 }]} onPress={() => {
-            changeStatus(userInfo.id, 29);
-            navigation.navigate('HomeStack');
-          }}>
-            <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('auth.status.deleted.link1')}</Text>
-          </Button>
+          <Text style={[styles.dangerTitle, { color: COLORS.black }]}>Zone sensible</Text>
+          <Text style={[styles.dangerHint, { color: COLORS.dark }]}>Ces actions modifient l’accès à votre compte.</Text>
+          <TouchableOpacity style={[styles.dangerRow, { borderColor: COLORS.light_secondary }]} onPress={() => Alert.alert('Désactiver le compte ?', 'Votre compte ne sera plus accessible jusqu’à sa réactivation.', [{ text: 'Annuler', style: 'cancel' }, { text: 'Désactiver', style: 'destructive', onPress: () => { changeStatus(userInfo.id, 4); navigation.navigate('HomeStack'); } }])}>
+            <View style={[styles.dangerIcon, { backgroundColor: COLORS.light_warning }]}><Icon name="pause-circle-outline" size={21} color={COLORS.warning} /></View><View style={styles.dangerCopy}><Text style={[styles.dangerRowTitle, { color: COLORS.black }]}>{t('auth.status.disabled.link1')}</Text><Text style={[styles.dangerRowHint, { color: COLORS.dark }]}>Vous pourrez réactiver votre compte plus tard.</Text></View><Icon name="chevron-right" size={22} color={COLORS.dark} />
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.dangerRow, { borderColor: COLORS.light_secondary }]} onPress={() => Alert.alert('Supprimer définitivement ?', 'Cette action est irréversible. Toutes vos données associées peuvent être perdues.', [{ text: 'Annuler', style: 'cancel' }, { text: 'Supprimer', style: 'destructive', onPress: () => { changeStatus(userInfo.id, 29); navigation.navigate('HomeStack'); } }])}>
+            <View style={[styles.dangerIcon, { backgroundColor: COLORS.light_danger }]}><Icon name="trash-can-outline" size={21} color={COLORS.danger} /></View><View style={styles.dangerCopy}><Text style={[styles.dangerRowTitle, { color: COLORS.danger }]}>{t('auth.status.deleted.link1')}</Text><Text style={[styles.dangerRowHint, { color: COLORS.dark }]}>Cette action est définitive.</Text></View><Icon name="chevron-right" size={22} color={COLORS.danger} />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -536,6 +531,12 @@ const styles = StyleSheet.create({
   avatar: { borderRadius: 80, height: 160, width: 160 },
   avatarEditButton: { alignItems: 'center', borderRadius: 20, justifyContent: 'center', marginLeft: 104, marginTop: -30, height: 40, width: 40 },
   formCard: { borderRadius: 20, borderWidth: 1, marginBottom: 16, padding: 20 },
+  saveAction: { alignItems: 'center', borderRadius: 16, flexDirection: 'row', justifyContent: 'center', marginTop: 20, minHeight: 54 },
+  saveActionText: { color: '#ffffff', fontSize: 15, fontWeight: '800', marginLeft: 8 },
+  dangerTitle: { fontSize: 17, fontWeight: '800' }, dangerHint: { fontSize: 13, lineHeight: 18, marginTop: 5 },
+  dangerRow: { alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth, flexDirection: 'row', marginTop: 15, paddingTop: 15 },
+  dangerIcon: { alignItems: 'center', borderRadius: 16, height: 40, justifyContent: 'center', width: 40 }, dangerCopy: { flex: 1, marginHorizontal: 11 },
+  dangerRowTitle: { fontSize: 14, fontWeight: '800' }, dangerRowHint: { fontSize: 12, marginTop: 3 },
   select: { borderRadius: 12, borderWidth: 0, height: 52, marginBottom: 10, paddingHorizontal: 16 },
   dateActions: { flexDirection: 'row', gap: 10, marginBottom: 10 },
   dateAction: { alignItems: 'center', borderRadius: 14, flex: 1, justifyContent: 'center', minHeight: 48 },

@@ -3,7 +3,8 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useContext } from 'react';
-import { Linking, Switch, Text, View } from 'react-native';
+import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
 import { PADDING } from '../tools/constants';
 import ThemeContext from '../contexts/ThemeContext';
@@ -30,13 +31,10 @@ const FooterComponent = ({ color }) => {
 
   return (
     <View>
-      {/* Dark mode */}
-      <View style={[homeStyles.langButton, { flexDirection: 'row', alignItems: 'center', alignSelf: 'center', justifyContent: 'space-between', width: 230, marginBottom: PADDING.p05, borderWidth: 1, borderColor: COLORS.light_secondary }]}>
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={[homeStyles.cardLabelSettings, { color: COLORS.black }]}>{t('dark_theme')}</Text>
-        </View>
-        <Switch value={theme === 'dark'} onValueChange={handleToggleTheme} trackColor={{ false: COLORS.black, true: COLORS.primary }} thumbColor={COLORS.light} />
-      </View>
+      <TouchableOpacity style={[styles.themeAction, { backgroundColor: COLORS.light_primary }]} onPress={handleToggleTheme} accessibilityLabel={t('dark_theme')}>
+        <Icon name={theme === 'dark' ? 'weather-sunny' : 'weather-night'} size={18} color={COLORS.primary} />
+        <Text style={[styles.themeLabel, { color: COLORS.black }]}>{theme === 'dark' ? 'Mode clair' : t('dark_theme')}</Text>
+      </TouchableOpacity>
 
       {/* Copyright */}
       <Text style={{ textAlign: 'center', color: COLORS.dark_secondary, marginBottom: PADDING.p00 }}>{t('copyright', { year })} <Text style={{ fontWeight: '700' }}>Reborn</Text></Text>
@@ -46,3 +44,5 @@ const FooterComponent = ({ color }) => {
 };
 
 export default FooterComponent;
+
+const styles = StyleSheet.create({ themeAction: { alignItems: 'center', alignSelf: 'center', borderRadius: 18, flexDirection: 'row', marginBottom: PADDING.p05, minHeight: 42, paddingHorizontal: 15 }, themeLabel: { fontSize: 13, fontWeight: '800', marginLeft: 8 } });
