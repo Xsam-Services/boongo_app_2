@@ -21,7 +21,7 @@ import GovernmentScreen from '../screens/Organization/GovernmentScreen';
 import AddGovernmentScreen from '../screens/Organization/Government/AddGovernmentScreen';
 import EventScreen from '../screens/Organization/event_data';
 import QuizScreen from '../screens/Organization/quiz';
-import AddWorkScreen from '../screens/add_work';
+import AddWorkScreen from '../screens/AddWorkScreen';
 import BookScreen from '../screens/Organization/BookScreen';
 import JournalScreen from '../screens/Organization/JournalScreen';
 import MappingScreen from '../screens/Organization/MappingScreen';
