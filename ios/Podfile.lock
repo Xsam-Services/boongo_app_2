@@ -2413,15 +2413,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNImageCropPicker (0.42.0):
-    - React-Core
-    - React-RCTImage
-    - RNImageCropPicker/QBImagePickerController (= 0.42.0)
-    - TOCropViewController (~> 2.7.4)
-  - RNImageCropPicker/QBImagePickerController (0.42.0):
-    - React-Core
-    - React-RCTImage
-    - TOCropViewController (~> 2.7.4)
   - RNLocalize (3.7.0):
     - hermes-engine
     - RCTRequired
@@ -2715,7 +2706,6 @@ PODS:
     - SDWebImage/Core (= 5.21.7)
   - SDWebImage/Core (5.21.7)
   - SwiftUIIntrospect (1.3.0)
-  - TOCropViewController (2.7.4)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -2833,7 +2823,6 @@ DEPENDENCIES:
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
-  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -2847,7 +2836,6 @@ SPEC REPOS:
     - lottie-ios
     - SDWebImage
     - SwiftUIIntrospect
-    - TOCropViewController
 
 EXTERNAL SOURCES:
   EXConstants:
@@ -3077,8 +3065,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/datetimepicker"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
-  RNImageCropPicker:
-    :path: "../node_modules/react-native-image-crop-picker"
   RNLocalize:
     :path: "../node_modules/react-native-localize"
   RNReanimated:
@@ -3209,7 +3195,6 @@ SPEC CHECKSUMS:
   RNCPicker: d74667bdfc08ed389a2a277d95b8faf2349290a9
   RNDateTimePicker: 7b2738f1e595f83c14580a11c476872755c5befc
   RNGestureHandler: 92172e79df6e88e0e93b6341f9dcd8b5a02746ba
-  RNImageCropPicker: b0afedeefd8655254a15c34103718455fde6ce59
   RNLocalize: f370284ea42c48f29f0d8dd3a7bcc28a04f82155
   RNReanimated: fcf6a8cdd698fb09a811a8d6c5bcfe36575d965d
   RNScreens: 7118cd7715c226856125b5bece3c4d9abec90356
@@ -3218,7 +3203,6 @@ SPEC CHECKSUMS:
   RNWorklets: 43af89f696342f91118a2f1f3a879056e2f47331
   SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
   SwiftUIIntrospect: fee9aa07293ee280373a591e1824e8ddc869ba5d
-  TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Yoga: 9891cfb1c680f64de9c41b09e7453dea33454d2b
 
 PODFILE CHECKSUM: 30505dfd938c34760ac5509fb74b3f6c8ff483dd
