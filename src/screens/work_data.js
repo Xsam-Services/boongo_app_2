@@ -19,6 +19,7 @@ import useColors from '../hooks/useColors';
 import HeaderComponent from './header';
 import FileThumbnail from '../components/file_thumbnail';
 import ContentImage from '../components/content_image';
+import { sanitizeImageUri } from '../tools/image_source';
 
 const getLanguage = () => RNLocalize.getLocales()[0]?.languageCode || 'fr';
 const isVideoFile = url => ['.mp4', '.mov', '.avi', '.webm', '.mkv'].some(extension => url?.toLowerCase().includes(extension));
@@ -86,6 +87,12 @@ const WorkDataScreen = ({ route, navigation }) => {
         },
       });
       const workData = response.data?.data || null;
+      console.log('Work detail API response:', JSON.stringify(workData, null, 2));
+      console.log('Work detail image sources:', {
+        cover: workData?.photo_url,
+        firstImage: workData?.images?.[0]?.file_url,
+        owner: workData?.user_id ? workData?.user_owner?.avatar_url : workData?.organization_owner?.cover_url,
+      });
       const userLike = workData?.likes?.some(like => like.user_id === userInfo.id || like.user?.id === userInfo.id) || false;
 
       setWork(workData);
@@ -172,15 +179,15 @@ const WorkDataScreen = ({ route, navigation }) => {
   const hasPaidConsultation = userInfo.valid_consultations?.some(consultation => consultation.id === work?.id);
   const isInCart = userInfo.unpaid_consultations?.some(consultation => consultation.id === work?.id);
   const canReadFiles = hasAccessPass && (!isPrivate || hasPaidConsultation);
-  const coverImage = work?.photo_url || work?.images?.find(image => image.type?.alias === 'image_file')?.file_url || work?.images?.find(image => image.file_url)?.file_url;
-  const gallerySources = work?.images?.filter(image => image.file_url).map(image => ({
+  const coverImage = sanitizeImageUri(work?.photo_url || work?.images?.find(image => image.type?.alias === 'image_file')?.file_url || work?.images?.find(image => image.file_url)?.file_url);
+  const gallerySources = work?.images?.map(image => ({
     id: image.id,
-    uri: image.file_url,
+    uri: sanitizeImageUri(image.file_url),
     type: isVideoFile(image.file_url) ? 'video' : 'image',
-  })) || [];
+  })).filter(image => image.uri) || [];
   const owner = work?.user_id ? work.user_owner : work?.organization_owner;
   const ownerName = work?.user_id ? [owner?.firstname, owner?.lastname].filter(Boolean).join(' ') : owner?.org_name;
-  const ownerImage = work?.user_id ? owner?.avatar_url : owner?.cover_url;
+  const ownerImage = sanitizeImageUri(work?.user_id ? owner?.avatar_url : owner?.cover_url);
 
   const openOwner = () => {
     if (!owner?.id) return;
@@ -265,6 +272,21 @@ const WorkDataScreen = ({ route, navigation }) => {
     return null;
   };
 
+  if (loading) {
+    return (
+      <SafeAreaView style={[styles.screen, { backgroundColor: COLORS.light }]} edges={['top']}>
+        <StatusBar barStyle={COLORS.bar_style} backgroundColor={COLORS.white} />
+        <View style={{ backgroundColor: COLORS.white }}><HeaderComponent title={t('work.title')} /></View>
+        <View style={styles.loadingState}>
+          <View style={[styles.loadingIcon, { backgroundColor: COLORS.light_primary }]}><Icon name="book-open-page-variant-outline" size={34} color={COLORS.primary} /></View>
+          <ActivityIndicator size="large" color={COLORS.primary} style={styles.loadingSpinner} />
+          <Text style={[styles.loadingTitle, { color: COLORS.black }]}>Chargement de l’œuvre</Text>
+          <Text style={[styles.loadingHint, { color: COLORS.dark }]}>Préparation des informations et des fichiers associés.</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: COLORS.light }]} edges={['top']}>
       <StatusBar barStyle={COLORS.bar_style} backgroundColor={COLORS.white} />
@@ -327,6 +349,11 @@ const WorkDataScreen = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
+  loadingState: { alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: 42 },
+  loadingIcon: { alignItems: 'center', borderRadius: 24, height: 88, justifyContent: 'center', width: 88 },
+  loadingSpinner: { marginTop: 22 },
+  loadingTitle: { fontSize: 19, fontWeight: '800', marginTop: 16 },
+  loadingHint: { fontSize: 14, lineHeight: 20, marginTop: 7, textAlign: 'center' },
   content: { padding: 16, paddingBottom: 38 },
   heroCard: { borderRadius: 24, borderWidth: 1, overflow: 'hidden' },
   cover: { height: 250, width: '100%' },

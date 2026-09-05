@@ -9,7 +9,7 @@ import HomeScreen from '../screens/Home/HomeScreen';
 import LanguageScreen from '../screens/language';
 import DictionaryScreen from '../screens/DictionaryScreen';
 import SettingsScreen from '../screens/Account/settings';
-import ProfileScreen from '../screens/profile';
+import ProfileScreen from '../screens/ProfileScreen';
 import AccountScreen from '../screens/Account';
 import NotificationsScreen from '../screens/Account/notifications';
 import SearchScreen from '../screens/SearchScreen';

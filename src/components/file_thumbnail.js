@@ -9,21 +9,15 @@ import useColors from '../hooks/useColors';
 
 const FileThumbnail = ({ uri, type, title, onPress }) => {
     const COLORS = useColors();
-    const isImageOrVideo = type === 'image' || type === 'video';
+    const isImage = type === 'image';
 
     return (
         <TouchableOpacity style={[styles.container, {backgroundColor: COLORS.black}]} onPress={onPress}>
-            {isImageOrVideo ? (
+            {isImage ? (
                 <Image source={{ uri }} style={[styles.thumbnail, styles.editorialSurface]} resizeMode="contain" />
             ) : (
-                <View style={[styles.thumbnail, styles.iconWrapper, { backgroundColor: (type === 'audio' ? COLORS.primary : COLORS.success) }]}>
-                    <Icon name={type === 'audio' ? 'music' : 'file-document'} size={30} color='white' />
-                </View>
-            )}
-
-            {type === 'video' && (
-                <View style={[styles.playOverlay, { backgroundColor: COLORS.danger }]}>
-                    <Icon name="play-circle-outline" size={30} color='white' />
+                <View style={[styles.thumbnail, styles.iconWrapper, { backgroundColor: type === 'audio' ? COLORS.primary : type === 'video' ? COLORS.danger : COLORS.success }]}>
+                    <Icon name={type === 'audio' ? 'music' : type === 'video' ? 'play-circle-outline' : 'file-document'} size={30} color='white' />
                 </View>
             )}
 
@@ -40,9 +34,6 @@ const styles = StyleSheet.create({
     editorialSurface: { backgroundColor: '#ffffff' },
     iconWrapper: {
         justifyContent: 'center', alignItems: 'center',
-    },
-    playOverlay: {
-        position: 'absolute', top: 0, left: 0, width: '100%', height: 80, display: 'flex', justifyContent: 'center', alignItems: 'center',
     },
     label: {
         fontSize: 12, marginVertical: 4, textAlign: 'center',
