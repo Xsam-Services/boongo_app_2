@@ -1,18 +1,12 @@
-/**
- * @author Xanders
- * @see https://team.xsamtech.com/xanderssamoth
- */
-import React from 'react'
-import { SafeAreaView } from 'react-native';
-import { WebView } from 'react-native-webview';
-import { WEB } from '../../tools/constants';
+import React from 'react';
+import {WEB} from '../../tools/constants';
+import AboutWebScreen from './AboutWebScreen';
 
-const AboutScreen = () => {
+export default function AboutScreen() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <WebView source={{ uri: `${WEB.boongo_url}/about?app=yes` }} />
-    </SafeAreaView>
+    <AboutWebScreen
+      titleKey="navigation.about"
+      uri={`${WEB.boongo_url}/about?app=yes`}
+    />
   );
 }
-
-export default AboutScreen;

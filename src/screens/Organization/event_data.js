@@ -165,9 +165,7 @@ const About = ({ handleScroll, showBackToTop, listRef, headerHeight = 0, selecte
 //       setCount(response.data.count);
 //     } catch (error) {
 //       if (error.response?.status === 429) {
-//         console.warn("Trop de requêtes envoyées. Attendez avant de réessayer.");
 //       } else {
-//         console.error(error);
 //       }
 //     } finally {
 //       setIsLoading(false);
@@ -362,7 +360,7 @@ const EventScreen = () => {
         return eventData;
       })
       .catch(error => {
-        console.log(error);
+
       });
   };
 
@@ -420,7 +418,7 @@ const EventScreen = () => {
 
     if (newIndex === 0 && aboutListRef.current) {
       aboutListRef.current.scrollTo({ offset, animated: true });
-    } 
+    }
     // else if (newIndex === 1 && chatListRef.current) {
     //   chatListRef.current.scrollToOffset({ offset, animated: true });
     // }

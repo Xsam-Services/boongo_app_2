@@ -58,7 +58,7 @@ const OrganizationListScreen = ({ typeId, navigationTitle, detailType, addRoute,
       const response = await axios.get(`${API.boongo_url}/organization/find_all_by_type/${typeId}`, { headers });
       setOrganizations(response.data.data || []);
     } catch (error) {
-      console.error('Unable to load organizations:', error);
+
       setOrganizations([]);
     } finally {
       loadingRef.current = false;
@@ -89,7 +89,7 @@ const OrganizationListScreen = ({ typeId, navigationTitle, detailType, addRoute,
       );
       setOrganizations(response.data.data || []);
     } catch (error) {
-      console.error('Unable to search organizations:', error);
+
       setOrganizations([]);
     } finally {
       loadingRef.current = false;

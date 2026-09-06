@@ -81,7 +81,7 @@ const AddGovernmentScreen = () => {
         setCountriesData(countryArray);
       })
       .catch((error) => {
-        console.log(error);
+
       });
   }, []);
 
@@ -152,11 +152,11 @@ const AddGovernmentScreen = () => {
       setWebsiteURL('');
       setImageData('');
 
-      console.log(json);
+
       navigation.navigate('OrganizationData', { organization_id: json.data.id, type: 'government' });
 
     } catch (error) {
-      console.error('Error:', error);
+
     }
 
     setIsLoading(false);

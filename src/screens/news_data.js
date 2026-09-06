@@ -51,10 +51,10 @@ const NewsDataScreen = ({ route, navigation }) => {
         },
       });
 
-      console.log('News detail API response:', response.data);
+
       setWork(response.data?.data || null);
     } catch (error) {
-      console.error('Erreur lors de la récupération de l’actualité:', error);
+
     } finally {
       setLoading(false);
     }

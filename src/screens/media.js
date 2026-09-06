@@ -55,7 +55,7 @@ const MediaList = ({ contentTopInset, handleScroll, isActive, listRef }) => {
       });
       setCategories([{ id: 0, category_name: t('all_f') }, ...(response.data?.data || [])]);
     } catch (error) {
-      console.error('Erreur fetchCategories media:', error);
+
     }
   }, [t, userInfo?.api_token]);
 
@@ -78,7 +78,7 @@ const MediaList = ({ contentTopInset, handleScroll, isActive, listRef }) => {
       setMedias(currentMedias => pageToFetch === 1 ? (response.data?.data || []) : [...currentMedias, ...(response.data?.data || [])]);
       setAd(response.data?.ad || null);
     } catch (error) {
-      console.error('Erreur fetchMedias:', error);
+
     } finally {
       loadingRef.current = false;
       if (!silent) setIsLoading(false);

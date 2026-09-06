@@ -1,294 +1,145 @@
-/**
- * @author Xanders
- * @see https://team.xsamtech.com/xanderssamoth
- */
-import React, { useContext, useEffect, useState } from 'react'
-import { View, Text, ScrollView, SafeAreaView, Dimensions, TouchableOpacity, Image, TextInput } from 'react-native'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
-import { Button, Divider } from 'react-native-paper';
-import * as RNLocalize from 'react-native-localize';
-import DropDownPicker from 'react-native-dropdown-picker';
-import Spinner from 'react-native-loading-spinner-overlay';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
+import { WebView } from 'react-native-webview';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
-import { API, PADDING, TEXT_SIZE, WEB } from '../tools/constants';
+import { API, WEB } from '../tools/constants';
 import HeaderComponent from './header';
 import useColors from '../hooks/useColors';
-import homeStyles from './style';
+import { formatPaymentAmount, safePaymentUrl } from '../utils/payment';
 
-const MobileSubscribeScreen = ({ route }) => {
-  // =============== Colors ===============
-  const COLORS = useColors();
-  // =============== Language ===============
-  const { t } = useTranslation();
-  // =============== Navigation ===============
+const OPERATORS = [
+  { image: require('../../assets/img/operator-m-pesa.png'), label: 'M-PESA', value: 'M-Pesa' },
+  { image: require('../../assets/img/operator-airtel-money.png'), label: 'Airtel Money', value: 'Airtel money' },
+  { image: require('../../assets/img/operator-orange-money.png'), label: 'Orange Money', value: 'Orange money' },
+  { image: require('../../assets/img/operator-afrimoney.png'), label: 'Afrimoney', value: 'Afrimoney' },
+];
+
+export default function MobileSubscribeScreen({ route }) {
+  const colors = useColors();
   const navigation = useNavigation();
-  // =============== Get context ===============
-  const { userInfo, purchase, isLoading } = useContext(AuthContext);
-  // =============== Get parameters ===============
-  const { amount, currency, formSubmitted } = route.params;
-  // =============== Get data ===============
-  const [phoneCode, setPhoneCode] = useState(null);
-  const [phone, setPhone] = useState('');
-  const [formattedAmount, setFormattedAmount] = useState(amount);
-  // Get type "Mobile money"
-  const [mobileMoneyType, setMobileMoneyType] = useState(null);
-
-  // OPERATOR dropdown
-  const [channel, setChannel] = useState(null);
-  const [channelOpen, setChannelOpen] = useState(false);
-  const [channelItems, setChannelItems] = useState([
-    { operatorImage: require('../../assets/img/operator-m-pesa.png'), label: 'M-PESA', value: 'M-Pesa' },
-    { operatorImage: require('../../assets/img/operator-airtel-money.png'), label: 'Airtel money', value: 'Airtel money' },
-    { operatorImage: require('../../assets/img/operator-orange-money.png'), label: 'Orange money', value: 'Orange money' },
-    { operatorImage: require('../../assets/img/operator-afrimoney.png'), label: 'Afrimoney', value: 'Afrimoney' }
-  ]);
-
-  const handleChannelChange = (item) => {
-    setChannel(item.value);
-  };
+  const { userInfo, purchase, resetPaymentURL, isLoading } = useContext(AuthContext);
+  const { amount, currency, cartId, entity } = route.params || {};
+  const initialPhone = useMemo(() => {
+    const code = userInfo?.country?.country_phone_code || '';
+    const number = userInfo?.phone || '';
+    if (number.startsWith('+')) return number;
+    return code || number ? `+${code}${number}` : '';
+  }, [userInfo?.country?.country_phone_code, userInfo?.phone]);
+  const [phone, setPhone] = useState(initialPhone);
+  const [channel, setChannel] = useState('');
+  const [transactionTypeId, setTransactionTypeId] = useState(null);
+  const [loadingType, setLoadingType] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [gatewayUrl, setGatewayUrl] = useState('');
+  const [error, setError] = useState('');
+  const initialized = useRef(false);
 
   useEffect(() => {
-    axios({ method: 'GET', url: `${API.boongo_url}/type/search/fr/${encodeURIComponent('Mobile money')}` })
-      .then(function (res) {
-        let typeData = res.data.data;
-
-        setMobileMoneyType(typeData);
-        console.log(`${JSON.stringify(typeData)}`);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, []);
-
-  // COUNTRIES DATA dropdown
-  const [countriesData, setCountriesData] = useState([]);
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    axios({ method: 'GET', url: 'https://restcountries.com/v3.1/all?fields=cca2,idd,flags,name' })
-      .then((res) => {
-        // On garde une trace des codes téléphoniques uniques
-        const phoneCodes = new Set();
-
-        const countryArray = res.data.map((country) => {
-          let phoneCodeData = country.idd && country.idd.root ? `${country.idd.root}${country.idd.suffixes ? `${country.idd.suffixes[0]}` : ''}` : '';
-          const fmtPhoneCodeData = phoneCodeData.replace('+', '');
-
-          // Vérifier si le code téléphonique existe déjà dans le Set
-          if (phoneCodes.has(fmtPhoneCodeData)) {
-            return null; // Si le code existe déjà, ignorer cet élément
-          }
-
-          // Ajouter le code téléphonique dans le Set pour éviter les doublons
-          phoneCodes.add(fmtPhoneCodeData);
-
-          return {
-            value: fmtPhoneCodeData, // Le code téléphonique est unique
-            label: `${country.cca2} (${fmtPhoneCodeData})`, // Affichage "CD (+243)"
-            flag: country.flags.png
-          };
-        }).filter(item => item !== null); // Filtrer les éléments nulls
-
-        // Trie des pays par nom (A-Z)
-        countryArray.sort((a, b) => a.label.localeCompare(b.label));
-
-        setCountriesData(countryArray);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
-  const handleCountryChange = (item) => {
-    setPhoneCode(item.value);
-  };
-
-  // =============== Get system language ===============
-  const getLanguage = () => {
-    const locales = RNLocalize.getLocales();
-
-    if (locales && locales.length > 0) {
-      return locales[0].languageCode;
+    if (!initialized.current) {
+      initialized.current = true;
+      resetPaymentURL();
     }
-
-    return 'fr';
-  };
+  }, [resetPaymentURL]);
 
   useEffect(() => {
-    const userLang = getLanguage();
-
-    // Apply language-specific formatting
-    const readableAmount = formattedAmount.toLocaleString(userLang, {
-      style: 'decimal',
-      useGrouping: true,
-      minimumFractionDigits: 0, // No digits after the decimal point
-      maximumFractionDigits: 0, // No digits after the decimal point
-    });
-
-    setFormattedAmount(readableAmount);
+    let active = true;
+    axios.get(`${API.boongo_url}/type/search/fr/${encodeURIComponent('Mobile money')}`)
+      .then(response => {
+        if (active) setTransactionTypeId(response.data?.data?.id || null);
+      })
+      .catch(() => {
+        if (active) setError('Le paiement mobile n’est pas disponible pour le moment.');
+      })
+      .finally(() => {
+        if (active) setLoadingType(false);
+      });
+    return () => { active = false; };
   }, []);
+
+  const displayAmount = formatPaymentAmount(amount, currency);
+
+  const submit = async () => {
+    const normalizedPhone = phone.replace(/[^+\d]/g, '');
+    if (!cartId || !entity) setError('Le panier à payer est introuvable. Revenez à Mon espace.');
+    else if (!channel) setError('Choisissez un opérateur.');
+    else if (!/^\+?\d{8,15}$/.test(normalizedPhone)) setError('Saisissez un numéro de téléphone valide avec son indicatif.');
+    else if (!transactionTypeId) setError('Le moyen de paiement est encore indisponible. Réessayez.');
+    else {
+      setError('');
+      setSubmitting(true);
+      const result = await purchase(cartId, entity, transactionTypeId, normalizedPhone, channel, WEB.boongo_url);
+      setSubmitting(false);
+      if (!result.success) setError(result.error || 'Le paiement n’a pas pu être initialisé.');
+      else if (result.url) {
+        const nextUrl = safePaymentUrl(result.url);
+        if (nextUrl) setGatewayUrl(nextUrl);
+        else setError('L’adresse sécurisée du prestataire est invalide.');
+      } else setSubmitted(true);
+    }
+  };
+
+  if (gatewayUrl) {
+    return (
+      <SafeAreaView edges={['top', 'bottom']} style={[styles.screen, { backgroundColor: colors.light }]}>
+        <HeaderComponent title="Paiement sécurisé" hideSearch />
+        <WebView source={{ uri: gatewayUrl }} style={styles.webView} startInLoadingState renderLoading={() => <ActivityIndicator color={colors.primary} style={styles.webLoader} />} />
+        <TouchableOpacity onPress={() => { resetPaymentURL(); navigation.navigate('Account'); }} style={[styles.closePayment, { borderColor: colors.primary }]}><Text style={[styles.secondaryButtonText, { color: colors.primary }]}>Revenir à Mon espace</Text></TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
   return (
-    <>
-      {/* Header */}
-      <View style={{ backgroundColor: COLORS.white, paddingVertical: PADDING.p01 }}>
-        <HeaderComponent />
-      </View>
+    <SafeAreaView edges={['top', 'bottom']} style={[styles.screen, { backgroundColor: colors.light }]}>
+      <HeaderComponent title="Paiement mobile" hideSearch />
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <View style={[styles.amountCard, { backgroundColor: colors.light_primary }]}>
+          <View style={[styles.amountIcon, { backgroundColor: colors.primary }]}><Icon name="cellphone-check" size={28} color="#fff" /></View>
+          <Text style={[styles.amountLabel, { color: colors.dark }]}>Montant à payer</Text>
+          <Text style={[styles.amount, { color: colors.black }]}>{displayAmount}</Text>
+        </View>
 
-      {/* Spinner (for AuthContext requests) */}
-      <Spinner visible={isLoading} />
-
-      {/* Content */}
-      <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: COLORS.white, paddingHorizontal: PADDING.p01 }}>
-        <SafeAreaView style={{ height: Dimensions.get('screen').height - 200, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: PADDING.p01 }}>
-          {formSubmitted ? (
-            <>
-              <Image style={{ width: 150, height: 200, marginBottom: PADDING.p07 }} source={require('./../../assets/img/human-hand-holding-smartphone.png')} />
-              <Text style={[homeStyles.cardEmptyTitle, { color: COLORS.black, textAlign: 'center', marginBottom: PADDING.p02, paddingHorizontal: PADDING.p02 }]}>{t('payment_method.mobile_money.submitted')}</Text>
-              <Button style={[homeStyles.authButton, { width: 100, backgroundColor: COLORS.primary }]} onPress={() => { navigation.navigate('HomeStack'); }}>
-                <Text style={[homeStyles.authButtonText, { color: 'white' }]}>OK</Text>
-              </Button>
-            </>
-          ) : (
-            <>
-              {/* Image */}
-              <Image style={{ width: 100, height: 100, borderRadius: 100 / 2, marginBottom: PADDING.p07 }} source={require('./../../assets/img/mobile_money_payment.png')} />
-
-              {/* Title / Description */}
-              <Text style={[homeStyles.cardEmptyTitle, { color: COLORS.black, textAlign: 'center', marginBottom: PADDING.p02, paddingHorizontal: PADDING.p02 }]}>{t('payment_method.mobile_money.title')}</Text>
-              <Text style={{ color: COLORS.black, textAlign: 'center', paddingHorizontal: PADDING.p02 }}>{t('payment_method.mobile_money.descrciption')}</Text>
-
-              {/* Amount */}
-              <Divider style={[homeStyles.authDivider, { width: '100%', backgroundColor: COLORS.light_secondary }]} />
-              <Text style={{ fontSize: TEXT_SIZE.normal, color: COLORS.dark_secondary, textAlign: 'center', marginBottom: PADDING.p00 }}>{t('amount_to_pay')}</Text>
-              <Text style={{ fontSize: TEXT_SIZE.header, fontWeight: '700', color: COLORS.link_color, textAlign: 'center' }}>{`${formattedAmount} ${currency}`}</Text>
-              <Divider style={[homeStyles.authDivider, { width: '100%', backgroundColor: COLORS.light_secondary }]} />
-
-              {/* Operator */}
-              <DropDownPicker
-                modalTitle={t('payment_method.mobile_money.operator')}
-                modalTitleStyle={{
-                  color: COLORS.dark_secondary,
-                  borderBottomColor: COLORS.dark_secondary
-                }}
-                modalProps={{
-                  presentationStyle: 'fullScreen', // optional
-                  animationType: 'slide',
-                }}
-                modalContentContainerStyle={{
-                  backgroundColor: COLORS.white,
-                  borderTopWidth: 0,
-                  borderBottomWidth: 1,
-                  borderBottomColor: COLORS.light_secondary,
-                }}
-                closeIconStyle={{
-                  tintColor: COLORS.black
-                }}
-                style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
-                textStyle={{ fontSize: TEXT_SIZE.paragraph, color: COLORS.black }}
-                placeholderStyle={{ fontSize: TEXT_SIZE.paragraph, color: COLORS.dark_secondary }}
-                arrowIconStyle={{ tintColor: COLORS.dark_secondary }}
-                tickIconStyle={{ tintColor: COLORS.black }}
-                open={channelOpen}
-                value={channel}
-                placeholder={t('payment_method.mobile_money.operator')}
-                placeholderTextColor={COLORS.dark_secondary}
-                listMode='MODAL'
-                items={channelItems}
-                setOpen={setChannelOpen}
-                setValue={setChannel}
-                setItems={setChannelItems}
-                onChangeItem={handleChannelChange}
-                renderListItem={({ item }) => {
-                  return (
-                    <TouchableOpacity onPress={() => { handleChannelChange(item); setChannelOpen(false); }} style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
-                      {item.operatorImage ? (
-                        <Image source={item.operatorImage} style={{ width: 50, height: 50, marginRight: 10 }} />
-                      ) : null}
-                      <Text style={{ color: COLORS.black }}>
-                        {item.label}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                }}
-              />
-
-              <View style={{ flexDirection: 'row' }}>
-                {/* Phone code  */}
-                <DropDownPicker
-                  modalTitle={t('auth.phone_code.title')}
-                  disabled={countriesData.length === 0}
-                  loading={countriesData.length === 0}
-                  modalProps={{
-                    presentationStyle: 'fullScreen', // optional
-                    animationType: 'slide',
-                  }}
-                  modalContentContainerStyle={{
-                    backgroundColor: COLORS.white,
-                    borderTopWidth: 0,
-                    borderBottomWidth: 1,
-                    borderBottomColor: COLORS.light_secondary,
-                  }}
-                  closeIconStyle={{
-                    tintColor: COLORS.black
-                  }}
-                  textStyle={{ color: COLORS.black }}
-                  placeholderStyle={{ color: COLORS.black }}
-                  placeholder={t('auth.phone_code.label')}
-                  arrowIconStyle={{ tintColor: COLORS.black }}
-                  containerStyle={{ width: '50%', height: 50 }}
-                  style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary, borderTopEndRadius: 0, borderBottomEndRadius: 0, borderRightWidth: 0 }]}
-                  listMode='MODAL'
-                  open={open}
-                  value={phoneCode}
-                  items={countriesData}
-                  setOpen={setOpen}
-                  setValue={setPhoneCode}
-                  onChangeItem={handleCountryChange}
-                  renderListItem={({ item }) => {
-                    return (
-                      <TouchableOpacity onPress={() => { handleCountryChange(item); setOpen(false); }} style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
-                        {item.flag ? (
-                          <Image source={{ uri: item.flag }} style={{ width: 20, height: 15, marginRight: 10 }} />
-                        ) : null}
-                        <Text style={{ color: COLORS.black }}>
-                          {item.label}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  }}
-                />
-
-                {/* Phone number */}
-                <TextInput
-                  style={[homeStyles.authInput, { color: COLORS.black, width: '50%', height: 50, borderColor: COLORS.light_secondary, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }]}
-                  keyboardType='phone-pad'
-                  value={phone}
-                  placeholder={t('auth.phone')}
-                  placeholderTextColor={COLORS.dark_secondary}
-                  onChangeText={text => setPhone(text)} />
-              </View>
-
-              {/* Submit / Cancel */}
-              <Button style={[homeStyles.authButton, { backgroundColor: COLORS.success }]}
-                onPress={() => {
-                  purchase(userInfo.id, mobileMoneyType.id, `${phoneCode}${phone}`, channel, WEB.boongo_url);
-                  navigation.navigate('MobileSubscribe', { amount: amount, currency: currency, formSubmitted: true });
-                }}>
-                <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('send')}</Text>
-              </Button>
-              <TouchableOpacity style={[homeStyles.authCancel, { borderColor: COLORS.black }]}
-                onPress={() => { navigation.navigate('BankCardSubscribe', { amount: amount, currency: currency }); }}>
-                <Text style={[homeStyles.authButtonText, { color: COLORS.black }]}>{t('payment_method.mobile_money.go_bank_card')}</Text>
-              </TouchableOpacity>
-            </>
-          )}
-        </SafeAreaView>
+        {submitted ? (
+          <View style={[styles.successCard, { backgroundColor: colors.white, borderColor: colors.light_secondary }]}>
+            <Icon name="check-decagram" size={58} color={colors.success} />
+            <Text style={[styles.title, { color: colors.black }]}>Demande envoyée</Text>
+            <Text style={[styles.description, { color: colors.dark }]}>Confirmez la transaction sur votre téléphone. La validation peut prendre quelques instants.</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Account')} style={[styles.primaryButton, { backgroundColor: colors.primary }]}><Text style={styles.primaryButtonText}>Retour à Mon espace</Text></TouchableOpacity>
+          </View>
+        ) : (
+          <View style={[styles.formCard, { backgroundColor: colors.white, borderColor: colors.light_secondary }]}>
+            <Text style={[styles.title, { color: colors.black }]}>Choisissez votre opérateur</Text>
+            <Text style={[styles.description, { color: colors.dark }]}>Le numéro doit être associé à un compte Mobile Money actif.</Text>
+            <View style={styles.operatorGrid}>
+              {OPERATORS.map(operator => (
+                <TouchableOpacity key={operator.value} onPress={() => setChannel(operator.value)} style={[styles.operator, { backgroundColor: channel === operator.value ? colors.light_primary : colors.light, borderColor: channel === operator.value ? colors.primary : colors.light_secondary }]}>
+                  <Image source={operator.image} style={styles.operatorImage} resizeMode="contain" />
+                  <Text style={[styles.operatorLabel, { color: channel === operator.value ? colors.primary : colors.black }]}>{operator.label}</Text>
+                  {channel === operator.value ? <Icon name="check-circle" size={18} color={colors.primary} /> : null}
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text style={[styles.label, { color: colors.black }]}>Numéro avec indicatif</Text>
+            <TextInput value={phone} onChangeText={setPhone} keyboardType="phone-pad" autoComplete="tel" placeholder="+243…" placeholderTextColor={colors.dark} style={[styles.input, { color: colors.black, backgroundColor: colors.light, borderColor: colors.light_secondary }]} />
+            {error ? <Text accessibilityLiveRegion="polite" style={[styles.error, { color: colors.danger, backgroundColor: colors.light_danger }]}>{error}</Text> : null}
+            <TouchableOpacity disabled={submitting || isLoading || loadingType} onPress={submit} style={[styles.primaryButton, { backgroundColor: colors.primary, opacity: submitting || isLoading || loadingType ? 0.6 : 1 }]}>
+              {submitting || isLoading ? <ActivityIndicator color="#fff" /> : <><Text style={styles.primaryButtonText}>Continuer</Text><Icon name="arrow-right" size={20} color="#fff" /></>}
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.replace('BankCardSubscribe', { amount, currency, cartId, entity })} style={[styles.secondaryButton, { borderColor: colors.primary }]}><Icon name="credit-card-outline" size={20} color={colors.primary} /><Text style={[styles.secondaryButtonText, { color: colors.primary }]}>Payer autrement</Text></TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
-};
+}
 
-export default MobileSubscribeScreen;
+const styles = StyleSheet.create({
+  screen: { flex: 1 }, content: { flexGrow: 1, padding: 18, paddingBottom: 32 }, amountCard: { alignItems: 'center', borderRadius: 24, padding: 20 }, amountIcon: { alignItems: 'center', borderRadius: 24, height: 48, justifyContent: 'center', marginBottom: 12, width: 48 }, amountLabel: { fontSize: 13, fontWeight: '700' }, amount: { fontSize: 25, fontWeight: '900', marginTop: 4 },
+  formCard: { borderRadius: 22, borderWidth: 1, marginTop: 18, padding: 16 }, title: { fontSize: 19, fontWeight: '800', textAlign: 'center' }, description: { fontSize: 14, lineHeight: 20, marginTop: 7, textAlign: 'center' }, operatorGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginVertical: 18 }, operator: { alignItems: 'center', borderRadius: 16, borderWidth: 1, flexBasis: '47%', flexDirection: 'row', minHeight: 62, padding: 10 }, operatorImage: { height: 34, marginRight: 7, width: 34 }, operatorLabel: { flex: 1, fontSize: 12, fontWeight: '700' }, label: { fontSize: 14, fontWeight: '700', marginBottom: 8 }, input: { borderRadius: 14, borderWidth: 1, fontSize: 16, paddingHorizontal: 14, paddingVertical: 14 }, error: { borderRadius: 13, fontSize: 13, fontWeight: '600', lineHeight: 18, marginTop: 12, padding: 12 },
+  primaryButton: { alignItems: 'center', borderRadius: 18, flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 18, minHeight: 54, paddingHorizontal: 18 }, primaryButtonText: { color: '#fff', fontSize: 16, fontWeight: '800' }, secondaryButton: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 10, minHeight: 52 }, secondaryButtonText: { fontSize: 15, fontWeight: '800' },
+  successCard: { alignItems: 'center', borderRadius: 22, borderWidth: 1, marginTop: 18, padding: 24 }, webView: { flex: 1 }, webLoader: { flex: 1 }, closePayment: { alignItems: 'center', borderRadius: 16, borderWidth: 1, margin: 12, padding: 14 },
+});

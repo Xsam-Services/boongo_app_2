@@ -81,7 +81,7 @@ export default function AccountScreen() {
         setData(r.data?.data || []);
       }
     } catch (e) {
-      console.error('Compte:', e);
+
       setData([]);
     } finally {
       setLoad(false);
@@ -110,6 +110,28 @@ export default function AccountScreen() {
       setTab(x);
     }
   };
+  const checkoutGroups = [
+    {
+      key: 'subscription',
+      label: 'Abonnements',
+      cartId: u?.unpaid_subscription_cart?.id,
+      items: u?.unpaid_subscriptions || [],
+      amount: (u?.unpaid_subscriptions || []).reduce(
+        (total, item) => total + Number(item.price || 0),
+        0,
+      ),
+    },
+    {
+      key: 'consultation',
+      label: 'Consultations',
+      cartId: u?.unpaid_consultation_cart?.id,
+      items: u?.unpaid_consultations || [],
+      amount: (u?.unpaid_consultations || []).reduce(
+        (total, item) => total + Number(item.consultation_price || 0),
+        0,
+      ),
+    },
+  ].filter(group => group.items.length > 0);
   const render = ({item}) =>
     tab === 'works' ? (
       <WorkItemComponent item={item} />
@@ -229,24 +251,45 @@ export default function AccountScreen() {
         }
         ListHeaderComponent={
           tab === 'cart' && data.length ? (
-            <View style={[s.summary, {backgroundColor: C.light_primary}]}>
-              <View>
-                <Text style={{color: C.dark}}>Total à régler</Text>
-                <Text style={{color: C.black, fontSize: 18, fontWeight: '900'}}>
-                  {u.totals_unpaid?.grand_totals || 0}{' '}
-                  {u.currency?.currency_acronym}
-                </Text>
-              </View>
-              <TouchableOpacity
-                onPress={() =>
-                  n.navigate('MobileSubscribe', {
-                    amount: u.totals_unpaid?.grand_totals,
-                    currency: u.currency?.currency_acronym,
-                  })
-                }
-                style={[s.pay, {backgroundColor: C.primary}]}>
-                <Text style={{color: '#fff', fontWeight: '900'}}>Payer</Text>
-              </TouchableOpacity>
+            <View style={s.checkoutGroups}>
+              {checkoutGroups.map(group => (
+                <View
+                  key={group.key}
+                  style={[s.summary, {backgroundColor: C.light_primary}]}>
+                  <View style={s.summaryCopy}>
+                    <Text style={[s.summaryLabel, {color: C.dark}]}>
+                      {group.label}
+                    </Text>
+                    <Text style={[s.summaryAmount, {color: C.black}]}>
+                      {group.amount} {u.currency?.currency_acronym}
+                    </Text>
+                    <Text style={[s.summaryCount, {color: C.dark}]}>
+                      {group.items.length}{' '}
+                      {group.items.length > 1 ? 'éléments' : 'élément'}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    disabled={!group.cartId}
+                    onPress={() =>
+                      n.navigate('MobileSubscribe', {
+                        amount: group.amount,
+                        currency: u.currency?.currency_acronym,
+                        cartId: group.cartId,
+                        entity: group.key,
+                      })
+                    }
+                    style={[
+                      s.pay,
+                      {
+                        backgroundColor: C.primary,
+                        opacity: group.cartId ? 1 : 0.45,
+                      },
+                    ]}>
+                    <Text style={s.payText}>Payer</Text>
+                    <Icon name="arrow-right" color="#fff" size={18} />
+                  </TouchableOpacity>
+                </View>
+              ))}
             </View>
           ) : null
         }
@@ -309,14 +352,27 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   summary: {
-    margin: 16,
+    marginHorizontal: 16,
     padding: 15,
     borderRadius: 18,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  pay: {paddingHorizontal: 20, paddingVertical: 13, borderRadius: 14},
+  checkoutGroups: {gap: 10, marginBottom: 6, marginTop: 16},
+  summaryCopy: {flex: 1},
+  summaryLabel: {fontSize: 13, fontWeight: '700'},
+  summaryAmount: {fontSize: 18, fontWeight: '900', marginTop: 2},
+  summaryCount: {fontSize: 12, marginTop: 2},
+  pay: {
+    alignItems: 'center',
+    borderRadius: 14,
+    flexDirection: 'row',
+    gap: 6,
+    paddingHorizontal: 18,
+    paddingVertical: 13,
+  },
+  payText: {color: '#fff', fontWeight: '900'},
   profile: {alignItems: 'center', borderRadius: 22, flexDirection: 'row', margin: 16, marginBottom: 4, padding: 16},
   avatar: {borderRadius: 32, height: 64, width: 64},
   avatarFallback: {alignItems: 'center', justifyContent: 'center'},

@@ -71,7 +71,7 @@ const Works = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
         return userData;
       })
       .catch(error => {
-        console.log(error);
+
       });
   };
 
@@ -97,7 +97,7 @@ const Works = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
       setIdCat(itemAll.id);
 
     } catch (error) {
-      console.error('Erreur fetchCategories', error);
+
     }
   };
 
@@ -140,10 +140,8 @@ const Works = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
       setLastPage(response.data.lastPage || page);
       setCount(response.data.count || 0);
 
-      // console.log(response.data);
-
     } catch (error) {
-      console.error('Erreur fetchWorks', error);
+
     } finally {
       setIsLoading(false);
     }
@@ -314,7 +312,7 @@ const Cercles = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => 
         return userData;
       })
       .catch(error => {
-        console.log(error);
+
       });
   };
 
@@ -346,7 +344,7 @@ const Cercles = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => 
 
       setAddressees(response.data.data);
     } catch (error) {
-      console.error('Erreur lors de la recherche:', error);
+
     } finally {
       setIsLoading(false);
     }
@@ -385,9 +383,9 @@ const Cercles = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => 
       setCount(response.data.count);
     } catch (error) {
       if (error.response?.status === 429) {
-        console.warn("Trop de requêtes envoyées. Attendez avant de réessayer.");
+
       } else {
-        console.error(error);
+
       }
     } finally {
       setIsLoading(false);
@@ -529,7 +527,7 @@ const Consultations = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 
       setLoading(false);
 
     } catch (error) {
-      console.error('Erreur getUser', error);
+
       setLoading(false);
     } finally {
       setLoading(false);
@@ -711,7 +709,7 @@ const ProfileScreen = () => {
         return userData;
       })
       .catch(error => {
-        console.log(error);
+
       });
   };
 

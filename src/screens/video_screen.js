@@ -32,13 +32,7 @@ const VideoPlayerScreen = ({ route }) => {
   const [videoKey, setVideoKey] = useState(0);
 
   useEffect(() => {
-    console.log('VideoPlayer opened:', {
-      title: videoTitle,
-      url: videoUri,
-      mediaType,
-      isYoutube,
-      isVideo,
-    });
+
   }, [isVideo, isYoutube, mediaType, videoTitle, videoUri]);
 
   const onYoutubeStateChange = useCallback(state => {
@@ -54,14 +48,14 @@ const VideoPlayerScreen = ({ route }) => {
     if (!isVideo || videoState !== 'loading') return undefined;
 
     const timeout = setTimeout(() => {
-      console.error('Video loading timed out:', videoUri);
+
       setVideoState('error');
     }, 12000);
     return () => clearTimeout(timeout);
   }, [isVideo, videoKey, videoState, videoUri]);
 
   const retryVideo = () => {
-    console.log('Video retry requested:', videoUri);
+
     setVideoState('loading');
     setVideoKey(currentKey => currentKey + 1);
   };
@@ -89,11 +83,11 @@ const VideoPlayerScreen = ({ route }) => {
                 play={playing}
                 videoId={youtubeId}
                 onReady={() => {
-                  console.log('YouTube video loaded successfully:', { url: videoUri, videoId: youtubeId });
+
                   setVideoState('ready');
                 }}
                 onError={error => {
-                  console.error('YouTube video failed to load:', { url: videoUri, videoId: youtubeId, error });
+
                   setVideoState('error');
                 }}
                 onChangeState={onYoutubeStateChange}
@@ -110,15 +104,15 @@ const VideoPlayerScreen = ({ route }) => {
                 controls
                 resizeMode="contain"
                 onLoadStart={() => {
-                  console.log('Video load started:', videoUri);
+
                   setVideoState('loading');
                 }}
                 onLoad={() => {
-                  console.log('Video loaded successfully:', videoUri);
+
                   setVideoState('ready');
                 }}
                 onError={error => {
-                  console.error('Video failed to load:', { url: videoUri, error });
+
                   setVideoState('error');
                 }}
               />

@@ -77,9 +77,9 @@ const News = ({ handleScroll, isActive, listRef, contentTopInset }) => {
       setCount(response.data?.count || 0);
     } catch (error) {
       if (error.response?.status === 429) {
-        console.warn("Trop de requêtes envoyées. Attendez avant de réessayer.");
+
       } else {
-        console.error("Erreur fetchWorks News:", error);
+
       }
     } finally {
       loadingRef.current = false;
@@ -194,7 +194,7 @@ const Books = ({ handleScroll, isActive, listRef, contentTopInset }) => {
       setCategories(data);
       setIdCat(itemAll.id);
     } catch (error) {
-      console.error('Erreur fetchCategories index', error);
+
     }
   }, [userInfo?.api_token, t]);
 
@@ -231,7 +231,7 @@ const Books = ({ handleScroll, isActive, listRef, contentTopInset }) => {
       setLastPage(nextLastPage);
       setCount(response.data?.count || 0);
     } catch (error) {
-      console.error('Erreur fetchBooks', error);
+
     } finally {
       loadingRef.current = false;
       if (!silent) setIsLoading(false);
@@ -362,7 +362,7 @@ const ProgramWorks = ({ typeId, emptyDescriptionKey, handleScroll, isActive, lis
       setCategories([itemAll, ...(response.data?.data || [])]);
       setIdCat(itemAll.id);
     } catch (error) {
-      console.error('Erreur fetchCategories programmes', error);
+
     }
   }, [t, userInfo?.api_token]);
 
@@ -395,7 +395,7 @@ const ProgramWorks = ({ typeId, emptyDescriptionKey, handleScroll, isActive, lis
       lastPageRef.current = nextLastPage;
       setLastPage(nextLastPage);
     } catch (error) {
-      console.error('Erreur lors de la récupération des programmes:', error);
+
     } finally {
       loadingRef.current = false;
       if (!silent) setIsLoading(false);

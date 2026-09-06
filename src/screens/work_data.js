@@ -61,7 +61,7 @@ const WorkDataScreen = ({ route, navigation }) => {
         );
         amount *= Number(response.data?.data?.rate || 1);
       } catch (error) {
-        console.error('Erreur lors de la récupération du taux de change:', error);
+
       }
     }
 
@@ -87,12 +87,7 @@ const WorkDataScreen = ({ route, navigation }) => {
         },
       });
       const workData = response.data?.data || null;
-      console.log('Work detail API response:', JSON.stringify(workData, null, 2));
-      console.log('Work detail image sources:', {
-        cover: workData?.photo_url,
-        firstImage: workData?.images?.[0]?.file_url,
-        owner: workData?.user_id ? workData?.user_owner?.avatar_url : workData?.organization_owner?.cover_url,
-      });
+
       const userLike = workData?.likes?.some(like => like.user_id === userInfo.id || like.user?.id === userInfo.id) || false;
 
       setWork(workData);
@@ -100,7 +95,7 @@ const WorkDataScreen = ({ route, navigation }) => {
       setHasLiked(userLike);
       setPrice(await formatPrice(workData));
     } catch (error) {
-      console.error('Erreur lors de la récupération de l’œuvre:', error);
+
     } finally {
       setLoading(false);
     }
@@ -140,26 +135,24 @@ const WorkDataScreen = ({ route, navigation }) => {
     setLikeUpdating(true);
     try {
       if (hasLiked) {
-        const response = await axios.delete(`${API.boongo_url}/like/unlike_entity/${userInfo.id}/work/${work.id}`, {
+        await axios.delete(`${API.boongo_url}/like/unlike_entity/${userInfo.id}/work/${work.id}`, {
           headers: { 'X-localization': getLanguage(), Authorization: `Bearer ${userInfo.api_token}` },
         });
-        console.log(response.data?.message || 'Like retiré.');
         setLikeCount(currentCount => Math.max(0, currentCount - 1));
         setHasLiked(false);
       } else {
-        const response = await axios.post(
+        await axios.post(
           `${API.boongo_url}/like`,
           { user_id: userInfo.id, for_work_id: work.id },
           { headers: { 'X-localization': getLanguage(), Authorization: `Bearer ${userInfo.api_token}` } }
         );
-        console.log(response.data?.message || 'Like ajouté.');
         setLikeCount(currentCount => currentCount + 1);
         setHasLiked(true);
       }
     } catch (error) {
       const message = error.response?.data?.message || t('error_message.no_server_response');
       Alert.alert(t('error'), message);
-      console.error('Erreur lors de la mise à jour du like:', error);
+
     } finally {
       setLikeUpdating(false);
     }

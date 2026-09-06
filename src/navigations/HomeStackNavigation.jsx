@@ -11,7 +11,7 @@ import DictionaryScreen from '../screens/DictionaryScreen';
 import SettingsScreen from '../screens/Account/settings';
 import ProfileScreen from '../screens/ProfileScreen';
 import AccountScreen from '../screens/Account';
-import NotificationsScreen from '../screens/Account/notifications';
+import NotificationsScreen from '../screens/Account/NotificationsScreen';
 import SearchScreen from '../screens/SearchScreen';
 import OrganizationDataScreen from '../screens/Organization/OrganizationDataScreen';
 import OrganizationSettingsScreen from '../screens/Organization/OrganizationSettingsScreen';

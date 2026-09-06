@@ -1,18 +1,12 @@
-/**
- * @author Xanders
- * @see https://team.xsamtech.com/xanderssamoth
- */
-import React from 'react'
-import { SafeAreaView } from 'react-native';
-import { WebView } from 'react-native-webview';
-import { WEB } from '../../tools/constants';
+import React from 'react';
+import {WEB} from '../../tools/constants';
+import AboutWebScreen from './AboutWebScreen';
 
-const PrivacyScreen = () => {
+export default function PrivacyScreen() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <WebView source={{ uri: `${WEB.boongo_url}/about/privacy_policy?app=yes` }} />
-    </SafeAreaView>
+    <AboutWebScreen
+      titleKey="navigation.privacy"
+      uri={`${WEB.boongo_url}/about/privacy_policy?app=yes`}
+    />
   );
-};
-
-export default PrivacyScreen;
+}

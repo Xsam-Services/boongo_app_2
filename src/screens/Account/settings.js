@@ -50,7 +50,7 @@ const SettingsScreen = () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permission.granted) {
-      console.warn('Media library permission is required to update the avatar.');
+
       return;
     }
 
@@ -100,7 +100,7 @@ const SettingsScreen = () => {
         setCountries(countryArray);
       })
       .catch(function (error) {
-        console.log(error);
+
       });
   }, [userInfo.api_token, userInfo.id]);
 
@@ -135,7 +135,7 @@ const SettingsScreen = () => {
         setOrganizations(organizationArray);
       })
       .catch(function (error) {
-        console.log(error);
+
       });
   }, [userInfo.api_token, userInfo.id]);
 
@@ -182,7 +182,7 @@ const SettingsScreen = () => {
         setCurrencyItems(currencyArray);
       })
       .catch(function (error) {
-        console.log(error);
+
       });
   }, [userInfo.api_token, userInfo.id]);
 

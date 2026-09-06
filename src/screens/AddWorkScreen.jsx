@@ -62,7 +62,7 @@ const AddWorkScreen = ({ navigation }) => {
         setCurrencies(currenciesResponse.data?.data || []);
         setCategories(categoriesResponse.data?.data || []);
       } catch (metadataError) {
-        console.error('Erreur lors du chargement du formulaire de publication:', metadataError);
+
         setError('Impossible de préparer le formulaire. Réessayez plus tard.');
       } finally { setLoadingMetadata(false); }
     };
@@ -154,7 +154,7 @@ const AddWorkScreen = ({ navigation }) => {
       if (response.data?.success === false) throw new Error(response.data.message || 'La publication a échoué.');
       if (!userInfo.is_publisher) await changeRole('add', userInfo.id, 4);
       navigation.goBack();
-    } catch (submitError) { console.error('Erreur de publication:', submitError); setError(submitError.message || 'Impossible de publier cette œuvre.'); }
+    } catch (submitError) {  setError(submitError.message || 'Impossible de publier cette œuvre.'); }
     finally { setSubmitting(false); }
   };
   const chip = (item, selected, onPress, label) => {

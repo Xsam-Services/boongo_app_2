@@ -227,7 +227,7 @@ const MessageItem = ({ item, isOwnMessage }) => {
             // Load report reasons
             axios.get(`${API.boongo_url}/report_reason/find_by_entity/message`)
                 .then(response => setReportReasons(response.data))
-                .catch(err => console.error('Error loading report reasons', err));
+                .catch(err => null);
         }
     }, [reportModalVisible]);
 
@@ -236,7 +236,7 @@ const MessageItem = ({ item, isOwnMessage }) => {
         try {
             await axios.put(`${API.boongo_url}/message/delete_for_myself/${userInfo.id}/${item.id}`);
         } catch (error) {
-            console.error('Message deleting error:', error);
+
         }
     };
 
@@ -245,7 +245,7 @@ const MessageItem = ({ item, isOwnMessage }) => {
         try {
             await axios.put(`${API.boongo_url}/message/delete_for_everybody/${item.id}`);
         } catch (error) {
-            console.error('Message deleting error:', error);
+
         }
     };
 
@@ -275,7 +275,7 @@ const MessageItem = ({ item, isOwnMessage }) => {
 
             setReportModalVisible(false);
         } catch (error) {
-            console.error('Message reporting error:', error);
+
         }
     };
 

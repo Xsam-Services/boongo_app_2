@@ -10,7 +10,7 @@ export const sanitizeImageUri = uri => {
     // Backend file names may contain spaces or a stray percent character.
     return encodeURI(value.replace(/%(?![0-9a-f]{2})/gi, '%25'));
   } catch (error) {
-    console.warn('URL d’image ignorée car invalide:', uri);
+
     return null;
   }
 };

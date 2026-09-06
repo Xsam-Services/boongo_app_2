@@ -48,7 +48,7 @@ const ProfileScreen = () => {
       const response = await axios.get(`${API.boongo_url}/user/${userId}`, { headers });
       setProfile(response.data?.data?.user || null);
     } catch (error) {
-      console.error('Impossible de charger le profil:', error);
+
       setProfile(null);
     } finally { setLoadingProfile(false); }
   }, [headers, userId, userInfo?.api_token]);
@@ -57,7 +57,7 @@ const ProfileScreen = () => {
     try {
       const response = await axios.get(`${API.boongo_url}/category/find_by_group/${encodeURIComponent('Catégorie pour œuvre')}`, { headers });
       setCategories([{ id: 0, category_name: 'Toutes' }, ...(response.data?.data || [])]);
-    } catch (error) { console.error('Impossible de charger les catégories:', error); }
+    } catch (error) {  }
   }, [headers]);
 
   const loadContent = useCallback(async (force = false) => {
@@ -72,14 +72,14 @@ const ProfileScreen = () => {
       } else if (activeTab === 'circles') {
         const response = await axios.get(`${API.boongo_url}/user/member_groups/circle/${profile.id}/15`, { headers });
         const circles = (response.data?.data || []).filter(hasCircleIdentity);
-        console.log('Profil - réponse des cercles:', response.data);
+
         if (contentRequestRef.current === requestKey) setItems(circles);
       } else {
         const response = await axios.post(`${API.boongo_url}/work/filter_by_categories`, qs.stringify({ 'categories_ids[0]': categoryId, user_id: profile.id }), { headers });
         if (contentRequestRef.current === requestKey) setItems(response.data?.data || []);
       }
     } catch (error) {
-      console.error('Impossible de charger le contenu du profil:', error);
+
     } finally {
       if (contentRequestRef.current === requestKey) {
         contentRequestRef.current = null;

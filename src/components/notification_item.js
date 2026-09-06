@@ -3,13 +3,13 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import FaIcon from '@expo/vector-icons/FontAwesome6';
 import { getTranslationKeyFromAlias } from './../utils/notificationMapper';
 import useColors from '../hooks/useColors';
 
-const NotificationItemComponent = ({ item, onPress }) => {
+const NotificationItemComponent = ({ item, onPress, busy = false, disabled = false }) => {
     // =============== Colors ===============
     const COLORS = useColors();
     // =============== Language ===============
@@ -26,11 +26,13 @@ const NotificationItemComponent = ({ item, onPress }) => {
     let message = '';
 
     const typeAlias = item.type?.alias;
+    const sender = item.from || item.from_user || {};
+    const username = [sender.firstname, sender.lastname].filter(Boolean).join(' ') || sender.username || 'Un membre';
 
     if (item.text_content) {
         // ✅ Notification already read: use text_content
         message = t(item.text_content, {
-            username: `${item.from?.firstname} ${item.from?.lastname}`,
+            username,
             event_title: item.event?.event_title,
             organisation_name: item.organization?.org_name,
             circle_name: item.circle?.circle_name,
@@ -44,7 +46,7 @@ const NotificationItemComponent = ({ item, onPress }) => {
             entity = item.group_entity || 'one';
 
         } else if (item.circle_id) {
-            entity = 'cercle';
+            entity = 'circle';
 
         } else if (item.event_id) {
             entity = 'event';
@@ -53,7 +55,7 @@ const NotificationItemComponent = ({ item, onPress }) => {
         const translationKey = typeAlias ? getTranslationKeyFromAlias(typeAlias, entity) : 'notifications.unknown';
 
         message = t(translationKey, {
-            username: `${item.from?.firstname} ${item.from?.lastname}`,
+            username,
             event_title: item.event?.event_title,
             organisation_name: item.organization?.org_name,
             circle_name: item.circle?.circle_name,
@@ -70,24 +72,25 @@ const NotificationItemComponent = ({ item, onPress }) => {
         return iconParts[iconParts.length - 1].replace(/^fa-/, '');  // Remove "fa-" if necessary
     };
 
-    const icon = item.type?.icon || item.icon || 'bell';
+    const icon = cleanIconName(item.type?.icon || item.icon || 'bell');
+    if (!message || message === 'empty_list.title' || message === t('empty_list.title') || message === 'notifications.unknown') message = 'Une nouvelle activité concerne votre compte.';
 
     return (
-        <TouchableOpacity style={[styles.card, { backgroundColor: COLORS.white }]} onPress={() => onPress(item)} activeOpacity={0.75}>
-            {item.type ? <View style={[styles.unreadDot, { backgroundColor: COLORS.info }]} /> : null}
+        <TouchableOpacity accessibilityRole="button" accessibilityState={{ busy, disabled }} disabled={disabled} style={[styles.card, { backgroundColor: COLORS.white, borderColor: item.unread ? COLORS.primary : COLORS.light_secondary }]} onPress={() => onPress(item)} activeOpacity={0.75}>
+            {item.unread ? <View style={[styles.unreadDot, { backgroundColor: COLORS.primary }]} /> : null}
             <View style={[styles.iconContainer, { backgroundColor: COLORS.light_primary }]}>
-                <FaIcon name={cleanIconName(icon)} size={20} color={COLORS.primary} />
+                {busy ? <ActivityIndicator color={COLORS.primary} /> : <FaIcon name={FaIcon.glyphMap[icon] ? icon : 'bell'} size={20} color={COLORS.primary} />}
             </View>
             <View style={styles.content}>
-                <Text style={[styles.message, { color: COLORS.black }]} numberOfLines={3}>{message}</Text>
-                <Text style={[styles.date, { color: COLORS.dark_secondary }]}>{ucfirst(item.created_at_explicit)}</Text>
+                <Text style={[styles.message, { color: COLORS.black }]}>{message}</Text>
+                <Text style={[styles.date, { color: COLORS.dark }]}>{ucfirst(item.created_at_ago || item.created_at_explicit || '')}</Text>
             </View>
         </TouchableOpacity>
     );
 };
 
 const styles = StyleSheet.create({
-    card: { alignItems: 'center', borderRadius: 18, flexDirection: 'row', marginBottom: 10, minHeight: 88, padding: 14 },
+    card: { alignItems: 'flex-start', borderRadius: 20, borderWidth: 1, flexDirection: 'row', marginBottom: 10, minHeight: 88, padding: 16 },
     iconContainer: { alignItems: 'center', borderRadius: 18, height: 36, justifyContent: 'center', marginRight: 12, width: 36 },
     content: { flex: 1, paddingRight: 8 },
     message: { fontSize: 14, fontWeight: '600', lineHeight: 19 },

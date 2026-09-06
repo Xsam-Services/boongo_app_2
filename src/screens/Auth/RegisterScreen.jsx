@@ -46,7 +46,7 @@ const RegisterScreen = ({ route }) => {
         setRole(roleData);
       })
       .catch(function (error) {
-        console.log(error);
+
       });
   }, []);
 
@@ -85,7 +85,7 @@ const RegisterScreen = ({ route }) => {
         setCountriesData(countryArray);
       })
       .catch((error) => {
-        console.log(error);
+
       });
   }, []);
 

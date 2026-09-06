@@ -69,7 +69,7 @@ const PasswordResetScreen = () => {
         setCountriesData(countryArray);
       })
       .catch((error) => {
-        console.log(error);
+
       });
   }, []);
 
@@ -93,7 +93,7 @@ const PasswordResetScreen = () => {
     }
 
     setLoading(true);
-    console.log(`Phone number: ${phoneCode}${phone}`);
+
 
     try {
       const res = await axios.get(
@@ -102,7 +102,7 @@ const PasswordResetScreen = () => {
 
       const message = res.data.message;
 
-      console.log(`API response: ${message}`);
+
 
       if (!res.data.success) {
         setErrorMessage(message);
