@@ -87,12 +87,7 @@ const WorkDataScreen = ({ route, navigation }) => {
         },
       });
       const workData = response.data?.data || null;
-      console.log('Work detail API response:', JSON.stringify(workData, null, 2));
-      console.log('Work detail image sources:', {
-        cover: workData?.photo_url,
-        firstImage: workData?.images?.[0]?.file_url,
-        owner: workData?.user_id ? workData?.user_owner?.avatar_url : workData?.organization_owner?.cover_url,
-      });
+      
       const userLike = workData?.likes?.some(like => like.user_id === userInfo.id || like.user?.id === userInfo.id) || false;
 
       setWork(workData);
@@ -143,7 +138,6 @@ const WorkDataScreen = ({ route, navigation }) => {
         const response = await axios.delete(`${API.boongo_url}/like/unlike_entity/${userInfo.id}/work/${work.id}`, {
           headers: { 'X-localization': getLanguage(), Authorization: `Bearer ${userInfo.api_token}` },
         });
-        console.log(response.data?.message || 'Like retiré.');
         setLikeCount(currentCount => Math.max(0, currentCount - 1));
         setHasLiked(false);
       } else {
@@ -152,7 +146,6 @@ const WorkDataScreen = ({ route, navigation }) => {
           { user_id: userInfo.id, for_work_id: work.id },
           { headers: { 'X-localization': getLanguage(), Authorization: `Bearer ${userInfo.api_token}` } }
         );
-        console.log(response.data?.message || 'Like ajouté.');
         setLikeCount(currentCount => currentCount + 1);
         setHasLiked(true);
       }
