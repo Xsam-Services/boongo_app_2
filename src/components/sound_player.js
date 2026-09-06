@@ -38,7 +38,7 @@ const SoundPlayer = ({ audioUrl, artwork, artist, title }) => {
           interruptionMode: 'doNotMix',
         });
       } catch (error) {
-        console.error('Failed to configure audio mode:', error);
+
       }
     };
 

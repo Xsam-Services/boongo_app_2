@@ -35,7 +35,7 @@ const CheckEmailOTPScreen = ({ route }) => {
   const handleCheckEmailCode = async () => {
     const result = await checkOTP(emailAddress, null, code);
 
-    console.log(registerError);
+
 
     if (!registerError) {
       if (result === 'phone_not_validated') {

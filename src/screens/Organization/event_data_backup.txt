@@ -142,9 +142,7 @@ const _Chat = ({ handleScroll, showBackToTop, listRef, headerHeight = 0, selecte
       setCount(response.data.count);
     } catch (error) {
       if (error.response?.status === 429) {
-        console.warn("Trop de requêtes envoyées. Attendez avant de réessayer.");
       } else {
-        console.error(error);
       }
     } finally {
       setIsLoading(false);
@@ -338,7 +336,6 @@ const _EventScreen = () => {
         return eventData;
       })
       .catch(error => {
-        console.log(error);
       });
   };
 

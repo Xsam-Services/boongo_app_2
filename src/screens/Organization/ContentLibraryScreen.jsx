@@ -63,7 +63,7 @@ const ContentLibraryScreen = ({ categoryGroup, emptyDescriptionKey, emptyIcon, i
       const apiCategories = Array.isArray(response.data?.data) ? response.data.data : [];
       setCategories([allCategory, ...apiCategories.filter(category => category.id !== allCategory.id)]);
     } catch (fetchError) {
-      console.error(`Erreur lors du chargement des catégories ${title}:`, fetchError);
+
     } finally {
       setIsLoadingCategories(false);
     }
@@ -89,7 +89,7 @@ const ContentLibraryScreen = ({ categoryGroup, emptyDescriptionKey, emptyIcon, i
         setItems([]);
         setError(true);
       }
-      console.error(`Erreur lors du chargement des ${title}:`, fetchError);
+
     } finally {
       if (requestId === requestIdRef.current) setIsLoadingContent(false);
     }

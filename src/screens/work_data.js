@@ -61,7 +61,7 @@ const WorkDataScreen = ({ route, navigation }) => {
         );
         amount *= Number(response.data?.data?.rate || 1);
       } catch (error) {
-        console.error('Erreur lors de la récupération du taux de change:', error);
+
       }
     }
 
@@ -87,7 +87,7 @@ const WorkDataScreen = ({ route, navigation }) => {
         },
       });
       const workData = response.data?.data || null;
-      
+
       const userLike = workData?.likes?.some(like => like.user_id === userInfo.id || like.user?.id === userInfo.id) || false;
 
       setWork(workData);
@@ -95,7 +95,7 @@ const WorkDataScreen = ({ route, navigation }) => {
       setHasLiked(userLike);
       setPrice(await formatPrice(workData));
     } catch (error) {
-      console.error('Erreur lors de la récupération de l’œuvre:', error);
+
     } finally {
       setLoading(false);
     }
@@ -135,13 +135,13 @@ const WorkDataScreen = ({ route, navigation }) => {
     setLikeUpdating(true);
     try {
       if (hasLiked) {
-        const response = await axios.delete(`${API.boongo_url}/like/unlike_entity/${userInfo.id}/work/${work.id}`, {
+        await axios.delete(`${API.boongo_url}/like/unlike_entity/${userInfo.id}/work/${work.id}`, {
           headers: { 'X-localization': getLanguage(), Authorization: `Bearer ${userInfo.api_token}` },
         });
         setLikeCount(currentCount => Math.max(0, currentCount - 1));
         setHasLiked(false);
       } else {
-        const response = await axios.post(
+        await axios.post(
           `${API.boongo_url}/like`,
           { user_id: userInfo.id, for_work_id: work.id },
           { headers: { 'X-localization': getLanguage(), Authorization: `Bearer ${userInfo.api_token}` } }
@@ -152,7 +152,7 @@ const WorkDataScreen = ({ route, navigation }) => {
     } catch (error) {
       const message = error.response?.data?.message || t('error_message.no_server_response');
       Alert.alert(t('error'), message);
-      console.error('Erreur lors de la mise à jour du like:', error);
+
     } finally {
       setLikeUpdating(false);
     }

@@ -33,20 +33,20 @@ const CheckPhoneOTPScreen = ({ route }) => {
     const result = await checkPhoneOTP(isPasswordReset, phoneNumber, code);
 
     if (!result.success) {
-      console.log(result.error);
+
       setErrorMessage(result.error);
       return;
     }
 
     if (isPasswordReset) {
-      console.log(`Former password CheckOTP: ${result.data.passwordReset.former_password}`);
+
       navigation.navigate('UpdatePassword', {
         userId: result.data.user.id,
         apiToken: result.data.user.api_token,
         formerPassword: result.data.passwordReset.former_password
       });
     } else {
-      console.log(registerError);
+
 
       if (!registerError) {
         navigation.navigate('ContinueRegister');

@@ -1,296 +1,122 @@
-/**
- * @author Xanders
- * @see https://team.xsamtech.com/xanderssamoth
- */
-import React, { useContext, useEffect, useState } from 'react'
-import { View, Text, ScrollView, SafeAreaView, Dimensions, TouchableOpacity, Image, TextInput } from 'react-native'
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { WebView } from 'react-native-webview';
-import { Button, Divider } from 'react-native-paper';
-import * as RNLocalize from 'react-native-localize';
-import DropDownPicker from 'react-native-dropdown-picker';
-import Spinner from 'react-native-loading-spinner-overlay';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
-import { API, PADDING, TEXT_SIZE, WEB } from '../tools/constants';
+import { API, WEB } from '../tools/constants';
 import HeaderComponent from './header';
 import useColors from '../hooks/useColors';
-import homeStyles from './style';
+import { formatPaymentAmount, safePaymentUrl } from '../utils/payment';
 
-const BankCardSubscribeScreen = ({ route }) => {
-  // =============== Colors ===============
-  const COLORS = useColors();
-  // =============== Language ===============
-  const { t } = useTranslation();
-  // =============== Navigation ===============
+const PROVIDERS = [
+  { image: require('../../assets/img/operator-flexpay.png'), label: 'FlexPay', value: 'FlexPaie' },
+  { image: require('../../assets/img/operator-multipay.png'), label: 'Multipay', value: 'Multipay' },
+  { image: require('../../assets/img/operator-paypal.png'), label: 'PayPal', value: 'PayPal' },
+  { image: require('../../assets/img/operator-visa-mastercard.png'), label: 'Carte Visa / Mastercard', value: 'Carte bancaire' },
+];
+
+export default function BankCardSubscribeScreen({ route }) {
+  const colors = useColors();
   const navigation = useNavigation();
-  // =============== Get context ===============
-  const { userInfo, paymentURL, purchase, isLoading } = useContext(AuthContext);
-  // =============== Get parameters ===============
-  const { amount, currency } = route.params;
-  // =============== Get data ===============
-  const [formattedAmount, setFormattedAmount] = useState(amount);
-
-  // =============== Get system language ===============
-  const getLanguage = () => {
-    const locales = RNLocalize.getLocales();
-
-    if (locales && locales.length > 0) {
-      return locales[0].languageCode;
-    }
-
-    return 'fr';
-  };
+  const { purchase, resetPaymentURL, isLoading } = useContext(AuthContext);
+  const { amount, currency, cartId, entity } = route.params || {};
+  const [provider, setProvider] = useState('');
+  const [transactionTypeId, setTransactionTypeId] = useState(null);
+  const [loadingType, setLoadingType] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [gatewayUrl, setGatewayUrl] = useState('');
+  const [error, setError] = useState('');
+  const initialized = useRef(false);
 
   useEffect(() => {
-    const userLang = getLanguage();
+    if (!initialized.current) {
+      initialized.current = true;
+      resetPaymentURL();
+    }
+  }, [resetPaymentURL]);
 
-    // Apply language-specific formatting
-    const readableAmount = formattedAmount.toLocaleString(userLang, {
-      style: 'decimal',
-      useGrouping: true,
-      minimumFractionDigits: 0, // No digits after the decimal point
-      maximumFractionDigits: 0, // No digits after the decimal point
-    });
-
-    setFormattedAmount(readableAmount);
+  useEffect(() => {
+    let active = true;
+    axios.get(`${API.boongo_url}/type/search/fr/${encodeURIComponent('Carte bancaire')}`)
+      .then(response => {
+        if (active) setTransactionTypeId(response.data?.data?.id || null);
+      })
+      .catch(() => {
+        if (active) setError('Le paiement par carte n’est pas disponible pour le moment.');
+      })
+      .finally(() => {
+        if (active) setLoadingType(false);
+      });
+    return () => { active = false; };
   }, []);
 
-  const ObjectScreen = () => {
-    // If payment is performed, show webview
-    if (paymentURL !== '' && typeof paymentURL === 'string') {
-      return (
-        <SafeAreaView style={{ flex: 1 }}>
-          <WebView source={{ uri: paymentURL }} />
-        </SafeAreaView>
-      );
-
-      // Otherwise, show bank card form
-    } else {
-      // =============== Get data ===============
-      const [cardNumber, setCardNumber] = useState(null);
-      const [cvc, setCvc] = useState(null);
-      const [cardName, setCardName] = useState('');
-      const [email, setEmail] = useState('');
-      const [showPayPalData, setShowPayPalData] = useState(false);
-      const [showCardData, setShowCardData] = useState(false);
-      // Get type "Bank card"
-      const [bankCardType, setBankCardType] = useState(null);
-
-      // OPERATOR dropdown
-      const [channel, setChannel] = useState(null);
-      const [channelOpen, setChannelOpen] = useState(false);
-      const [channelItems, setChannelItems] = useState([
-        { operatorImage: require('../../assets/img/operator-flexpay.png'), label: 'FlexPaie', value: 'FlexPaie' },
-        { operatorImage: require('../../assets/img/operator-multipay.png'), label: 'Multipay', value: 'Multipay' },
-        { operatorImage: require('../../assets/img/operator-paypal.png'), label: 'PayPal', value: 'PayPal' },
-        { operatorImage: require('../../assets/img/operator-visa-mastercard.png'), label: t('payment_method.bank_card.use_card'), value: t('payment_method.bank_card.use_card') }
-      ]);
-
-      const handlePay = (user_id, transaction_type_id, channel, app_url) => {
-        if (channel === 'PayPal') {
-          return;
-
-        } else if (channel === t('payment_method.bank_card.use_card')) {
-          return;
-
-        } else {
-          purchase(user_id, transaction_type_id, null, channel, app_url);
-        }
-
-        if (!paymentURL) {
-          navigation.navigate('BankCardSubscribe', { amount: amount, currency: currency });
-        }
-      };
-
-      const handleChannelChange = (item) => {
-        setChannel(item.value);
-
-        if (item.value === 'PayPal') {
-          setShowPayPalData(true);
-          setShowCardData(false);
-
-        } else if (item.value === t('payment_method.bank_card.use_card')) {
-          setShowCardData(true);
-          setShowPayPalData(false);
-
-        } else {
-          setShowCardData(false);
-          setShowPayPalData(false);
-        }
-      };
-
-      useEffect(() => {
-        axios({ method: 'GET', url: `${API.boongo_url}/type/search/fr/${encodeURIComponent('Carte bancaire')}` })
-          .then(function (res) {
-            let typeData = res.data.data;
-
-            setBankCardType(typeData);
-            console.log(`${JSON.stringify(typeData)}`);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      }, []);
-
-      return (
-        <SafeAreaView style={{ height: 'auto', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: PADDING.p01 }}>
-          {/* Image */}
-          <Image style={{ width: 100, height: 100, borderRadius: 100 / 2, marginBottom: PADDING.p07 }} source={require('../../assets/img/bank_card_payment.png')} />
-
-          {/* Title / Description */}
-          <Text style={[homeStyles.cardEmptyTitle, { color: COLORS.black, textAlign: 'center', marginBottom: PADDING.p02, paddingHorizontal: PADDING.p02 }]}>{t('payment_method.bank_card.title')}</Text>
-
-          {/* Amount */}
-          <Divider style={{ width: '100%', backgroundColor: COLORS.light_secondary, marginBottom: PADDING.p07 }} />
-          <Text style={{ fontSize: TEXT_SIZE.normal, color: COLORS.dark_secondary, textAlign: 'center', marginBottom: PADDING.p00 }}>{t('amount_to_pay')}</Text>
-          <Text style={{ fontSize: TEXT_SIZE.header, fontWeight: '700', color: COLORS.link_color, textAlign: 'center' }}>{`${formattedAmount} ${currency}`}</Text>
-          <Divider style={[homeStyles.authDivider, { width: '100%', backgroundColor: COLORS.light_secondary }]} />
-
-          {/* Operator */}
-          <DropDownPicker
-            modalTitle={t('payment_method.bank_card.operator')}
-            modalTitleStyle={{
-              color: COLORS.dark_secondary,
-              borderBottomColor: COLORS.dark_secondary
-            }}
-            modalProps={{
-              presentationStyle: 'fullScreen', // optional
-              animationType: 'slide',
-            }}
-            modalContentContainerStyle={{
-              backgroundColor: COLORS.white,
-              borderTopWidth: 0,
-              borderBottomWidth: 1,
-              borderBottomColor: COLORS.light_secondary,
-            }}
-            closeIconStyle={{
-              tintColor: COLORS.black
-            }}
-            style={[homeStyles.authInput, { color: COLORS.black, marginBottom: PADDING.p02, borderColor: COLORS.light_secondary }]}
-            textStyle={{ fontSize: TEXT_SIZE.paragraph, color: COLORS.black }}
-            placeholderStyle={{ fontSize: TEXT_SIZE.paragraph, color: COLORS.dark_secondary }}
-            arrowIconStyle={{ tintColor: COLORS.dark_secondary }}
-            tickIconStyle={{ tintColor: COLORS.black }}
-            open={channelOpen}
-            value={channel}
-            placeholder={t('payment_method.bank_card.operator')}
-            placeholderTextColor={COLORS.dark_secondary}
-            listMode='MODAL'
-            items={channelItems}
-            setOpen={setChannelOpen}
-            setValue={setChannel}
-            setItems={setChannelItems}
-            onChangeItem={handleChannelChange}
-            renderListItem={({ item }) => {
-              return (
-                <TouchableOpacity onPress={() => { handleChannelChange(item); setChannelOpen(false); }} style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
-                  {item.operatorImage ? (
-                    <Image source={item.operatorImage} style={{ width: 50, height: 50, marginRight: 10 }} />
-                  ) : null}
-                  <Text style={{ color: COLORS.black }}>
-                    {item.label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            }}
-          />
-
-          {/* PayPal data */}
-          {showPayPalData && (
-            <View style={{ flexDirection: 'column' }}>
-              {/* Email */}
-              <TextInput
-                style={[homeStyles.authInput, { color: COLORS.black, width: Dimensions.get('window').width - 40, height: 50, borderColor: COLORS.light_secondary }]}
-                keyboardType='email-address'
-                value={email}
-                placeholder={t('auth.email')}
-                placeholderTextColor={COLORS.dark_secondary}
-                onChangeText={text => setEmail(text)} />
-            </View>
-          )}
-
-          {/* Credit card data */}
-          {showCardData && (
-            <View style={{ padding: 20, borderWidth: 1, borderColor: COLORS.light_secondary, borderRadius: PADDING.p00 }}>
-              <Text style={{ color: COLORS.warning, textAlign: 'center', marginBottom: PADDING.p02, paddingHorizontal: PADDING.p02 }}>{t('payment_method.bank_card.descrciption')}</Text>
-              <View style={{ flexDirection: 'column' }}>
-                {/* Name on the card */}
-                <TextInput
-                  style={[homeStyles.authInput, { color: COLORS.black, width: Dimensions.get('window').width - 80, height: 50, marginBottom: 3, borderColor: COLORS.light_secondary }]}
-                  value={cardName}
-                  placeholder={t('payment_method.bank_card.name_on_card')}
-                  placeholderTextColor={COLORS.dark_secondary}
-                  onChangeText={text => setCardName(text)} />
-
-                {/* Card number */}
-                <Text style={{ color: COLORS.dark_secondary, width: '100%', paddingVertical: 5, paddingHorizontal: PADDING.horizontal }}>{t('payment_method.bank_card.card_number.label')}</Text>
-                <TextInput
-                  style={[homeStyles.authInput, { color: COLORS.black, width: Dimensions.get('window').width - 80, height: 50, marginBottom: 3, borderColor: COLORS.light_secondary }]}
-                  keyboardType='number-pad'
-                  value={cardNumber}
-                  placeholder={t('payment_method.bank_card.card_number.placeholder')}
-                  placeholderTextColor={COLORS.dark_secondary}
-                  onChangeText={text => setCardNumber(text)} />
-              </View>
-
-              <View style={{ flexDirection: 'row' }}>
-                {/* Expiration  */}
-                <View style={{ width: '68%', flexDirection: 'column', marginRight: '2%' }}>
-                  <Text style={{ color: COLORS.dark_secondary, paddingVertical: 5, paddingHorizontal: PADDING.horizontal }}>{t('payment_method.bank_card.expiration.label')}</Text>
-                  <TextInput
-                    style={[homeStyles.authInput, { color: COLORS.black, height: 50, borderColor: COLORS.light_secondary }]}
-                    keyboardType='number-pad'
-                    value={cardNumber}
-                    placeholder={t('payment_method.bank_card.expiration.placeholder')}
-                    placeholderTextColor={COLORS.dark_secondary}
-                    onChangeText={text => setCardNumber(text)} />
-                </View>
-
-                {/* CVC */}
-                <View style={{ width: '30%', flexDirection: 'column' }}>
-                  <Text style={{ color: COLORS.dark_secondary, paddingVertical: 5, paddingHorizontal: PADDING.horizontal }}>{t('payment_method.bank_card.cvc')}</Text>
-                  <TextInput
-                    style={[homeStyles.authInput, { color: COLORS.black, height: 50, borderColor: COLORS.light_secondary }]}
-                    value={cvc}
-                    placeholder={t('payment_method.bank_card.cvc')}
-                    placeholderTextColor={COLORS.dark_secondary}
-                    onChangeText={text => setCvc(text)} />
-                </View>
-              </View>
-            </View>
-          )}
-
-          {/* Submit / Cancel */}
-          <Button style={[homeStyles.authButton, { backgroundColor: COLORS.success }]}
-            onPress={() => { handlePay(userInfo.id, bankCardType.id, channel, WEB.boongo_url); }}>
-            <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('send')}</Text>
-          </Button>
-          <TouchableOpacity style={[homeStyles.authCancel, { borderColor: COLORS.black }]} onPress={() => navigation.navigate('MobileSubscribe', { amount: amount, currency: currency })}>
-            <Text style={[homeStyles.authButtonText, { color: COLORS.black }]}>{t('payment_method.bank_card.go_mobile_money')}</Text>
-          </TouchableOpacity>
-        </SafeAreaView>
-      );
+  const submit = async () => {
+    if (!cartId || !entity) setError('Le panier à payer est introuvable. Revenez à Mon espace.');
+    else if (!provider) setError('Choisissez un prestataire de paiement.');
+    else if (!transactionTypeId) setError('Le moyen de paiement est encore indisponible. Réessayez.');
+    else {
+      setError('');
+      setSubmitting(true);
+      const result = await purchase(cartId, entity, transactionTypeId, null, provider, WEB.boongo_url);
+      setSubmitting(false);
+      if (!result.success) setError(result.error || 'Le paiement n’a pas pu être initialisé.');
+      else {
+        const nextUrl = safePaymentUrl(result.url);
+        if (nextUrl) setGatewayUrl(nextUrl);
+        else setError('Le prestataire n’a pas renvoyé de page de paiement sécurisée.');
+      }
     }
   };
 
+  if (gatewayUrl) {
+    return (
+      <SafeAreaView edges={['top', 'bottom']} style={[styles.screen, { backgroundColor: colors.light }]}>
+        <HeaderComponent title="Paiement sécurisé" hideSearch />
+        <WebView source={{ uri: gatewayUrl }} style={styles.webView} startInLoadingState renderLoading={() => <ActivityIndicator color={colors.primary} style={styles.webLoader} />} />
+        <TouchableOpacity onPress={() => { resetPaymentURL(); navigation.navigate('Account'); }} style={[styles.closePayment, { borderColor: colors.primary }]}><Text style={[styles.secondaryButtonText, { color: colors.primary }]}>Revenir à Mon espace</Text></TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <>
-      {/* Header */}
-      <View style={{ backgroundColor: COLORS.white, paddingVertical: PADDING.p01 }}>
-        <HeaderComponent />
-      </View>
+    <SafeAreaView edges={['top', 'bottom']} style={[styles.screen, { backgroundColor: colors.light }]}>
+      <HeaderComponent title="Paiement" hideSearch />
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={[styles.amountCard, { backgroundColor: colors.light_primary }]}>
+          <View style={[styles.amountIcon, { backgroundColor: colors.primary }]}><Icon name="shield-check-outline" size={28} color="#fff" /></View>
+          <Text style={[styles.amountLabel, { color: colors.dark }]}>Montant à payer</Text>
+          <Text style={[styles.amount, { color: colors.black }]}>{formatPaymentAmount(amount, currency)}</Text>
+        </View>
 
-      {/* Spinner (for AuthContext requests) */}
-      <Spinner visible={isLoading} />
-
-      {/* Content */}
-      <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: COLORS.white, paddingHorizontal: PADDING.p01, paddingBottom: PADDING.p10 }}>
-        <ObjectScreen />
+        <View style={[styles.formCard, { backgroundColor: colors.white, borderColor: colors.light_secondary }]}>
+          <Text style={[styles.title, { color: colors.black }]}>Choisissez un prestataire</Text>
+          <Text style={[styles.description, { color: colors.dark }]}>Vos informations bancaires seront saisies directement sur la page sécurisée du prestataire. Boongo ne les collecte pas.</Text>
+          <View style={styles.providerList}>
+            {PROVIDERS.map(item => (
+              <TouchableOpacity key={item.value} onPress={() => setProvider(item.value)} style={[styles.provider, { backgroundColor: provider === item.value ? colors.light_primary : colors.light, borderColor: provider === item.value ? colors.primary : colors.light_secondary }]}>
+                <Image source={item.image} resizeMode="contain" style={styles.providerImage} />
+                <Text style={[styles.providerLabel, { color: provider === item.value ? colors.primary : colors.black }]}>{item.label}</Text>
+                <Icon name={provider === item.value ? 'radiobox-marked' : 'radiobox-blank'} size={22} color={provider === item.value ? colors.primary : colors.dark} />
+              </TouchableOpacity>
+            ))}
+          </View>
+          {error ? <Text accessibilityLiveRegion="polite" style={[styles.error, { color: colors.danger, backgroundColor: colors.light_danger }]}>{error}</Text> : null}
+          <TouchableOpacity disabled={submitting || isLoading || loadingType} onPress={submit} style={[styles.primaryButton, { backgroundColor: colors.primary, opacity: submitting || isLoading || loadingType ? 0.6 : 1 }]}>
+            {submitting || isLoading ? <ActivityIndicator color="#fff" /> : <><Text style={styles.primaryButtonText}>Ouvrir le paiement sécurisé</Text><Icon name="open-in-new" size={19} color="#fff" /></>}
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.replace('MobileSubscribe', { amount, currency, cartId, entity })} style={[styles.secondaryButton, { borderColor: colors.primary }]}><Icon name="cellphone" size={20} color={colors.primary} /><Text style={[styles.secondaryButtonText, { color: colors.primary }]}>Payer par Mobile Money</Text></TouchableOpacity>
+        </View>
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
-};
+}
 
-export default BankCardSubscribeScreen;
+const styles = StyleSheet.create({
+  screen: { flex: 1 }, content: { flexGrow: 1, padding: 18, paddingBottom: 32 }, amountCard: { alignItems: 'center', borderRadius: 24, padding: 20 }, amountIcon: { alignItems: 'center', borderRadius: 24, height: 48, justifyContent: 'center', marginBottom: 12, width: 48 }, amountLabel: { fontSize: 13, fontWeight: '700' }, amount: { fontSize: 25, fontWeight: '900', marginTop: 4 },
+  formCard: { borderRadius: 22, borderWidth: 1, marginTop: 18, padding: 16 }, title: { fontSize: 19, fontWeight: '800', textAlign: 'center' }, description: { fontSize: 14, lineHeight: 20, marginTop: 7, textAlign: 'center' }, providerList: { gap: 10, marginTop: 18 }, provider: { alignItems: 'center', borderRadius: 16, borderWidth: 1, flexDirection: 'row', minHeight: 68, padding: 12 }, providerImage: { height: 42, marginRight: 12, width: 56 }, providerLabel: { flex: 1, fontSize: 14, fontWeight: '700' }, error: { borderRadius: 13, fontSize: 13, fontWeight: '600', lineHeight: 18, marginTop: 14, padding: 12 },
+  primaryButton: { alignItems: 'center', borderRadius: 18, flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 18, minHeight: 54, paddingHorizontal: 14 }, primaryButtonText: { color: '#fff', fontSize: 15, fontWeight: '800' }, secondaryButton: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 10, minHeight: 52 }, secondaryButtonText: { fontSize: 14, fontWeight: '800' },
+  webView: { flex: 1 }, webLoader: { flex: 1 }, closePayment: { alignItems: 'center', borderRadius: 16, borderWidth: 1, margin: 12, padding: 14 },
+});

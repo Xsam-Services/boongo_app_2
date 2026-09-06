@@ -58,7 +58,7 @@ const SummaryScreenContent = ({ route, navigation }) => {
         `);
         if (isMounted) setDb(database);
       } catch (error) {
-        console.error('Erreur lors de l’initialisation des notes:', error);
+
         Alert.alert(t('error'), 'Impossible d’initialiser les notes.');
       }
     };
@@ -74,7 +74,7 @@ const SummaryScreenContent = ({ route, navigation }) => {
       const rows = await db.getAllAsync('SELECT * FROM BlocNotes WHERE doc_uri = ? ORDER BY id DESC', [docUri]);
       setNotes(rows);
     } catch (error) {
-      console.error('Erreur lors du chargement des notes:', error);
+
       Alert.alert(t('error'), 'Impossible de charger les notes.');
     }
   }, [db, docUri, t]);
@@ -104,7 +104,7 @@ const SummaryScreenContent = ({ route, navigation }) => {
       resetForm();
       await loadNotes();
     } catch (error) {
-      console.error('Erreur lors de l’enregistrement de la note:', error);
+
       Alert.alert(t('error'), 'Impossible d’enregistrer la note.');
     }
   };
@@ -121,7 +121,7 @@ const SummaryScreenContent = ({ route, navigation }) => {
             if (editingNote?.id === note.id) resetForm();
             await loadNotes();
           } catch (error) {
-            console.error('Erreur lors de la suppression de la note:', error);
+
           }
         },
       },
@@ -199,7 +199,7 @@ const PDFViewerScreenContent = ({ route, navigation }) => {
           source={{ uri: docUri, cache: true }}
           page={curPage}
           onLoadComplete={numberOfPages => setPageCount(numberOfPages)}
-          onError={error => { console.error('Erreur du lecteur PDF:', error); Alert.alert(t('error'), 'Impossible d’ouvrir ce document.'); }}
+          onError={error => {  Alert.alert(t('error'), 'Impossible d’ouvrir ce document.'); }}
           style={styles.pdf}
         />
       </View>

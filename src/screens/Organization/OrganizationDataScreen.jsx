@@ -80,7 +80,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
       const organizationData = res.data.data;
       setSelectedOrganization(organizationData);
     } catch (error) {
-      console.log(error);
+
     }
   };
 
@@ -113,7 +113,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
       setSelectedProgram(programData[0] || null);
       setIsLoaded(true);
     } catch (error) {
-      console.error('Unable to fetch organization programs:', error);
+
       setPrograms([]);
       setSelectedProgram(null);
       setIsLoaded(false);
@@ -160,7 +160,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
       setSelectedProgram(response.data.data);
       setFormProgramModalVisible(false);
     } catch (error) {
-      console.error('Error adding program:', error);
+
     } finally {
       setIsLoading(false);
     }
@@ -196,7 +196,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
 
       setSelectedProgram(response.data.data);
     } catch (error) {
-      console.error('Error fetching program details:', error);
+
     } finally {
       setIsProgramSelectionLoading(false);
     }
@@ -276,7 +276,7 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
 
       if (validFiles.length === 0) {
         ToastAndroid.show(t('error.invalid_file_type'), ToastAndroid.LONG);
-        console.warn("Le fichier sélectionné n'est pas un PDF valide.");
+
         return;
       }
 
@@ -284,9 +284,9 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
 
     } catch (err) {
       if (isErrorWithCode(err) && err.code === errorCodes.userCancelled) {
-        console.log('L’utilisateur a annulé la sélection.');
+
       } else {
-        console.error('Erreur lors de la sélection de fichier:', err);
+
       }
     } finally {
       setIsPicking(false); // reset, even in the case of error
@@ -349,16 +349,16 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
                         trustAllCerts={false}
                         source={{ uri: selectedProgram.files[0].file_url, cache: true }}
                         onLoadComplete={(numberOfPages, filePath) => {
-                          console.log(`Number of pages: ${numberOfPages}`);
+
                         }}
                         onPageChanged={(page, numberOfPages) => {
-                          console.log(`Current page: ${page}`);
+
                         }}
                         onError={(error) => {
-                          console.log(error);
+
                         }}
                         onPressLink={(uri) => {
-                          console.log(`Link pressed: ${uri}`);
+
                         }}
                         page={pdfPage}
                         style={{ flex: 1, width: '100%' }} />
@@ -384,17 +384,17 @@ const Schedule = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) =>
                           trustAllCerts={false}
                           source={{ uri: selectedProgram.files[0].file_url, cache: true }}
                           onLoadComplete={(numberOfPages, filePath) => {
-                            console.log(`Number of pages: ${numberOfPages}`);
+
                           }}
                           onPageChanged={(page, numberOfPages) => {
-                            console.log(`Current page: ${page}`);
+
                             // setPdfPage(page);
                           }}
                           onError={(error) => {
-                            console.log(error);
+
                           }}
                           onPressLink={(uri) => {
-                            console.log(`Link pressed: ${uri}`);
+
                           }}
                           page={pdfPage}
                           style={{ flex: 1, width: '100%' }} />
@@ -536,7 +536,7 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
         return organizationData;
       })
       .catch(error => {
-        console.log(error);
+
       });
   };
 
@@ -575,9 +575,9 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
         setCount(response.data.count);
       } catch (error) {
         if (error.response?.status === 429) {
-          console.warn("Trop de requêtes envoyées. Attendez avant de réessayer.");
+
         } else {
-          console.error(error);
+
         }
       } finally {
         setIsLoading(false);
@@ -614,7 +614,7 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
       const message = res.data.message;
 
       ToastAndroid.show(`${message}`, ToastAndroid.LONG);
-      console.log(`${message}`);
+
 
       setFormEventModalVisible(false);
       setIsLoading(false);
@@ -623,7 +623,7 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
       if (error.response) {
         // The request was made and the server responded with a status code
         ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
-        console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
+
 
       } else if (error.request) {
         // The request was made but no response was received
@@ -909,7 +909,7 @@ const Books = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
         return organizationData;
       })
       .catch(error => {
-        console.log(error);
+
       });
   };
 
@@ -935,7 +935,7 @@ const Books = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
       setIdCat(itemAll.id);
 
     } catch (error) {
-      console.error('Erreur fetchCategories', error);
+
     }
   };
 
@@ -983,10 +983,8 @@ const Books = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
       setLastPage(response.data.lastPage || page);
       setCount(response.data.count || 0);
 
-      // console.log(response.data);
-
     } catch (error) {
-      console.error('Erreur fetchBooks', error);
+
     } finally {
       setIsLoading(false);
     }
@@ -1162,7 +1160,7 @@ const Teach = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
         return organizationData;
       })
       .catch(error => {
-        console.log(error);
+
       });
   };
 
@@ -1208,9 +1206,9 @@ const Teach = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
         setCount(response.data.count);
       } catch (error) {
         if (error.response?.status === 429) {
-          console.warn("Trop de requêtes envoyées. Attendez avant de réessayer.");
+
         } else {
-          console.error(error);
+
         }
       } finally {
         setIsLoading(false);
@@ -1249,7 +1247,7 @@ const Teach = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
       const message = res.data.message;
 
       ToastAndroid.show(`${message}`, ToastAndroid.LONG);
-      console.log(`${message}`);
+
 
       setFormEventModalVisible(false);
       setIsLoading(false);
@@ -1258,7 +1256,7 @@ const Teach = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
       if (error.response) {
         // The request was made and the server responded with a status code
         ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
-        console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
+
 
       } else if (error.request) {
         // The request was made but no response was received
@@ -1645,7 +1643,7 @@ const OrganizationDataScreen = () => {
         return organizationData;
       })
       .catch(error => {
-        console.log(error);
+
       });
   }, [organization_id, userInfo.api_token]);
 

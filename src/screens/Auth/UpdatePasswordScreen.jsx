@@ -34,13 +34,13 @@ const UpdatePasswordScreen = ({ route }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  console.log('User data');
-  console.log('================');
-  console.log(`ID: ${userId}`);
-  console.log(`API token: ${apiToken}`);
-  console.log(`former password updatePW: ${formerPassword}`);
-  console.log(`new password: ${password}`);
-  console.log(`confirm new password: ${confirm_password}`);
+
+
+
+
+
+
+
 
   const handleUpdatePassword = async () => {
     setErrorMessage('');
@@ -60,7 +60,7 @@ const UpdatePasswordScreen = ({ route }) => {
     const result = await changePassword(userId, apiToken, formerPassword, password, confirm_password);
 
     if (!result.success) {
-      console.log(result.error);
+
       setErrorMessage(result.error);
       Toast.show({
         type: 'error',

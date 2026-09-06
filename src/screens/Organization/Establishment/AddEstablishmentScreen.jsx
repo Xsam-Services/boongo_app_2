@@ -81,7 +81,7 @@ const AddEstablishmentScreen = () => {
         setCountriesData(countryArray);
       })
       .catch((error) => {
-        console.log(error);
+
       });
   }, []);
 
@@ -152,11 +152,11 @@ const AddEstablishmentScreen = () => {
       setWebsiteURL('');
       setImageData('');
 
-      console.log(json);
+
       navigation.navigate('OrganizationData', { organization_id: json.data.id, type: 'establishment' });
 
     } catch (error) {
-      console.error('Error:', error);
+
     }
 
     setIsLoading(false);

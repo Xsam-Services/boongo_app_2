@@ -39,7 +39,7 @@ const SearchScreen = () => {
         const response = await axios.get(`${API.boongo_url}/type/find_by_group/${encodeURIComponent("Type d'œuvre")}`);
         setTypes(response.data.data || []);
       } catch (error) {
-        console.error('Erreur lors de la récupération des types:', error);
+
       }
     };
 
@@ -52,7 +52,7 @@ const SearchScreen = () => {
         const response = await axios.get(`${API.boongo_url}/category/find_by_group/${encodeURIComponent('Catégorie pour œuvre')}`);
         setCategories(response.data.data || []);
       } catch (error) {
-        console.error('Erreur lors de la récupération des catégories:', error);
+
       }
     };
 
@@ -88,7 +88,7 @@ const SearchScreen = () => {
 
       setDatas(response.data.data || []);
     } catch (error) {
-      console.error('Erreur lors de la recherche:', error);
+
     } finally {
       setIsLoading(false);
     }

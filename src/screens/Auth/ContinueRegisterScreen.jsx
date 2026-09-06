@@ -60,7 +60,7 @@ const ContinueRegisterScreen = () => {
         setCountries(countryArray);
       })
       .catch(function (error) {
-        console.log(error);
+
       });
   }, []);
 

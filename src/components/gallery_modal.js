@@ -78,7 +78,7 @@ const GalleryModal = ({ visible, index = 0, files = [], onClose }) => {
                                         paused={!isPlaying}
                                         onProgress={({ currentTime }) => setVideoProgress(currentTime)}
                                         onLoad={({ duration }) => setVideoDuration(duration)}
-                                        onError={e => console.log('Video error:', e)}
+                                        onError={e => null}
                                     />
 
                                     {/* Controls */}

@@ -82,7 +82,7 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
         setCountriesData(countryArray);
       })
       .catch((error) => {
-        console.warn('Impossible de charger les indicatifs pays.', error?.message);
+
       });
   }, []);
 
@@ -128,7 +128,7 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
         setImageData(organizationData.cover_url || null);
       })
       .catch(error => {
-        console.log(error);
+
         setLoading(false);
       });
   }, [organization_id, userInfo.api_token]);
@@ -193,7 +193,7 @@ const OrganizationSettingsScreen = ({ route, navigation }) => {
       navigation.goBack();
 
     } catch (error) {
-      console.error('Error:', error);
+
     }
 
     setIsLoading(false);
