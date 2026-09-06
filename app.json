@@ -13,7 +13,13 @@
       }
     },
     "android": {
-      "package": "com.boongo_app_2"
+      "package": "com.boongo_app_2",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ]
     },
     "plugins": [
       "@react-native-community/datetimepicker",
@@ -47,6 +53,12 @@
           "imageWidth": 200
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "bc9f3998-8c3b-4f2d-9730-d00e20e7b2ed"
+      }
+    },
+    "owner": "vander.codes"
   }
 }
