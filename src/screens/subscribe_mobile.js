@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
@@ -96,7 +96,17 @@ export default function MobileSubscribeScreen({ route }) {
   return (
     <SafeAreaView edges={['top', 'bottom']} style={[styles.screen, { backgroundColor: colors.light }]}>
       <HeaderComponent title="Paiement mobile" hideSearch />
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 12 : 0}
+      >
+      <ScrollView
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+        automaticallyAdjustKeyboardInsets
+      >
         <View style={[styles.amountCard, { backgroundColor: colors.light_primary }]}>
           <View style={[styles.amountIcon, { backgroundColor: colors.primary }]}><Icon name="cellphone-check" size={28} color="#fff" /></View>
           <Text style={[styles.amountLabel, { color: colors.dark }]}>Montant à payer</Text>
@@ -133,12 +143,13 @@ export default function MobileSubscribeScreen({ route }) {
           </View>
         )}
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1 }, content: { flexGrow: 1, padding: 18, paddingBottom: 32 }, amountCard: { alignItems: 'center', borderRadius: 24, padding: 20 }, amountIcon: { alignItems: 'center', borderRadius: 24, height: 48, justifyContent: 'center', marginBottom: 12, width: 48 }, amountLabel: { fontSize: 13, fontWeight: '700' }, amount: { fontSize: 25, fontWeight: '900', marginTop: 4 },
+  screen: { flex: 1 }, keyboardAvoidingView: { flex: 1 }, content: { flexGrow: 1, padding: 18, paddingBottom: 32 }, amountCard: { alignItems: 'center', borderRadius: 24, padding: 20 }, amountIcon: { alignItems: 'center', borderRadius: 24, height: 48, justifyContent: 'center', marginBottom: 12, width: 48 }, amountLabel: { fontSize: 13, fontWeight: '700' }, amount: { fontSize: 25, fontWeight: '900', marginTop: 4 },
   formCard: { borderRadius: 22, borderWidth: 1, marginTop: 18, padding: 16 }, title: { fontSize: 19, fontWeight: '800', textAlign: 'center' }, description: { fontSize: 14, lineHeight: 20, marginTop: 7, textAlign: 'center' }, operatorGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginVertical: 18 }, operator: { alignItems: 'center', borderRadius: 16, borderWidth: 1, flexBasis: '47%', flexDirection: 'row', minHeight: 62, padding: 10 }, operatorImage: { height: 34, marginRight: 7, width: 34 }, operatorLabel: { flex: 1, fontSize: 12, fontWeight: '700' }, label: { fontSize: 14, fontWeight: '700', marginBottom: 8 }, input: { borderRadius: 14, borderWidth: 1, fontSize: 16, paddingHorizontal: 14, paddingVertical: 14 }, error: { borderRadius: 13, fontSize: 13, fontWeight: '600', lineHeight: 18, marginTop: 12, padding: 12 },
   primaryButton: { alignItems: 'center', borderRadius: 18, flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 18, minHeight: 54, paddingHorizontal: 18 }, primaryButtonText: { color: '#fff', fontSize: 16, fontWeight: '800' }, secondaryButton: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 10, minHeight: 52 }, secondaryButtonText: { fontSize: 15, fontWeight: '800' },
   successCard: { alignItems: 'center', borderRadius: 22, borderWidth: 1, marginTop: 18, padding: 24 }, webView: { flex: 1 }, webLoader: { flex: 1 }, closePayment: { alignItems: 'center', borderRadius: 16, borderWidth: 1, margin: 12, padding: 14 },

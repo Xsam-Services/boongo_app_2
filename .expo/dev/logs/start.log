@@ -8419,3 +8419,34 @@
 {"_e":"metro:bundling:done","_t":1788774715932,"id":"6","total":1,"ms":121.396167}
 {"_e":"metro:client_log","_t":1788774827876,"level":"error","data":["[Error: Cannot find native module 'ExpoVideo']"]}
 {"_e":"metro:client_log","_t":1788774827995,"level":"error","data":["[Error: Cannot find native module 'ExpoVideo']"]}
+{"_e":"root:init","_t":1788777947628,"format":"v0-jsonl","version":"57.0.13"}
+{"_e":"env:mode","_t":1788777947629,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1788777947632,"mode":"development","files":["../../../.env.local"],"env":{"EXPO_PUBLIC_REST_COUNTRIES_API_KEY":"rc_live_f08c44d2057c44a0917ad1e01bbb6b62"}}
+{"_e":"devserver:start","_t":1788777948122,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1788777948467,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1788777948767,"plugins":[{"packageName":"expo-sqlite","bannerTitle":"expo-sqlite","cliBanner":false,"webpageEndpoint":"/_expo/plugins/expo-sqlite"}]}
+{"_e":"metro:instantiate","_t":1788777949959,"atlas":false,"workers":6,"host":"::","port":8081}
+{"_e":"metro:bundling:started","_t":1788778010226,"id":"1","platform":"android","environment":null,"entry":"index.js"}
+{"_e":"metro:bundling:progress","_t":1788778010227,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1788778010229,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1788778010342,"id":"1","progress":0.025443185667507244,"total":163,"current":26}
+{"_e":"metro:bundling:progress","_t":1788778010442,"id":"1","progress":0.08607677071238305,"total":484,"current":142}
+{"_e":"metro:bundling:progress","_t":1788778010542,"id":"1","progress":0.13866509364761115,"total":572,"current":213}
+{"_e":"metro:bundling:progress","_t":1788778010642,"id":"1","progress":0.21312888634187319,"total":639,"current":295}
+{"_e":"metro:bundling:progress","_t":1788778010742,"id":"1","progress":0.35269391694924757,"total":719,"current":427}
+{"_e":"metro:bundling:progress","_t":1788778010842,"id":"1","progress":0.38546576837667956,"total":815,"current":506}
+{"_e":"metro:bundling:progress","_t":1788778010942,"id":"1","progress":0.5314976518164444,"total":978,"current":713}
+{"_e":"metro:bundling:progress","_t":1788778011045,"id":"1","progress":0.5314976518164444,"total":1141,"current":815}
+{"_e":"metro:bundling:progress","_t":1788778011149,"id":"1","progress":0.6014160766347355,"total":1225,"current":950}
+{"_e":"metro:bundling:progress","_t":1788778011249,"id":"1","progress":0.6402368834994063,"total":1351,"current":1081}
+{"_e":"metro:bundling:progress","_t":1788778011353,"id":"1","progress":0.6402368834994063,"total":1495,"current":1153}
+{"_e":"metro:bundling:progress","_t":1788778011453,"id":"1","progress":0.6402368834994063,"total":1626,"current":1261}
+{"_e":"metro:bundling:progress","_t":1788778011553,"id":"1","progress":0.7096493460644822,"total":1745,"current":1470}
+{"_e":"metro:bundling:progress","_t":1788778011653,"id":"1","progress":0.7210435918367346,"total":1750,"current":1486}
+{"_e":"metro:bundling:progress","_t":1788778011753,"id":"1","progress":0.7506737011016436,"total":1849,"current":1602}
+{"_e":"metro:bundling:progress","_t":1788778011872,"id":"1","progress":0.7997443539500412,"total":1977,"current":1768}
+{"_e":"metro:bundling:progress","_t":1788778011972,"id":"1","progress":0.8239311022896836,"total":2167,"current":1967}
+{"_e":"metro:bundling:progress","_t":1788778012072,"id":"1","progress":0.9631959844940267,"total":2315,"current":2272}
+{"_e":"metro:bundling:done","_t":1788778012224,"id":"1","total":2315,"ms":1997.88425}
+{"_e":"metro:client_log","_t":1788778598781,"level":"warn","data":["SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context"]}
+{"_e":"metro:client_log","_t":1788778604803,"level":"warn","data":["DateTimePicker: `onChange` is deprecated. Use `onValueChange`, `onDismiss`, and `onNeutralButtonPress` instead."]}
