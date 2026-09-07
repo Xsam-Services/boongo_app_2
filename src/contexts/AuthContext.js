@@ -1163,7 +1163,7 @@ export const AuthProvider = ({ children }) => {
 
         try {
             const res = await axios.post(
-                purchaseUrl(API.boongo_url, cart_id),
+                purchaseUrl(API.boongo_url, cart_id, entity),
                 qs.stringify({ transaction_type_id, other_phone, channel, app_url }),
                 {
                     headers: {

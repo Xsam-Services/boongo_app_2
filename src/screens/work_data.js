@@ -9,6 +9,7 @@ import NetInfo from '@react-native-community/netinfo';
 import Constants from 'expo-constants';
 import * as RNLocalize from 'react-native-localize';
 import axios from 'axios';
+import qs from 'qs';
 import { useTranslation } from 'react-i18next';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
@@ -30,6 +31,8 @@ const WorkDataScreen = ({ route, navigation }) => {
   const {
     userInfo,
     addToCart,
+    removeFromCart,
+    isLoading,
     resetPaymentURL,
     validateSubscription,
     invalidateSubscription,
@@ -41,6 +44,7 @@ const WorkDataScreen = ({ route, navigation }) => {
   const [work, setWork] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasLiked, setHasLiked] = useState(false);
+  const [likeId, setLikeId] = useState(null);
   const [likeCount, setLikeCount] = useState(0);
   const [likeUpdating, setLikeUpdating] = useState(false);
   const [price, setPrice] = useState('');
@@ -88,11 +92,12 @@ const WorkDataScreen = ({ route, navigation }) => {
       });
       const workData = response.data?.data || null;
 
-      const userLike = workData?.likes?.some(like => like.user_id === userInfo.id || like.user?.id === userInfo.id) || false;
+      const userLike = workData?.likes?.find(like => Number(like.user_id ?? like.user?.id) === Number(userInfo.id));
 
       setWork(workData);
       setLikeCount(workData?.likes?.length || 0);
-      setHasLiked(userLike);
+      setHasLiked(Boolean(userLike));
+      setLikeId(userLike?.id || null);
       setPrice(await formatPrice(workData));
     } catch (error) {
 
@@ -135,19 +140,32 @@ const WorkDataScreen = ({ route, navigation }) => {
     setLikeUpdating(true);
     try {
       if (hasLiked) {
-        await axios.delete(`${API.boongo_url}/like/unlike_entity/${userInfo.id}/work/${work.id}`, {
+        if (!likeId) throw new Error('Le like ne peut pas être identifié.');
+        await axios.delete(`${API.boongo_url}/like/${likeId}`, {
           headers: { 'X-localization': getLanguage(), Authorization: `Bearer ${userInfo.api_token}` },
         });
         setLikeCount(currentCount => Math.max(0, currentCount - 1));
         setHasLiked(false);
+        setLikeId(null);
       } else {
-        await axios.post(
+        const response = await axios.post(
           `${API.boongo_url}/like`,
-          { user_id: userInfo.id, for_work_id: work.id },
-          { headers: { 'X-localization': getLanguage(), Authorization: `Bearer ${userInfo.api_token}` } }
+          qs.stringify({ user_id: userInfo.id, for_work_id: work.id, for_message_id: '' }),
+          {
+            headers: {
+              'X-localization': getLanguage(),
+              Authorization: `Bearer ${userInfo.api_token}`,
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          }
         );
+        if (response.data?.success === false) {
+          throw new Error(response.data?.message || "Le like n'a pas pu être enregistré.");
+        }
+        const createdLike = response.data?.data?.like || response.data?.data || response.data?.like;
         setLikeCount(currentCount => currentCount + 1);
         setHasLiked(true);
+        setLikeId(createdLike?.id || response.data?.id || null);
       }
     } catch (error) {
       const message = error.response?.data?.message || t('error_message.no_server_response');
@@ -168,6 +186,7 @@ const WorkDataScreen = ({ route, navigation }) => {
   };
 
   const isPrivate = Number(work?.is_public) === 0;
+  const isFavorite = userInfo?.favorite_works?.some(favorite => favorite.id === work?.id);
   const hasAccessPass = userInfo.has_valid_subscription || userInfo.has_active_code;
   const hasPaidConsultation = userInfo.valid_consultations?.some(consultation => consultation.id === work?.id);
   const isInCart = userInfo.unpaid_consultations?.some(consultation => consultation.id === work?.id);
@@ -181,6 +200,16 @@ const WorkDataScreen = ({ route, navigation }) => {
   const owner = work?.user_id ? work.user_owner : work?.organization_owner;
   const ownerName = work?.user_id ? [owner?.firstname, owner?.lastname].filter(Boolean).join(' ') : owner?.org_name;
   const ownerImage = sanitizeImageUri(work?.user_id ? owner?.avatar_url : owner?.cover_url);
+
+  const handleFavoriteToggle = () => {
+    if (!work?.id || !userInfo?.id) return;
+    if (isFavorite) {
+      const cartId = userInfo?.favorite_works_cart?.id;
+      if (cartId) removeFromCart(cartId, work.id, null);
+      return;
+    }
+    addToCart('favorite', userInfo.id, work.id, null);
+  };
 
   const openOwner = () => {
     if (!owner?.id) return;
@@ -325,10 +354,26 @@ const WorkDataScreen = ({ route, navigation }) => {
           {work?.categories?.length ? <View style={styles.categoriesRow}><Text style={[styles.infoLabel, { color: COLORS.dark }]}>{work.categories.length > 1 ? t('work.categories') : t('work.category')}</Text><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryList}>{work.categories.map(category => <Text key={category.id} style={[styles.categoryChip, { backgroundColor: COLORS.light_primary, color: COLORS.primary }]}>{category.category_name}</Text>)}</ScrollView></View> : null}
           {isPrivate ? <View style={[styles.priceRow, { borderTopColor: COLORS.light_secondary }]}><View><Text style={[styles.infoLabel, { color: COLORS.dark }]}>{t('work.is_public.consult_price')}</Text><Text style={[styles.priceValue, { color: COLORS.black }]}>{price || `${work?.consultation_price || ''} ${work?.currency?.currency_acronym || ''}`}</Text></View><Icon name="lock-outline" size={23} color={COLORS.primary} /></View> : null}
           <View style={[styles.likeRow, { borderTopColor: COLORS.light_secondary }]}>
-            <TouchableOpacity style={[styles.likeButton, { backgroundColor: hasLiked ? COLORS.danger : COLORS.light_secondary }]} onPress={handleLikeToggle} disabled={likeUpdating} accessibilityLabel="Aimer cette œuvre">
-              {likeUpdating ? <ActivityIndicator size="small" color={hasLiked ? '#ffffff' : COLORS.primary} /> : <Icon name={hasLiked ? 'heart' : 'heart-outline'} size={20} color={hasLiked ? '#ffffff' : COLORS.dark} />}
+            <View style={styles.likeSummary}>
+              <TouchableOpacity style={[styles.likeButton, { backgroundColor: hasLiked ? COLORS.danger : COLORS.light_secondary }]} onPress={handleLikeToggle} disabled={likeUpdating} accessibilityLabel="Aimer cette œuvre" accessibilityState={{ selected: hasLiked }}>
+                {likeUpdating ? <ActivityIndicator size="small" color={hasLiked ? '#ffffff' : COLORS.primary} /> : <Icon name={hasLiked ? 'heart' : 'heart-outline'} size={20} color={hasLiked ? '#ffffff' : COLORS.dark} />}
+              </TouchableOpacity>
+              <Text style={[styles.likeText, { color: COLORS.dark }]}>{`${likeCount} ${likeCount === 1 ? t('like') : t('likes')}`}</Text>
+            </View>
+            <TouchableOpacity
+              style={[styles.favoriteButton, { backgroundColor: isFavorite ? COLORS.light_primary : COLORS.white, borderColor: isFavorite ? COLORS.primary : COLORS.light_secondary }]}
+              onPress={handleFavoriteToggle}
+              disabled={isLoading}
+              accessibilityLabel={isFavorite ? t('remove_from_favorites') : t('add_to_favorite')}
+              accessibilityState={{ selected: isFavorite }}
+            >
+              {isLoading ? <ActivityIndicator size="small" color={COLORS.primary} /> : (
+                <>
+                  <Icon name={isFavorite ? 'bookmark' : 'bookmark-outline'} size={19} color={COLORS.primary} />
+                  <Text style={[styles.favoriteText, { color: COLORS.primary }]}>{isFavorite ? t('in_favorites') : t('add_to_favorite')}</Text>
+                </>
+              )}
             </TouchableOpacity>
-            <Text style={[styles.likeText, { color: COLORS.dark }]}>{`${likeCount} ${likeCount === 1 ? t('like') : t('likes')}`}</Text>
           </View>
         </View>
 
@@ -372,9 +417,12 @@ const styles = StyleSheet.create({
   categoryChip: { borderRadius: 13, fontSize: 12, fontWeight: '800', overflow: 'hidden', paddingHorizontal: 10, paddingVertical: 6 },
   priceRow: { alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth, flexDirection: 'row', justifyContent: 'space-between', paddingTop: 14 },
   priceValue: { fontSize: 18, fontWeight: '800', marginTop: 3 },
-  likeRow: { alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth, flexDirection: 'row', marginTop: 14, paddingTop: 14 },
+  likeRow: { alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth, flexDirection: 'row', justifyContent: 'space-between', marginTop: 14, paddingTop: 14 },
+  likeSummary: { alignItems: 'center', flexDirection: 'row' },
   likeButton: { alignItems: 'center', borderRadius: 19, height: 38, justifyContent: 'center', width: 38 },
   likeText: { fontSize: 14, fontWeight: '700', marginLeft: 9 },
+  favoriteButton: { alignItems: 'center', borderRadius: 19, borderWidth: 1, flexDirection: 'row', height: 38, justifyContent: 'center', paddingHorizontal: 12 },
+  favoriteText: { fontSize: 12, fontWeight: '800', marginLeft: 6 },
   filesCard: { borderRadius: 20, borderWidth: 1, marginTop: 14, paddingVertical: 16 },
   sectionHeading: { alignItems: 'center', flexDirection: 'row', paddingHorizontal: 16 },
   sectionTitle: { fontSize: 17, fontWeight: '800', marginLeft: 8 },

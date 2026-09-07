@@ -180,7 +180,7 @@ const FavoritesList = ({ contentTopInset, handleScroll, listRef }) => {
         scrollEventThrottle={16}
         contentContainerStyle={[styles.listContent, { flexGrow: 1, paddingTop: contentTopInset }]}
         ListHeaderComponent={<Text style={[styles.favoriteIntro, { color: COLORS.dark }]}>{t('navigation.media.favorite')}</Text>}
-        ListEmptyComponent={<EmptyListComponent iconName="heart-outline" title={t('empty_list.title')} />}
+        ListEmptyComponent={<EmptyListComponent iconName="bookmark-outline" title={t('empty_list.title')} />}
       />
     </SafeAreaView>
   );

@@ -1,6 +1,5 @@
-// The deployed purchase route accepts only the cart ID, without an entity suffix.
-export const purchaseUrl = (apiUrl, cartId) =>
-  `${apiUrl.replace(/\/$/, '')}/cart/purchase/${encodeURIComponent(cartId)}`;
+export const purchaseUrl = (apiUrl, cartId, entity) =>
+  `${apiUrl.replace(/\/$/, '')}/cart/purchase/${encodeURIComponent(cartId)}/${encodeURIComponent(entity)}`;
 
 export const safePaymentUrl = value => {
   if (typeof value !== 'string') return '';

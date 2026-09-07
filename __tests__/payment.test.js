@@ -1,12 +1,12 @@
 import {formatPaymentAmount, purchaseUrl, safePaymentUrl} from '../src/utils/payment';
 
 describe('payment helpers', () => {
-  test('uses the deployed purchase route without an entity suffix', () => {
-    expect(purchaseUrl('https://boongo7.com/api', 123)).toBe(
-      'https://boongo7.com/api/cart/purchase/123',
+  test('uses the purchase route documented in Postman', () => {
+    expect(purchaseUrl('https://boongo7.com/api', 123, 'consultation')).toBe(
+      'https://boongo7.com/api/cart/purchase/123/consultation',
     );
-    expect(purchaseUrl('https://boongo7.com/api/', 123)).toBe(
-      'https://boongo7.com/api/cart/purchase/123',
+    expect(purchaseUrl('https://boongo7.com/api/', 123, 'subscription')).toBe(
+      'https://boongo7.com/api/cart/purchase/123/subscription',
     );
   });
 
