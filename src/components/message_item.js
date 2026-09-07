@@ -10,7 +10,7 @@ import FileViewer from 'react-native-file-viewer';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
-import Video from 'react-native-video';
+import Video from './video_player';
 import { API, IMAGE_SIZE, PADDING, TEXT_SIZE } from '../tools/constants';
 import useColors from '../hooks/useColors';
 import AudioPlayer from '../screens/audio_screen';
@@ -200,7 +200,7 @@ const MessageItem = ({ item, isOwnMessage }) => {
 
     // Rendering of the Modals
     const renderMediaModal = () => { // Modal media
-        if (selectedMedia) {
+        if (selectedMedia && modalVisible) {
             return (
                 <Modal visible={modalVisible} transparent={true} onRequestClose={() => setModalVisible(false)}>
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.7)' }}>

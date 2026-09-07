@@ -52,7 +52,8 @@
           "image": "./assets/img/brand-with-name.png",
           "imageWidth": 200
         }
-      ]
+      ],
+      "expo-video"
     ],
     "extra": {
       "eas": {

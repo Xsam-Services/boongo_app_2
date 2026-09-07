@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import getVideoId from 'get-video-id';
-import Video from 'react-native-video';
+import Video from '../components/video_player';
 import ImageZoom from 'react-native-image-pan-zoom';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 

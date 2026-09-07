@@ -5,7 +5,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Modal, View, TouchableOpacity, StyleSheet, Image, Dimensions, Text } from 'react-native';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import Video from 'react-native-video';
+import Video from './video_player';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Slider from '@react-native-community/slider';
 import useColors from '../hooks/useColors';
@@ -22,23 +22,22 @@ const GalleryModal = ({ visible, index = 0, files = [], onClose }) => {
     const [videoDuration, setVideoDuration] = useState(0);
     const videoRef = useRef(null);
 
-    const currentFile = files[currentIndex] || {};
-
     const mediaSources = files.map(file => ({ url: file.uri }));
 
     useEffect(() => {
-        if (!visible) {
-            setCurrentIndex(safeIndex);
-            setIsPlaying(true);
-            setVideoProgress(0);
-        }
-    }, [visible]);
+        setCurrentIndex(safeIndex);
+        setIsPlaying(true);
+        setVideoProgress(0);
+        setVideoDuration(0);
+    }, [visible, safeIndex]);
 
     const formatTime = seconds => {
         const m = Math.floor(seconds / 60);
         const s = Math.floor(seconds % 60);
         return `${m}:${s < 10 ? '0' + s : s}`;
     };
+
+    if (!visible) return null;
 
     return (
         <Modal visible={visible} transparent>
@@ -61,6 +60,7 @@ const GalleryModal = ({ visible, index = 0, files = [], onClose }) => {
                         setCurrentIndex(newIndex);
                         setIsPlaying(true);
                         setVideoProgress(0);
+                        setVideoDuration(0);
                     }}
                     renderImage={() => {
                         const file = files[currentIndex];
@@ -127,6 +127,10 @@ const GalleryModal = ({ visible, index = 0, files = [], onClose }) => {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
+    videoContainer: { width, height },
+    controls: { position: 'absolute', bottom: 50, left: 20, right: 20, alignItems: 'center' },
+    progressRow: { flexDirection: 'row', alignItems: 'center' },
+    timeText: { color: '#ffffff' },
     closeBtn: {
         position: 'absolute',
         top: 50,

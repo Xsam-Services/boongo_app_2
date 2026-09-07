@@ -9,7 +9,7 @@ import NetInfo from '@react-native-community/netinfo';
 import Constants from 'expo-constants';
 import * as RNLocalize from 'react-native-localize';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import Video from 'react-native-video';
+import Video from '../components/video_player';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 
