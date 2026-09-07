@@ -155,7 +155,7 @@ const RegisterScreen = ({ route }) => {
     <SafeAreaView style={[styles.container, { backgroundColor: COLORS.light }]} edges={['top']}>
       <Spinner visible={isLoading} />
 
-      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: PADDING.p16 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: PADDING.p16 }} showsVerticalScrollIndicator={false}>
         <TouchableOpacity
           style={[styles.backButton, { backgroundColor: COLORS.dark_light }]}
           onPress={() => {
