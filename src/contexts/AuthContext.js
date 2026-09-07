@@ -10,6 +10,8 @@ import qs from 'qs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { API } from '../tools/constants';
+import { purchaseUrl } from '../utils/payment';
+import { buildSettingsPayload } from '../utils/settings';
 
 export const AuthContext = createContext();
 let onboardingCompletedCache = null;
@@ -477,64 +479,37 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
-    const update = (id, firstname, lastname, surname, gender, birthdate, city, address_1, address_2, p_o_box, email, phone, username, password, confirm_password, country_id, currency_id, role_id, organization_id) => {
+    const update = async (id, firstname, lastname, surname, gender, birthdate, city, address_1, address_2, p_o_box, email, phone, username, password, confirm_password, country_id, currency_id, role_id, organization_id) => {
         setIsLoading(true);
-
-
-        axios.put(`${API.boongo_url}/user/${id}`, {
-            id, firstname, lastname, surname, gender, birthdate, city, address_1, address_2, p_o_box, email, phone, username, password, confirm_password, country_id, currency_id, role_id, organization_id
-        }, {
-            headers: { 'Authorization': `Bearer ${userInfo.api_token}` }
-        }).then(res => {
-            const message = res.data.message;
-            const userData = res.data.data;
-
-
-            setUserInfo(userData);
-
-            AsyncStorage.setItem('userInfo', JSON.stringify(userData));
-            Toast.show({
-                type: 'success',
-                text1: 'Succès',
-                text2: message,
-                position: 'top'
+        try {
+            const payload = buildSettingsPayload({
+                id, firstname, lastname, surname, gender, birthdate, city,
+                address_1, address_2, p_o_box, email, phone, username,
+                password, confirm_password, country_id, currency_id, role_id, organization_id
             });
-
-
-            setIsLoading(false);
-
-        }).catch(error => {
-            if (error.response) {
-                // The request was made and the server responded with a status code
-                Toast.show({
-                    type: 'error',
-                    text1: 'Erreur',
-                    text2: error.response.data.message || error.response.data,
-                    position: 'top'
-                });
-
-
-            } else if (error.request) {
-                // The request was made but no response was received
-                Toast.show({
-                    type: 'error',
-                    text1: 'Erreur',
-                    text2: t('error') + ' ' + t('error_message.no_server_response'),
-                    position: 'top'
-                });
-
-            } else {
-                // An error occurred while configuring the query
-                Toast.show({
-                    type: 'error',
-                    text1: 'Erreur',
-                    text2: `${error}`,
-                    position: 'top'
-                });
+            const res = await axios.put(`${API.boongo_url}/user/${id}`, qs.stringify(payload), {
+                headers: {
+                    Authorization: `Bearer ${userInfo.api_token}`,
+                    Accept: 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-localization': getLanguage()
+                }
+            });
+            if (res.data?.success === false || !res.data?.data?.id) {
+                throw new Error(res.data?.message || 'Les paramètres n’ont pas pu être enregistrés.');
             }
-
+            const userData = { ...userInfo, ...res.data.data };
+            await AsyncStorage.setItem('userInfo', JSON.stringify(userData));
+            setUserInfo(userData);
+            Toast.show({ type: 'success', text1: 'Succès', text2: res.data.message, position: 'top' });
+            return { success: true };
+        } catch (error) {
+            const message = error.response?.data?.message || error.message || 'Les paramètres n’ont pas pu être enregistrés.';
+            Toast.show({ type: 'error', text1: 'Erreur', text2: message, position: 'top' });
+            return { success: false, error: message };
+        } finally {
             setIsLoading(false);
-        });
+        }
     };
 
     const updateAvatar = (user_id, image_64) => {
@@ -1188,12 +1163,13 @@ export const AuthProvider = ({ children }) => {
 
         try {
             const res = await axios.post(
-                `${API.boongo_url}/cart/purchase/${cart_id}/${entity}`,
+                purchaseUrl(API.boongo_url, cart_id),
                 qs.stringify({ transaction_type_id, other_phone, channel, app_url }),
                 {
                     headers: {
                         'Authorization': `Bearer ${userInfo.api_token}`,
                         'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json',
                         'X-localization': getLanguage()
                     }
                 }

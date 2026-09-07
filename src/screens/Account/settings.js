@@ -499,9 +499,9 @@ const SettingsScreen = () => {
           </View>
 
           {/* Submit */}
-          <TouchableOpacity style={[styles.saveAction, { backgroundColor: COLORS.primary }]} onPress={() => {
-            update(userInfo.id, firstname, lastname, surname, gender, birthdate, city, address_1, address_2, p_o_box, email, phone, username, password, confirm_password, country, currency, null, organization);
-            navigation.navigate('Account');
+          <TouchableOpacity style={[styles.saveAction, { backgroundColor: COLORS.primary }]} disabled={isLoading} onPress={async () => {
+            const result = await update(userInfo.id, firstname, lastname, surname, gender, birthdate, city, address_1, address_2, p_o_box, email, phone, username, password, confirm_password, country, currency, null, organization);
+            if (result.success) navigation.navigate('Account');
           }}>
             <Icon name="check" size={21} color="#ffffff" /><Text style={styles.saveActionText}>{t('update')}</Text>
           </TouchableOpacity>
