@@ -18,6 +18,13 @@ allprojects {
     mavenCentral()
     maven { url 'https://www.jitpack.io' }
   }
+
+  configurations.configureEach {
+    resolutionStrategy {
+      // react-native-pdf 6.7.7 requests 1.0.24, whose native bridge is only 4 KB aligned.
+      force 'io.legere:pdfiumandroid:1.0.35'
+    }
+  }
 }
 
 apply plugin: "expo-root-project"
