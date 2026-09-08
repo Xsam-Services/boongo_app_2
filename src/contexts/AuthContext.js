@@ -1152,8 +1152,8 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
-    const purchase = async (cart_id, entity, transaction_type_id, other_phone, channel, app_url) => {
-        if (!cart_id || !entity || !transaction_type_id || !channel) {
+    const purchase = async (user_id, transaction_type_id, other_phone, channel, app_url) => {
+        if (!user_id || !transaction_type_id || !channel) {
             return { success: false, error: t('error_message.missing_parameters') };
         }
 
@@ -1163,12 +1163,11 @@ export const AuthProvider = ({ children }) => {
 
         try {
             const res = await axios.post(
-                purchaseUrl(API.boongo_url, cart_id, entity),
-                qs.stringify({ transaction_type_id, other_phone, channel, app_url }),
+                purchaseUrl(API.boongo_url, user_id),
+                { transaction_type_id, other_phone, channel, app_url },
                 {
                     headers: {
                         'Authorization': `Bearer ${userInfo.api_token}`,
-                        'Content-Type': 'application/x-www-form-urlencoded',
                         'Accept': 'application/json',
                         'X-localization': getLanguage()
                     }

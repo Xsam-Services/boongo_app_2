@@ -1,5 +1,5 @@
-export const purchaseUrl = (apiUrl, cartId, entity) =>
-  `${apiUrl.replace(/\/$/, '')}/cart/purchase/${encodeURIComponent(cartId)}/${encodeURIComponent(entity)}`;
+export const purchaseUrl = (apiUrl, userId) =>
+  `${apiUrl.replace(/\/$/, '')}/cart/purchase/${encodeURIComponent(userId)}`;
 
 export const safePaymentUrl = value => {
   if (typeof value !== 'string') return '';

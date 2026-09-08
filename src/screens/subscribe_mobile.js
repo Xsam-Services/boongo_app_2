@@ -72,7 +72,7 @@ export default function MobileSubscribeScreen({ route }) {
     else {
       setError('');
       setSubmitting(true);
-      const result = await purchase(cartId, entity, transactionTypeId, normalizedPhone, channel, WEB.boongo_url);
+      const result = await purchase(userInfo?.id, transactionTypeId, normalizedPhone, channel, WEB.boongo_url);
       setSubmitting(false);
       if (!result.success) setError(result.error || 'Le paiement n’a pas pu être initialisé.');
       else if (result.url) {

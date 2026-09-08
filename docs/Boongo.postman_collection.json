@@ -3775,40 +3775,23 @@
 							}
 						],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "transaction_type_id",
-									"value": "{{type-id}}",
-									"type": "text"
-								},
-								{
-									"key": "other_phone",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "channel",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "app_url",
-									"value": "",
-									"type": "text"
+							"mode": "raw",
+							"raw": "{\n    \"transaction_type_id\": \"{{type-id}}\",\n    \"other_phone\": \"\",\n    \"channel\": \"\",\n    \"app_url\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "{{api-url}}/cart/purchase/{{cart-id}}/{{entity}}",
+							"raw": "{{api-url}}/cart/purchase/{{user-id}}",
 							"host": [
 								"{{api-url}}"
 							],
 							"path": [
 								"cart",
 								"purchase",
-								"{{cart-id}}",
-								"{{entity}}"
+								"{{user-id}}"
 							]
 						}
 					},

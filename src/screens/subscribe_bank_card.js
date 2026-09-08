@@ -21,7 +21,7 @@ const PROVIDERS = [
 export default function BankCardSubscribeScreen({ route }) {
   const colors = useColors();
   const navigation = useNavigation();
-  const { purchase, resetPaymentURL, isLoading } = useContext(AuthContext);
+  const { userInfo, purchase, resetPaymentURL, isLoading } = useContext(AuthContext);
   const { amount, currency, cartId, entity } = route.params || {};
   const [provider, setProvider] = useState('');
   const [transactionTypeId, setTransactionTypeId] = useState(null);
@@ -60,7 +60,7 @@ export default function BankCardSubscribeScreen({ route }) {
     else {
       setError('');
       setSubmitting(true);
-      const result = await purchase(cartId, entity, transactionTypeId, null, provider, WEB.boongo_url);
+      const result = await purchase(userInfo?.id, transactionTypeId, null, provider, WEB.boongo_url);
       setSubmitting(false);
       if (!result.success) setError(result.error || 'Le paiement n’a pas pu être initialisé.');
       else {
