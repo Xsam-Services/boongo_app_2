@@ -71,11 +71,6 @@ const AddWorkScreen = ({ navigation }) => {
 
   const toggleCategory = id => setCategoryIds(current => current.includes(id) ? current.filter(item => item !== id) : [...current, id]);
   const chooseCover = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      setError("L'accès aux photos est requis pour choisir une image de couverture.");
-      return;
-    }
     const result = await ImagePicker.launchImageLibraryAsync({ base64: true, mediaTypes: ['images'], quality: 0.85 });
     const asset = result.assets?.[0];
     if (!result.canceled && asset?.base64) {
@@ -110,11 +105,6 @@ const AddWorkScreen = ({ navigation }) => {
     if (picking || files.length >= MAX_FILES) return;
     setPicking(true);
     try {
-      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permission.granted) {
-        setError("L'accès à la photothèque est requis pour ajouter ce média.");
-        return;
-      }
       const result = await ImagePicker.launchImageLibraryAsync({ allowsMultipleSelection: true, mediaTypes: [mediaType], quality: 0.85 });
       if (!result.canceled) {
         const selected = result.assets.map((asset, index) => ({

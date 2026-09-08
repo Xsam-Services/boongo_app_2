@@ -587,9 +587,6 @@ const Events = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
 
   // =============== Handle Image Picker ===============
   const imagePick = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) return;
-
     const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], base64: true, mediaTypes: ['images'], quality: 0.8 });
     if (!result.canceled && result.assets[0]?.base64) {
       const asset = result.assets[0];
@@ -1220,9 +1217,6 @@ const Teach = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => {
 
   // =============== Handle Image Picker ===============
   const imagePick = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) return;
-
     const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], base64: true, mediaTypes: ['images'], quality: 0.8 });
     if (!result.canceled && result.assets[0]?.base64) {
       const asset = result.assets[0];

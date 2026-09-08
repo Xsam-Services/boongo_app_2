@@ -47,13 +47,6 @@ const SettingsScreen = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const imagePick = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (!permission.granted) {
-
-      return;
-    }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [1, 1],
