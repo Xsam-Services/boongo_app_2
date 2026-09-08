@@ -22,7 +22,7 @@ export default function MobileSubscribeScreen({ route }) {
   const colors = useColors();
   const navigation = useNavigation();
   const { userInfo, purchase, resetPaymentURL, isLoading } = useContext(AuthContext);
-  const { amount, currency, cartId, entity } = route.params || {};
+  const { amount, currency } = route.params || {};
   const initialPhone = useMemo(() => {
     const code = userInfo?.country?.country_phone_code || '';
     const number = userInfo?.phone || '';
@@ -65,7 +65,7 @@ export default function MobileSubscribeScreen({ route }) {
 
   const submit = async () => {
     const normalizedPhone = phone.replace(/[^+\d]/g, '');
-    if (!cartId || !entity) setError('Le panier à payer est introuvable. Revenez à Mon espace.');
+    if (!userInfo?.id) setError('Le compte utilisateur est introuvable. Reconnectez-vous.');
     else if (!channel) setError('Choisissez un opérateur.');
     else if (!/^\+?\d{8,15}$/.test(normalizedPhone)) setError('Saisissez un numéro de téléphone valide avec son indicatif.');
     else if (!transactionTypeId) setError('Le moyen de paiement est encore indisponible. Réessayez.');
@@ -139,7 +139,7 @@ export default function MobileSubscribeScreen({ route }) {
             <TouchableOpacity disabled={submitting || isLoading || loadingType} onPress={submit} style={[styles.primaryButton, { backgroundColor: colors.primary, opacity: submitting || isLoading || loadingType ? 0.6 : 1 }]}>
               {submitting || isLoading ? <ActivityIndicator color="#fff" /> : <><Text style={styles.primaryButtonText}>Continuer</Text><Icon name="arrow-right" size={20} color="#fff" /></>}
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.replace('BankCardSubscribe', { amount, currency, cartId, entity })} style={[styles.secondaryButton, { borderColor: colors.primary }]}><Icon name="credit-card-outline" size={20} color={colors.primary} /><Text style={[styles.secondaryButtonText, { color: colors.primary }]}>Payer autrement</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.replace('BankCardSubscribe', { amount, currency })} style={[styles.secondaryButton, { borderColor: colors.primary }]}><Icon name="credit-card-outline" size={20} color={colors.primary} /><Text style={[styles.secondaryButtonText, { color: colors.primary }]}>Payer autrement</Text></TouchableOpacity>
           </View>
         )}
       </ScrollView>

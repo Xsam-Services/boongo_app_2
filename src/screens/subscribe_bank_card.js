@@ -22,7 +22,7 @@ export default function BankCardSubscribeScreen({ route }) {
   const colors = useColors();
   const navigation = useNavigation();
   const { userInfo, purchase, resetPaymentURL, isLoading } = useContext(AuthContext);
-  const { amount, currency, cartId, entity } = route.params || {};
+  const { amount, currency } = route.params || {};
   const [provider, setProvider] = useState('');
   const [transactionTypeId, setTransactionTypeId] = useState(null);
   const [loadingType, setLoadingType] = useState(true);
@@ -54,7 +54,7 @@ export default function BankCardSubscribeScreen({ route }) {
   }, []);
 
   const submit = async () => {
-    if (!cartId || !entity) setError('Le panier à payer est introuvable. Revenez à Mon espace.');
+    if (!userInfo?.id) setError('Le compte utilisateur est introuvable. Reconnectez-vous.');
     else if (!provider) setError('Choisissez un prestataire de paiement.');
     else if (!transactionTypeId) setError('Le moyen de paiement est encore indisponible. Réessayez.');
     else {
@@ -107,7 +107,7 @@ export default function BankCardSubscribeScreen({ route }) {
           <TouchableOpacity disabled={submitting || isLoading || loadingType} onPress={submit} style={[styles.primaryButton, { backgroundColor: colors.primary, opacity: submitting || isLoading || loadingType ? 0.6 : 1 }]}>
             {submitting || isLoading ? <ActivityIndicator color="#fff" /> : <><Text style={styles.primaryButtonText}>Ouvrir le paiement sécurisé</Text><Icon name="open-in-new" size={19} color="#fff" /></>}
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.replace('MobileSubscribe', { amount, currency, cartId, entity })} style={[styles.secondaryButton, { borderColor: colors.primary }]}><Icon name="cellphone" size={20} color={colors.primary} /><Text style={[styles.secondaryButtonText, { color: colors.primary }]}>Payer par Mobile Money</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.replace('MobileSubscribe', { amount, currency })} style={[styles.secondaryButton, { borderColor: colors.primary }]}><Icon name="cellphone" size={20} color={colors.primary} /><Text style={[styles.secondaryButtonText, { color: colors.primary }]}>Payer par Mobile Money</Text></TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

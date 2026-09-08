@@ -14,5 +14,5 @@ export const safePaymentUrl = value => {
 export const formatPaymentAmount = (amount, currency) => {
   const numericAmount = Number(amount);
   if (!Number.isFinite(numericAmount)) return 'Montant calculé automatiquement';
-  return `${new Intl.NumberFormat('fr', { maximumFractionDigits: 0 }).format(numericAmount)} ${currency || ''}`.trim();
+  return `${new Intl.NumberFormat('fr', { maximumFractionDigits: 2 }).format(numericAmount)} ${currency || ''}`.trim();
 };

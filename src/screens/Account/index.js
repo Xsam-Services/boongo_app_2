@@ -28,6 +28,7 @@ import UserItemComponent from '../../components/user_item';
 import HeaderComponent from '../header';
 import useColors from '../../hooks/useColors';
 import {API} from '../../tools/constants';
+import {formatPaymentAmount} from '../../utils/payment';
 const T = [
   ['works', 'Mes œuvres', 'book-open-page-variant-outline'],
   ['cart', 'Panier', 'cart-outline'],
@@ -42,7 +43,9 @@ export default function AccountScreen() {
     [cats, setCats] = useState([]),
     [cat, setCat] = useState(0),
     [load, setLoad] = useState(true),
-    [refresh, setRefresh] = useState(false);
+    [refresh, setRefresh] = useState(false),
+    [checkoutTotals, setCheckoutTotals] = useState({}),
+    [checkoutTotalsLoading, setCheckoutTotalsLoading] = useState(false);
   const h = useMemo(
     () => ({
       'X-localization': 'fr',
@@ -110,28 +113,102 @@ export default function AccountScreen() {
       setTab(x);
     }
   };
-  const checkoutGroups = [
-    {
-      key: 'subscription',
-      label: 'Abonnements',
-      cartId: u?.unpaid_subscription_cart?.id,
-      items: u?.unpaid_subscriptions || [],
-      amount: (u?.unpaid_subscriptions || []).reduce(
-        (total, item) => total + Number(item.price || 0),
-        0,
-      ),
-    },
-    {
-      key: 'consultation',
-      label: 'Consultations',
-      cartId: u?.unpaid_consultation_cart?.id,
-      items: u?.unpaid_consultations || [],
-      amount: (u?.unpaid_consultations || []).reduce(
-        (total, item) => total + Number(item.consultation_price || 0),
-        0,
-      ),
-    },
-  ].filter(group => group.items.length > 0);
+  const checkoutGroups = useMemo(
+    () => [
+      {
+        key: 'subscription',
+        items: u?.unpaid_subscriptions || [],
+        priceKey: 'price',
+      },
+      {
+        key: 'consultation',
+        items: u?.unpaid_consultations || [],
+        priceKey: 'consultation_price',
+      },
+    ].filter(group => group.items.length > 0),
+    [
+      u?.unpaid_consultations,
+      u?.unpaid_subscriptions,
+    ],
+  );
+
+  useEffect(() => {
+    if (tab !== 'cart' || !checkoutGroups.length) {
+      setCheckoutTotals({});
+      setCheckoutTotalsLoading(false);
+      return;
+    }
+
+    let active = true;
+    const convertTotals = async () => {
+      const targetCurrency = u?.currency?.currency_acronym;
+      const rateCache = new Map();
+      const totals = {};
+
+      setCheckoutTotalsLoading(true);
+      try {
+        const rawServerTotal = u?.totals_unpaid?.grand_totals;
+        const serverTotal = Number(rawServerTotal);
+        if (rawServerTotal != null && Number.isFinite(serverTotal) && targetCurrency) {
+          if (active) setCheckoutTotals({grand: {amount: serverTotal, currency: targetCurrency}});
+          return;
+        }
+
+        for (const group of checkoutGroups) {
+          let amount = 0;
+          let currency = targetCurrency;
+          const sourceCurrencies = new Set();
+
+          for (const item of group.items) {
+            const sourceCurrency = item.currency?.currency_acronym;
+            sourceCurrencies.add(sourceCurrency || '');
+            let itemAmount = Number(item[group.priceKey] || 0);
+            if (!Number.isFinite(itemAmount) || (itemAmount && !sourceCurrency)) {
+              throw new Error('Invalid cart amount');
+            }
+
+            if (sourceCurrency && targetCurrency && sourceCurrency !== targetCurrency) {
+              const rateKey = `${sourceCurrency}:${targetCurrency}`;
+              if (!rateCache.has(rateKey)) {
+                const response = await axios.get(
+                  `${API.boongo_url}/currencies_rate/find_currency_rate/${sourceCurrency}/${targetCurrency}`,
+                  {headers: h},
+                );
+                const rate = Number(response.data?.data?.rate);
+                if (!Number.isFinite(rate) || rate <= 0) throw new Error('Invalid currency rate');
+                rateCache.set(rateKey, rate);
+              }
+              itemAmount *= rateCache.get(rateKey);
+            }
+            amount += itemAmount;
+          }
+
+          if (!targetCurrency) {
+            const knownCurrencies = [...sourceCurrencies].filter(Boolean);
+            currency = knownCurrencies.length === 1 ? knownCurrencies[0] : '';
+            if (knownCurrencies.length > 1) throw new Error('Missing target currency');
+          }
+          totals[group.key] = {amount, currency};
+        }
+        const currencies = new Set(Object.values(totals).map(total => total.currency));
+        if (currencies.size !== 1) throw new Error('Mixed cart currencies');
+        totals.grand = {
+          amount: Object.values(totals).reduce((sum, total) => sum + total.amount, 0),
+          currency: [...currencies][0],
+        };
+        if (active) setCheckoutTotals(totals);
+      } catch {
+        if (active) setCheckoutTotals({});
+      } finally {
+        if (active) setCheckoutTotalsLoading(false);
+      }
+    };
+
+    convertTotals();
+    return () => {
+      active = false;
+    };
+  }, [checkoutGroups, h, tab, u?.currency?.currency_acronym, u?.totals_unpaid?.grand_totals]);
   const render = ({item}) =>
     tab === 'works' ? (
       <WorkItemComponent item={item} />
@@ -252,44 +329,39 @@ export default function AccountScreen() {
         ListHeaderComponent={
           tab === 'cart' && data.length ? (
             <View style={s.checkoutGroups}>
-              {checkoutGroups.map(group => (
-                <View
-                  key={group.key}
-                  style={[s.summary, {backgroundColor: C.light_primary}]}>
-                  <View style={s.summaryCopy}>
-                    <Text style={[s.summaryLabel, {color: C.dark}]}>
-                      {group.label}
-                    </Text>
-                    <Text style={[s.summaryAmount, {color: C.black}]}>
-                      {group.amount} {u.currency?.currency_acronym}
-                    </Text>
-                    <Text style={[s.summaryCount, {color: C.dark}]}>
-                      {group.items.length}{' '}
-                      {group.items.length > 1 ? 'éléments' : 'élément'}
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    disabled={!group.cartId}
-                    onPress={() =>
-                      n.navigate('MobileSubscribe', {
-                        amount: group.amount,
-                        currency: u.currency?.currency_acronym,
-                        cartId: group.cartId,
-                        entity: group.key,
-                      })
-                    }
-                    style={[
-                      s.pay,
-                      {
-                        backgroundColor: C.primary,
-                        opacity: group.cartId ? 1 : 0.45,
-                      },
-                    ]}>
-                    <Text style={s.payText}>Payer</Text>
-                    <Icon name="arrow-right" color="#fff" size={18} />
-                  </TouchableOpacity>
+              <View style={[s.summary, {backgroundColor: C.light_primary}]}>
+                <View style={s.summaryCopy}>
+                  <Text style={[s.summaryLabel, {color: C.dark}]}>Total du panier</Text>
+                  <Text style={[s.summaryAmount, {color: C.black}]}>
+                    {checkoutTotalsLoading
+                      ? 'Conversion…'
+                      : checkoutTotals.grand
+                        ? formatPaymentAmount(checkoutTotals.grand.amount, checkoutTotals.grand.currency)
+                        : 'Montant calculé au paiement'}
+                  </Text>
+                  <Text style={[s.summaryCount, {color: C.dark}]}>
+                    {data.length} {data.length > 1 ? 'éléments' : 'élément'}
+                  </Text>
                 </View>
-              ))}
+                <TouchableOpacity
+                  disabled={checkoutTotalsLoading}
+                  onPress={() =>
+                    n.navigate('MobileSubscribe', {
+                      amount: checkoutTotals.grand?.amount,
+                      currency: checkoutTotals.grand?.currency,
+                    })
+                  }
+                  style={[
+                    s.pay,
+                    {
+                      backgroundColor: C.primary,
+                      opacity: checkoutTotalsLoading ? 0.45 : 1,
+                    },
+                  ]}>
+                  <Text style={s.payText}>Payer</Text>
+                  <Icon name="arrow-right" color="#fff" size={18} />
+                </TouchableOpacity>
+              </View>
             </View>
           ) : null
         }
