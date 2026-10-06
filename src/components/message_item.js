@@ -13,7 +13,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import Video from './video_player';
 import { API, IMAGE_SIZE, PADDING, TEXT_SIZE } from '../tools/constants';
 import useColors from '../hooks/useColors';
-import AudioPlayer from '../screens/audio_screen';
+import SoundPlayer from './sound_player';
 import homeStyles from '../screens/style';
 import { Button } from 'react-native-paper';
 
@@ -141,7 +141,13 @@ const MessageItem = ({ item, isOwnMessage }) => {
     const renderAudioPlayer = () => {
         if (hasAudio) {
             return item.audios.map((audio, index) => (
-                <AudioPlayer key={index} audioUrl={audio.file_url} color={COLORS.primary} />
+                <SoundPlayer
+                    key={audio.id || audio.file_url || index}
+                    audioId={audio.id || audio.file_url}
+                    audioUrl={audio.file_url}
+                    artist={[item.user?.firstname, item.user?.lastname].filter(Boolean).join(' ')}
+                    title={item.title || t('file.audio')}
+                />
             ));
         }
         return null;

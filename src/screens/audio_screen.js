@@ -2,18 +2,31 @@
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Image, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
 import HeaderComponent from './header';
+import { useMediaPlayback } from '../contexts/MediaPlaybackContext';
 import useColors from '../hooks/useColors';
 import SoundPlayer from '../components/sound_player';
 
 const AudioScreen = ({ route }) => {
   const COLORS = useColors();
-  const { audioTitle, audioAuthor, audioUrl, mediaCover } = route.params;
+  const { prepareAudio } = useMediaPlayback();
+  const { audioId, audioTitle, audioAuthor, audioUrl, mediaCover } = route.params;
+  const media = useMemo(() => ({
+    artwork: mediaCover,
+    artist: audioAuthor,
+    id: audioId || audioUrl,
+    title: audioTitle,
+    uri: audioUrl,
+  }), [audioAuthor, audioId, audioTitle, audioUrl, mediaCover]);
+
+  useEffect(() => {
+    prepareAudio(media);
+  }, [media, prepareAudio]);
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: COLORS.light }]} edges={['top']}>
@@ -30,7 +43,7 @@ const AudioScreen = ({ route }) => {
           {audioAuthor ? <Text style={[styles.author, { color: COLORS.dark }]} numberOfLines={1}>{audioAuthor}</Text> : null}
         </View>
         <View style={[styles.playerCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
-          <SoundPlayer audioUrl={audioUrl} title={audioTitle} artist={audioAuthor} artwork={mediaCover} color={COLORS.primary} />
+          <SoundPlayer audioId={audioId} audioUrl={audioUrl} title={audioTitle} artist={audioAuthor} artwork={mediaCover} />
         </View>
       </ScrollView>
     </SafeAreaView>

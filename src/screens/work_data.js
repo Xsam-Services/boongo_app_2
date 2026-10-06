@@ -242,16 +242,16 @@ const WorkDataScreen = ({ route, navigation }) => {
           <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{t('work.associated_files')}</Text>
         </View>
         {work.work_url ? renderFileRow(t('file.external_videos'), [work.work_url], url => (
-          <FileThumbnail key={url} uri={url} type="video" title={t('file.video')} onPress={() => navigation.navigate('VideoPlayer', { videoTitle: work.work_title, videoUri: url, mediaType: 'video' })} />
+          <FileThumbnail key={url} uri={url} type="video" title={t('file.video')} onPress={() => navigation.navigate('VideoPlayer', { videoId: `work-${work.id}-external-video`, videoTitle: work.work_title, videoUri: url, videoCover: coverImage, mediaType: 'video' })} />
         )) : null}
         {renderFileRow(t('file.documents'), work.documents, (file, index) => (
           <FileThumbnail key={file.id || file.file_url} type="document" title={`${t('file.document')} ${index + 1}`} onPress={() => navigation.navigate('PDFViewer', { docTitle: work.work_title, docUri: file.file_url, curPage: 1 })} />
         ))}
         {renderFileRow(t('file.audios'), work.audios, (file, index) => (
-          <FileThumbnail key={file.id || file.file_url} type="audio" title={`${t('file.audio')} ${index + 1}`} onPress={() => navigation.navigate('Audio', { audioTitle: work.work_title, audioUrl: file.file_url, mediaCover: coverImage, mediaAuthor: work.author })} />
+          <FileThumbnail key={file.id || file.file_url} type="audio" title={`${t('file.audio')} ${index + 1}`} onPress={() => navigation.navigate('Audio', { audioId: file.id || file.file_url, audioTitle: work.work_title, audioUrl: file.file_url, mediaCover: coverImage, audioAuthor: work.author })} />
         ))}
         {renderFileRow(`${t('file.photos')} / ${t('file.videos')}`, gallerySources, (file, index) => (
-          <FileThumbnail key={file.id || file.uri} uri={file.uri} type={file.type} title={`${t('file.image')} ${index + 1}`} onPress={() => navigation.navigate('VideoPlayer', { videoTitle: work.work_title, videoUri: file.uri, mediaType: file.type })} />
+          <FileThumbnail key={file.id || file.uri} uri={file.uri} type={file.type} title={`${t('file.image')} ${index + 1}`} onPress={() => navigation.navigate('VideoPlayer', { videoId: file.id || file.uri, videoTitle: work.work_title, videoUri: file.uri, videoCover: coverImage, mediaType: file.type })} />
         ))}
       </View>
     );

@@ -2,13 +2,14 @@
  * @author Vander Otis
  * @see https://github.com/vanotis720
  */
-import React, { useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Slider from '@react-native-community/slider';
-import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
+import { useMediaPlayback } from '../contexts/MediaPlaybackContext';
 import useColors from '../hooks/useColors';
+import { getMediaIdentity } from '../utils/mediaProgress';
 
 const formatDuration = (seconds) => {
   if (!Number.isFinite(seconds) || seconds < 0) return '00:00';
@@ -22,51 +23,30 @@ const formatDuration = (seconds) => {
     : `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 };
 
-const SoundPlayer = ({ audioUrl, artwork, artist, title }) => {
+const SoundPlayer = ({ audioId, audioUrl, artwork, artist, title }) => {
   const COLORS = useColors();
-  const player = useAudioPlayer({ uri: decodeURIComponent(audioUrl), name: title, artist, artwork });
-  const status = useAudioPlayerStatus(player);
-  const position = status.currentTime || 0;
-  const duration = status.duration || 0;
-
-  useEffect(() => {
-    const configureAudio = async () => {
-      try {
-        await setAudioModeAsync({
-          playsInSilentMode: true,
-          shouldPlayInBackground: true,
-          interruptionMode: 'doNotMix',
-        });
-      } catch (error) {
-
-      }
-    };
-
-    configureAudio();
-  }, []);
+  const { activeMedia, playAudio, playPause, seekBy, seekTo, status } = useMediaPlayback();
+  const media = useMemo(() => ({ id: audioId || audioUrl, uri: audioUrl, title, artist, artwork }), [artist, artwork, audioId, audioUrl, title]);
+  const isActive = activeMedia?.kind === 'audio' && getMediaIdentity(activeMedia) === getMediaIdentity(media);
+  const position = isActive ? status.currentTime || 0 : 0;
+  const duration = isActive ? status.duration || 0 : 0;
+  const isPlaying = isActive && status.playing;
 
   const togglePlayback = () => {
-    if (status.playing) {
-      player.pause();
-    } else {
-      player.play();
-    }
-  };
-
-  const seekBy = (seconds) => {
-    player.seekTo(Math.max(0, Math.min(duration, position + seconds)));
+    if (isActive) playPause();
+    else playAudio(media);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.transport}>
-        <Pressable accessibilityLabel="Reculer de 10 secondes" onPress={() => seekBy(-10)} style={[styles.secondaryButton, { backgroundColor: COLORS.light_secondary }]}>
+        <Pressable accessibilityLabel="Reculer de 10 secondes" disabled={!isActive} onPress={() => seekBy(-10)} style={[styles.secondaryButton, !isActive && styles.disabledButton, { backgroundColor: COLORS.light_secondary }]}>
           <Icon name="rewind-10" size={23} color={COLORS.dark} />
         </Pressable>
-        <Pressable accessibilityLabel={status.playing ? 'Pause' : 'Lecture'} onPress={togglePlayback} style={[styles.playButton, { backgroundColor: COLORS.primary }]}>
-          <Icon name={status.playing ? 'pause' : 'play'} size={31} color="#ffffff" />
+        <Pressable accessibilityLabel={isPlaying ? 'Pause' : 'Lecture'} onPress={togglePlayback} style={[styles.playButton, { backgroundColor: COLORS.primary }]}>
+          <Icon name={isPlaying ? 'pause' : 'play'} size={31} color="#ffffff" />
         </Pressable>
-        <Pressable accessibilityLabel="Avancer de 10 secondes" onPress={() => seekBy(10)} style={[styles.secondaryButton, { backgroundColor: COLORS.light_secondary }]}>
+        <Pressable accessibilityLabel="Avancer de 10 secondes" disabled={!isActive} onPress={() => seekBy(10)} style={[styles.secondaryButton, !isActive && styles.disabledButton, { backgroundColor: COLORS.light_secondary }]}>
           <Icon name="fast-forward-10" size={23} color={COLORS.dark} />
         </Pressable>
       </View>
@@ -78,7 +58,7 @@ const SoundPlayer = ({ audioUrl, artwork, artist, title }) => {
         minimumTrackTintColor={COLORS.primary}
         maximumTrackTintColor={COLORS.dark_light}
         thumbTintColor={COLORS.primary}
-        onSlidingComplete={(value) => player.seekTo(value)}
+        onSlidingComplete={seekTo}
         style={styles.slider}
       />
       <View style={styles.timeRow}>
@@ -93,6 +73,7 @@ export default SoundPlayer;
 
 const styles = StyleSheet.create({
   container: { paddingHorizontal: 18, paddingVertical: 18 },
+  disabledButton: { opacity: 0.45 },
   playButton: { alignItems: 'center', borderRadius: 32, height: 64, justifyContent: 'center', width: 64 },
   secondaryButton: { alignItems: 'center', borderRadius: 22, height: 44, justifyContent: 'center', width: 44 },
   slider: { height: 32, marginTop: 14, width: '100%' },

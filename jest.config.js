@@ -1,3 +1,4 @@
 module.exports = {
-  preset: 'react-native',
+  preset: 'jest-expo',
+  setupFiles: ['<rootDir>/jest.setup.js'],
 };
