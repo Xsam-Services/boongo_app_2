@@ -2,6 +2,17 @@ const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.avi', '.webm', '.mkv', '.m3u8', '.mp
 
 export const isVideoFile = url => VIDEO_EXTENSIONS.some(extension => url?.toLowerCase().includes(extension));
 
+export const formatDuration = seconds => {
+  if (!Number.isFinite(seconds) || seconds <= 0) return '';
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+  const pad = value => String(value).padStart(2, '0');
+
+  return hours > 0 ? `${hours}:${pad(minutes)}:${pad(secs)}` : `${minutes}:${pad(secs)}`;
+};
+
 const identityOf = media => String(media?.id || media?.uri || 'unknown');
 
 const parseDuration = value => {
@@ -32,6 +43,9 @@ const compareById = (first, second) => {
 const toItem = (file, index, kind, work, labels, workCover) => {
   const partTitle = typeof file.part_title === 'string' ? file.part_title.trim() : '';
   const fallbackLabel = kind === 'audio' ? labels.audio : labels.video;
+  // The API fills file_name with the work title when none is given, which would label every item identically.
+  const fromFileName = fileNameTitle(file.file_name);
+  const fileNameIsWorkTitle = fromFileName.toLowerCase() === String(work?.work_title || '').trim().toLowerCase();
 
   return {
     artist: work?.author || '',
@@ -40,7 +54,7 @@ const toItem = (file, index, kind, work, labels, workCover) => {
     id: String(file.id || file.file_url),
     kind,
     partTitle,
-    title: partTitle || fileNameTitle(file.file_name) || `${fallbackLabel} ${index + 1}`,
+    title: partTitle || (fileNameIsWorkTitle ? '' : fromFileName) || `${fallbackLabel} ${index + 1}`,
     uri: file.file_url,
     workId: work?.id,
   };

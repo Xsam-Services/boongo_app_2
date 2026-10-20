@@ -12,22 +12,11 @@ import { AuthContext } from '../contexts/AuthContext';
 import { useMediaPlayback } from '../contexts/MediaPlaybackContext';
 import { API } from '../tools/constants';
 import { sanitizeImageUri } from '../tools/image_source';
-import { buildCollections } from '../utils/mediaCollection';
+import { buildCollections, formatDuration } from '../utils/mediaCollection';
 import useColors from '../hooks/useColors';
 import HeaderComponent from './header';
 
 const getLanguage = () => RNLocalize.getLocales()[0]?.languageCode || 'fr';
-
-const formatDuration = seconds => {
-  if (!Number.isFinite(seconds) || seconds <= 0) return '';
-
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
-  const pad = value => String(value).padStart(2, '0');
-
-  return hours > 0 ? `${hours}:${pad(minutes)}:${pad(secs)}` : `${minutes}:${pad(secs)}`;
-};
 
 const MediaCollectionScreen = ({ navigation, route }) => {
   const COLORS = useColors();

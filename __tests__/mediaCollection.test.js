@@ -1,4 +1,4 @@
-import { buildCollections, isCollection, isVideoFile, resolveQueuePosition } from '../src/utils/mediaCollection';
+import { buildCollections, formatDuration, isCollection, isVideoFile, resolveQueuePosition } from '../src/utils/mediaCollection';
 
 const work = {
   id: 7,
@@ -43,6 +43,20 @@ describe('buildCollections', () => {
   });
 });
 
+describe('buildCollections titles', () => {
+  it('ignores a file name that only repeats the work title', () => {
+    const { videoEpisodes } = buildCollections({
+      work_title: '[TEST] Série vidéo',
+      images: [
+        { id: 1, file_url: 'https://cdn/e1.mp4', file_name: '[TEST] Série vidéo' },
+        { id: 2, file_url: 'https://cdn/e2.mp4', file_name: '[TEST] série vidéo' },
+      ],
+    });
+
+    expect(videoEpisodes.map(episode => episode.title)).toEqual(['Épisode 1', 'Épisode 2']);
+  });
+});
+
 describe('isVideoFile', () => {
   it('detects streaming and container formats', () => {
     expect(isVideoFile('https://cdn/a.M3U8?token=1')).toBe(true);
@@ -64,5 +78,14 @@ describe('resolveQueuePosition', () => {
     expect(resolveQueuePosition(items, { id: '9' }).index).toBe(-1);
     expect(resolveQueuePosition(items, null).total).toBe(0);
     expect(resolveQueuePosition([], { id: '1' }).index).toBe(-1);
+  });
+});
+
+describe('formatDuration', () => {
+  it('formats minutes and hours, and hides unknown durations', () => {
+    expect(formatDuration(65)).toBe('1:05');
+    expect(formatDuration(3725)).toBe('1:02:05');
+    expect(formatDuration(0)).toBe('');
+    expect(formatDuration(NaN)).toBe('');
   });
 });

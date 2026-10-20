@@ -15,13 +15,13 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
 import HeaderComponent from './header';
 import { useMediaPlayback } from '../contexts/MediaPlaybackContext';
-import { isVideoFile } from '../utils/mediaCollection';
+import { formatDuration, isVideoFile } from '../utils/mediaCollection';
 import useColors from '../hooks/useColors';
 
 const VideoPlayerScreen = ({ route }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
-  const { activeMedia, hasNext, hasPrevious, next, pause, playVideo, previous, queue, queueIndex, status, videoPlayer } = useMediaPlayback();
+  const { activeMedia, hasNext, hasPrevious, next, pause, playQueue, playVideo, previous, queue, queueIndex, status, videoPlayer } = useMediaPlayback();
   const { mediaType, videoCover, videoId, videoTitle: routeVideoTitle, videoUri } = route.params;
   const { width } = Dimensions.get('window');
   const [youtubePlaying, setYoutubePlaying] = useState(false);
@@ -150,6 +150,30 @@ const VideoPlayerScreen = ({ route }) => {
             </TouchableOpacity>
           </View>
         ) : null}
+        {inQueue ? (
+          <View style={[styles.playlist, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
+            <View style={styles.playlistHeader}>
+              <Icon name="playlist-play" size={22} color={COLORS.primary} />
+              <Text style={[styles.playlistTitle, { color: COLORS.black }]}>{t('media.series')} · {t('media.episodes_count', { count: queue.length })}</Text>
+            </View>
+            {queue.map((episode, index) => {
+              const isCurrent = index === queueIndex;
+              const duration = formatDuration(episode.duration);
+              return (
+                <TouchableOpacity key={episode.id} accessibilityRole="button" accessibilityState={{ selected: isCurrent }} activeOpacity={0.78} onPress={() => !isCurrent && playQueue(queue, index)} style={[styles.episodeRow, { borderColor: COLORS.light_secondary }, isCurrent && { backgroundColor: COLORS.light_primary }]}>
+                  {episode.artwork ? <Image source={{ uri: episode.artwork }} style={styles.episodeThumb} resizeMode="cover" /> : (
+                    <View style={[styles.episodeThumb, styles.episodeThumbFallback, { backgroundColor: COLORS.light_primary }]}><Icon name="play-circle-outline" size={22} color={COLORS.primary} /></View>
+                  )}
+                  <View style={styles.episodeCopy}>
+                    <Text numberOfLines={2} style={[styles.episodeTitle, { color: isCurrent ? COLORS.primary : COLORS.black }]}>{index + 1}. {episode.title}</Text>
+                    {isCurrent ? <Text style={[styles.episodeMeta, { color: COLORS.primary }]}>{t('media.playing')}</Text> : duration ? <Text style={[styles.episodeMeta, { color: COLORS.dark }]}>{duration}</Text> : null}
+                  </View>
+                  <Icon name={isCurrent ? (status.playing ? 'equalizer' : 'pause-circle-outline') : 'play-circle-outline'} size={24} color={isCurrent ? COLORS.primary : COLORS.dark} />
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        ) : null}
         <Text style={[styles.hint, { color: COLORS.dark }]}>{isVideo ? t('media.description') : 'Pincez l’image pour zoomer.'}</Text>
       </ScrollView>
     </SafeAreaView>
@@ -176,6 +200,15 @@ const styles = StyleSheet.create({
   episodeButton: { alignItems: 'center', borderRadius: 16, borderWidth: 1, flexDirection: 'row', minHeight: 40, paddingHorizontal: 10 },
   episodeButtonDisabled: { opacity: 0.4 },
   episodeButtonText: { fontSize: 12, fontWeight: '800', marginHorizontal: 4 },
+  playlist: { borderRadius: 20, borderWidth: 1, marginTop: 14, overflow: 'hidden' },
+  playlistHeader: { alignItems: 'center', flexDirection: 'row', padding: 14 },
+  playlistTitle: { fontSize: 15, fontWeight: '800', marginLeft: 8 },
+  episodeRow: { alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth, flexDirection: 'row', paddingHorizontal: 14, paddingVertical: 10 },
+  episodeThumb: { borderRadius: 10, height: 48, width: 72 },
+  episodeThumbFallback: { alignItems: 'center', justifyContent: 'center' },
+  episodeCopy: { flex: 1, marginHorizontal: 12 },
+  episodeTitle: { fontSize: 14, fontWeight: '700', lineHeight: 19 },
+  episodeMeta: { fontSize: 12, marginTop: 2 },
   episodePosition: { fontSize: 12, fontWeight: '700' },
   hint: { fontSize: 13, lineHeight: 19, marginTop: 14, textAlign: 'center' },
   youtubeControl: { alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.72)', borderRadius: 22, bottom: 10, height: 44, justifyContent: 'center', position: 'absolute', right: 10, width: 44 },
