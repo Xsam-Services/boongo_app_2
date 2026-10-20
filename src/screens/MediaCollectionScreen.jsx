@@ -63,7 +63,8 @@ const MediaCollectionScreen = ({ navigation, route }) => {
   const isPrivate = Number(work?.is_public) === 0;
   const hasAccessPass = userInfo.has_valid_subscription || userInfo.has_active_code;
   const hasPaidConsultation = userInfo.valid_consultations?.some(consultation => consultation.id === work?.id);
-  const canPlay = Boolean(hasAccessPass && (!isPrivate || hasPaidConsultation));
+  // The owner previewing a work being published does not need a subscription to check it.
+  const canPlay = Boolean(route.params?.preview || (hasAccessPass && (!isPrivate || hasPaidConsultation)));
 
   const openDetails = () => navigation.navigate('WorkData', { itemId });
 

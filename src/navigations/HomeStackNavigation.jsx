@@ -32,6 +32,7 @@ import PDFViewerScreen from '../screens/pdf_viewer';
 import AudioScreen from '../screens/audio_screen';
 import VideoPlayerScreen from '../screens/video_screen';
 import MediaCollectionScreen from '../screens/MediaCollectionScreen';
+import WorkFilesScreen from '../screens/WorkFilesScreen';
 import SubscriptionScreen from '../screens/subscriptions';
 import MobileSubscribeScreen from '../screens/subscribe_mobile';
 import BankCardSubscribeScreen from '../screens/subscribe_bank_card';
@@ -70,6 +71,7 @@ export const HomeStackNavigation = () => {
             <Stack.Screen name='Event' component={EventScreen} />
             <Stack.Screen name='Quiz' component={QuizScreen} />
             <Stack.Screen name='AddWork' component={AddWorkScreen} />
+            <Stack.Screen name='WorkFiles' component={WorkFilesScreen} />
             <Stack.Screen name='Book' component={BookScreen} />
             <Stack.Screen name='Journal' component={JournalScreen} />
             <Stack.Screen name='Mapping' component={MappingScreen} />
