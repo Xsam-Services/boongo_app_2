@@ -339,7 +339,22 @@
         "title": "Kotanga média",
         "description": "Ez’otanga...",
         "unavailable": "Video oyo ezali disponible te mpo na sik’oyo.",
-        "retry": "Meka lisusu"
+        "retry": "Meka lisusu",
+        "album": "Album",
+        "series": "Série",
+        "track": "Loyembo",
+        "episode": "Épisode",
+        "tracks_count": "Miyembo {{count}}",
+        "episodes_count": "Ba épisode {{count}}",
+        "play_all": "Tanga nyonso",
+        "previous": "Ya liboso",
+        "next": "Oyo elandi",
+        "previous_episode": "Épisode ya liboso",
+        "next_episode": "Épisode elandi",
+        "position": "{{current}} / {{total}}",
+        "locked": "Komisalisa to kofungola mosala oyo mpo na kotanga yango.",
+        "details": "Tala makambo",
+        "playing": "Ezali kotanga"
     },
     "navigation": {
         "home": {

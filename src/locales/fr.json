@@ -339,7 +339,22 @@
         "title": "Lecture média",
         "description": "En cours...",
         "unavailable": "Cette vidéo n’est pas disponible pour le moment.",
-        "retry": "Réessayer"
+        "retry": "Réessayer",
+        "album": "Album",
+        "series": "Série",
+        "track": "Piste",
+        "episode": "Épisode",
+        "tracks_count": "{{count}} pistes",
+        "episodes_count": "{{count}} épisodes",
+        "play_all": "Tout lire",
+        "previous": "Précédent",
+        "next": "Suivant",
+        "previous_episode": "Épisode précédent",
+        "next_episode": "Épisode suivant",
+        "position": "{{current}} / {{total}}",
+        "locked": "Abonnez-vous ou débloquez cette œuvre pour la lire.",
+        "details": "Voir les détails",
+        "playing": "En lecture"
     },
     "navigation": {
         "home": {

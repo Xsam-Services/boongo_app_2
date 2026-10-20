@@ -171,4 +171,94 @@ describe('MediaPlaybackProvider', () => {
     );
     expect(api.activeMedia).toBeNull();
   });
+
+  describe('queue', () => {
+    const tracks = [1, 2, 3].map(number => ({
+      id: `track-${number}`,
+      kind: 'audio',
+      title: `Piste ${number}`,
+      uri: `https://example.test/track-${number}.mp3`,
+    }));
+    const rerender = () => ReactTestRenderer.act(async () => {
+      renderer.update(
+        <MediaPlaybackProvider userId={7}>
+          <Probe onValue={value => { api = value; }} />
+        </MediaPlaybackProvider>,
+      );
+    });
+
+    test('plays a queue from a start index and exposes its position', async () => {
+      await renderProvider();
+
+      await ReactTestRenderer.act(async () => api.playQueue(tracks, 1));
+
+      expect(api.activeMedia).toMatchObject({ id: 'track-2', kind: 'audio' });
+      expect(api.queue).toHaveLength(3);
+      expect(api.queueIndex).toBe(1);
+      expect(api.hasNext).toBe(true);
+    });
+
+    test('moves to the next and previous items', async () => {
+      await renderProvider();
+      await ReactTestRenderer.act(async () => api.playQueue(tracks, 0));
+
+      await ReactTestRenderer.act(async () => api.next());
+      expect(api.activeMedia.id).toBe('track-2');
+
+      await ReactTestRenderer.act(async () => api.previous());
+      expect(api.activeMedia.id).toBe('track-1');
+    });
+
+    test('restarts the current item instead of going back after the first seconds', async () => {
+      await renderProvider();
+      await ReactTestRenderer.act(async () => api.playQueue(tracks, 1));
+      mockAudioPlayer.currentTime = 40;
+
+      await ReactTestRenderer.act(async () => api.previous());
+
+      expect(api.activeMedia.id).toBe('track-2');
+      expect(mockAudioPlayer.seekTo).toHaveBeenCalledWith(0);
+    });
+
+    test('advances automatically when an audio item finishes', async () => {
+      await renderProvider();
+      await ReactTestRenderer.act(async () => api.playQueue(tracks, 0));
+
+      mockAudioStatus.didJustFinish = true;
+      await rerender();
+
+      expect(api.activeMedia.id).toBe('track-2');
+    });
+
+    test('stops at the end of the queue', async () => {
+      await renderProvider();
+      await ReactTestRenderer.act(async () => api.playQueue(tracks, 2));
+
+      mockAudioStatus.didJustFinish = true;
+      await rerender();
+
+      expect(api.activeMedia.id).toBe('track-3');
+      expect(api.hasNext).toBe(false);
+    });
+
+    test('advances to the next video episode when playback ends', async () => {
+      await renderProvider();
+      const episodes = [1, 2].map(number => ({ id: `ep-${number}`, kind: 'video', title: `Ep ${number}`, uri: `https://example.test/ep-${number}.mp4` }));
+      await ReactTestRenderer.act(async () => api.playQueue(episodes, 0));
+
+      await ReactTestRenderer.act(async () => mockVideoListeners.playToEnd());
+
+      expect(api.activeMedia.id).toBe('ep-2');
+    });
+
+    test('ignores a queue that does not contain the active media', async () => {
+      await renderProvider();
+      await ReactTestRenderer.act(async () => api.playQueue(tracks, 0));
+
+      await ReactTestRenderer.act(async () => api.playAudio(audio));
+
+      expect(api.queue).toEqual([]);
+      expect(api.hasNext).toBe(false);
+    });
+  });
 });

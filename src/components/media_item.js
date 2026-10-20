@@ -2,7 +2,7 @@
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +14,7 @@ import Toast from 'react-native-toast-message';
 import { AuthContext } from '../contexts/AuthContext';
 import useColors from '../hooks/useColors';
 import { API } from '../tools/constants';
+import { buildCollections, isCollection } from '../utils/mediaCollection';
 
 const getUserLike = (likes, userId) => (likes || []).find((like) =>
   Number(like.user_id ?? like.user?.id) === Number(userId)
@@ -27,6 +28,9 @@ const MediaItemComponent = ({ item }) => {
   const isAd = item.id === 'ad';
   const isFavorite = userInfo?.favorite_works?.some((work) => work.id === item.id);
   const imageUri = item.photo_url || item.images?.find((image) => image.type?.alias === 'image_file')?.file_url || item.images?.find((image) => image.file_url)?.file_url;
+  const collections = useMemo(() => buildCollections(item), [item]);
+  const hasAlbum = collections.audioTracks.length > 1;
+  const hasSeries = collections.videoEpisodes.length > 1;
   const [hasLiked, setHasLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(item.likes?.length || 0);
   const [likeId, setLikeId] = useState(null);
@@ -119,7 +123,7 @@ const MediaItemComponent = ({ item }) => {
     );
   }
 
-  const openDetails = () => navigation.navigate('WorkData', { itemId: item.id });
+  const openDetails = () => navigation.navigate(isCollection(collections) ? 'MediaCollection' : 'WorkData', { itemId: item.id });
 
   return (
     <TouchableOpacity activeOpacity={0.84} style={[styles.card, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]} onPress={openDetails}>
@@ -133,6 +137,8 @@ const MediaItemComponent = ({ item }) => {
           <View style={styles.metaRow}>
             <Icon name="play-box-multiple-outline" size={15} color={COLORS.primary} />
             <Text style={[styles.meta, { color: COLORS.primary }]}>Média</Text>
+            {hasAlbum ? <Text style={[styles.badge, { backgroundColor: COLORS.light_primary, color: COLORS.primary }]}>{t('media.album')} · {t('media.tracks_count', { count: collections.audioTracks.length })}</Text> : null}
+            {hasSeries ? <Text style={[styles.badge, { backgroundColor: COLORS.light_primary, color: COLORS.primary }]}>{t('media.series')} · {t('media.episodes_count', { count: collections.videoEpisodes.length })}</Text> : null}
           </View>
           <Text style={[styles.title, { color: COLORS.black }]} numberOfLines={2}>{item.work_title}</Text>
           {item.work_content ? <Text style={[styles.description, { color: COLORS.dark }]} numberOfLines={2}>{item.work_content}</Text> : null}
@@ -179,6 +185,7 @@ export default MediaItemComponent;
 
 const styles = StyleSheet.create({
   actions: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
+  badge: { borderRadius: 8, fontSize: 10, fontWeight: '800', marginLeft: 6, overflow: 'hidden', paddingHorizontal: 6, paddingVertical: 2 },
   adCard: { borderRadius: 20, flexDirection: 'row', marginBottom: 10, marginHorizontal: 16, minHeight: 116, overflow: 'hidden', padding: 12 },
   adCopy: { flex: 1, justifyContent: 'center' },
   adImage: { borderRadius: 14, height: 92, marginRight: 12, width: 86 },
@@ -198,6 +205,6 @@ const styles = StyleSheet.create({
   likeButton: { alignItems: 'center', borderRadius: 17, height: 34, justifyContent: 'center', width: 34 },
   likeCount: { fontSize: 12, fontWeight: '700', marginLeft: 5 },
   meta: { fontSize: 12, fontWeight: '800', marginLeft: 5 },
-  metaRow: { alignItems: 'center', flexDirection: 'row', marginBottom: 5 },
+  metaRow: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', marginBottom: 5 },
   title: { fontSize: 16, fontWeight: '800', lineHeight: 21 },
 });

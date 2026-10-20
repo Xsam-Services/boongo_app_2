@@ -31,6 +31,7 @@ import NewsDataScreen from '../screens/news_data';
 import PDFViewerScreen from '../screens/pdf_viewer';
 import AudioScreen from '../screens/audio_screen';
 import VideoPlayerScreen from '../screens/video_screen';
+import MediaCollectionScreen from '../screens/MediaCollectionScreen';
 import SubscriptionScreen from '../screens/subscriptions';
 import MobileSubscribeScreen from '../screens/subscribe_mobile';
 import BankCardSubscribeScreen from '../screens/subscribe_bank_card';
@@ -75,6 +76,7 @@ export const HomeStackNavigation = () => {
             <Stack.Screen name='Media' component={MediaScreen} />
             <Stack.Screen name='NewsData' component={NewsDataScreen} />
             <Stack.Screen name='WorkData' component={WorkDataScreen} />
+            <Stack.Screen name='MediaCollection' component={MediaCollectionScreen} />
             <Stack.Screen name='PDFViewer' component={PDFViewerScreen} />
             <Stack.Screen name='Audio' component={AudioScreen} />
             <Stack.Screen name='VideoPlayer' component={VideoPlayerScreen} />

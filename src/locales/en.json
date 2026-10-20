@@ -339,7 +339,22 @@
         "title": "Media reading",
         "description": "In progress...",
         "unavailable": "This video is currently unavailable.",
-        "retry": "Try again"
+        "retry": "Try again",
+        "album": "Album",
+        "series": "Series",
+        "track": "Track",
+        "episode": "Episode",
+        "tracks_count": "{{count}} tracks",
+        "episodes_count": "{{count}} episodes",
+        "play_all": "Play all",
+        "previous": "Previous",
+        "next": "Next",
+        "previous_episode": "Previous episode",
+        "next_episode": "Next episode",
+        "position": "{{current}} / {{total}}",
+        "locked": "Subscribe or unlock this work to play it.",
+        "details": "View details",
+        "playing": "Now playing"
     },
     "navigation": {
         "home": {

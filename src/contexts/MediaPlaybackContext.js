@@ -3,6 +3,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { useVideoPlayer } from 'expo-video';
 
+import { resolveQueuePosition } from '../utils/mediaCollection';
 import { getMediaIdentity, getMediaProgressKey, getResumePosition, serializeMediaProgress } from '../utils/mediaProgress';
 
 const EMPTY_VIDEO_STATUS = {
@@ -38,6 +39,10 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
   const activeMediaRef = useRef(null);
   const loadSequenceRef = useRef(0);
   const completedMediaRef = useRef(null);
+  const finishHandledRef = useRef(false);
+  const queueRef = useRef([]);
+  const advanceRef = useRef(null);
+  const [queue, setQueueState] = useState([]);
 
   const updateActiveMedia = useCallback(media => {
     activeMediaRef.current = media;
@@ -188,6 +193,36 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
     seekTo((Number(position) || 0) + seconds);
   }, [audioPlayer, seekTo, videoPlayer]);
 
+  const setQueue = useCallback(items => {
+    const nextQueue = Array.isArray(items) ? items : [];
+    queueRef.current = nextQueue;
+    setQueueState(nextQueue);
+  }, []);
+
+  const startQueueItem = useCallback(item => {
+    if (!item) return;
+    if (item.kind === 'video') playVideo(item);
+    else playAudio(item);
+  }, [playAudio, playVideo]);
+
+  const playQueue = useCallback((items, startIndex = 0) => {
+    setQueue(items);
+    startQueueItem(items?.[startIndex]);
+  }, [setQueue, startQueueItem]);
+
+  const next = useCallback(() => {
+    const { next: nextItem } = resolveQueuePosition(queueRef.current, activeMediaRef.current);
+    startQueueItem(nextItem);
+  }, [startQueueItem]);
+
+  const previous = useCallback(() => {
+    const media = activeMediaRef.current;
+    const position = Number(media?.kind === 'video' ? videoPlayer.currentTime : audioPlayer.currentTime) || 0;
+    const { previous: previousItem } = resolveQueuePosition(queueRef.current, media);
+    if (previousItem && position <= 3) startQueueItem(previousItem);
+    else seekTo(0);
+  }, [audioPlayer, seekTo, startQueueItem, videoPlayer]);
+
   const stop = useCallback(() => {
     loadSequenceRef.current += 1;
     const media = activeMediaRef.current;
@@ -223,6 +258,7 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
     });
     const endSubscription = videoPlayer.addListener('playToEnd', () => {
       setVideoStatus(current => ({ ...current, currentTime: current.duration, playing: false }));
+      advanceRef.current?.();
     });
 
     return () => {
@@ -255,19 +291,33 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
   }, [activeMedia, audioStatus.playing, persistAudioProgress]);
 
   useEffect(() => {
-    if (!audioStatus.didJustFinish || activeMedia?.kind !== 'audio') return;
+    if (!audioStatus.didJustFinish) {
+      finishHandledRef.current = false;
+      return;
+    }
+    if (finishHandledRef.current || activeMedia?.kind !== 'audio') return;
+    finishHandledRef.current = true;
     const mediaId = getMediaIdentity(activeMedia);
     if (completedMediaRef.current === mediaId) return;
 
     completedMediaRef.current = mediaId;
     AsyncStorage.removeItem(getMediaProgressKey(userId, activeMedia)).catch(() => {});
     audioPlayer.seekTo(0);
+    advanceRef.current?.();
   }, [activeMedia, audioPlayer, audioStatus.didJustFinish, userId]);
+
+  useEffect(() => {
+    advanceRef.current = next;
+  }, [next]);
 
   useEffect(() => () => {
     const media = activeMediaRef.current;
     if (media?.kind === 'audio') persistAudioProgress(media);
-    audioPlayer.clearLockScreenControls();
+    try {
+      audioPlayer.clearLockScreenControls();
+    } catch {
+      // The native player may already be released when the provider unmounts (e.g. dev reload).
+    }
   }, [audioPlayer, persistAudioProgress]);
 
   const status = useMemo(() => activeMedia?.kind === 'video' ? videoStatus : ({
@@ -288,19 +338,29 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
     videoStatus,
   ]);
 
+  const queuePosition = useMemo(() => resolveQueuePosition(queue, activeMedia), [activeMedia, queue]);
+
   const value = useMemo(() => ({
     activeMedia,
+    hasNext: Boolean(queuePosition.next),
+    hasPrevious: queuePosition.index >= 0,
+    next,
     pause,
     playAudio,
     playPause,
+    playQueue,
     playVideo,
     prepareAudio,
+    previous,
+    queue: queuePosition.index >= 0 ? queue : [],
+    queueIndex: queuePosition.index,
     seekBy,
     seekTo,
+    setQueue,
     status,
     stop,
     videoPlayer,
-  }), [activeMedia, pause, playAudio, playPause, playVideo, prepareAudio, seekBy, seekTo, status, stop, videoPlayer]);
+  }), [activeMedia, next, pause, playAudio, playPause, playQueue, playVideo, prepareAudio, previous, queue, queuePosition, seekBy, seekTo, setQueue, status, stop, videoPlayer]);
 
   return <MediaPlaybackContext.Provider value={value}>{children}</MediaPlaybackContext.Provider>;
 };

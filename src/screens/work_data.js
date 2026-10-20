@@ -2,7 +2,7 @@
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Linking, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NetInfo from '@react-native-community/netinfo';
@@ -15,15 +15,16 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
 import { AuthContext } from '../contexts/AuthContext';
+import { useMediaPlayback } from '../contexts/MediaPlaybackContext';
 import { API, PHONE } from '../tools/constants';
 import useColors from '../hooks/useColors';
 import HeaderComponent from './header';
 import FileThumbnail from '../components/file_thumbnail';
 import ContentImage from '../components/content_image';
 import { sanitizeImageUri } from '../tools/image_source';
+import { buildCollections, isVideoFile } from '../utils/mediaCollection';
 
 const getLanguage = () => RNLocalize.getLocales()[0]?.languageCode || 'fr';
-const isVideoFile = url => ['.mp4', '.mov', '.avi', '.webm', '.mkv'].some(extension => url?.toLowerCase().includes(extension));
 
 const WorkDataScreen = ({ route, navigation }) => {
   const COLORS = useColors();
@@ -40,6 +41,7 @@ const WorkDataScreen = ({ route, navigation }) => {
     validateConsultations,
     invalidateConsultations,
   } = useContext(AuthContext);
+  const { setQueue } = useMediaPlayback();
   const { itemId } = route.params;
   const [work, setWork] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -192,6 +194,11 @@ const WorkDataScreen = ({ route, navigation }) => {
   const isInCart = userInfo.unpaid_consultations?.some(consultation => consultation.id === work?.id);
   const canReadFiles = hasAccessPass && (!isPrivate || hasPaidConsultation);
   const coverImage = sanitizeImageUri(work?.photo_url || work?.images?.find(image => image.type?.alias === 'image_file')?.file_url || work?.images?.find(image => image.file_url)?.file_url);
+  const collections = useMemo(() => buildCollections(work, {
+    labels: { audio: t('file.audio'), video: t('file.video') },
+    workCover: coverImage,
+  }), [coverImage, t, work]);
+  const episodesById = new Map(collections.videoEpisodes.map(episode => [episode.id, episode]));
   const gallerySources = work?.images?.map(image => ({
     id: image.id,
     uri: sanitizeImageUri(image.file_url),
@@ -247,12 +254,21 @@ const WorkDataScreen = ({ route, navigation }) => {
         {renderFileRow(t('file.documents'), work.documents, (file, index) => (
           <FileThumbnail key={file.id || file.file_url} type="document" title={`${t('file.document')} ${index + 1}`} onPress={() => navigation.navigate('PDFViewer', { docTitle: work.work_title, docUri: file.file_url, curPage: 1 })} />
         ))}
-        {renderFileRow(t('file.audios'), work.audios, (file, index) => (
-          <FileThumbnail key={file.id || file.file_url} type="audio" title={`${t('file.audio')} ${index + 1}`} onPress={() => navigation.navigate('Audio', { audioId: file.id || file.file_url, audioTitle: work.work_title, audioUrl: file.file_url, mediaCover: coverImage, audioAuthor: work.author })} />
+        {renderFileRow(t('file.audios'), collections.audioTracks, (track, index) => (
+          <FileThumbnail key={track.id} type="audio" title={track.partTitle || `${t('file.audio')} ${index + 1}`} onPress={() => {
+            setQueue(collections.audioTracks);
+            navigation.navigate('Audio', { audioId: track.id, audioTitle: track.partTitle || work.work_title, audioUrl: track.uri, mediaCover: track.artwork || coverImage, audioAuthor: work.author });
+          }} />
         ))}
-        {renderFileRow(`${t('file.photos')} / ${t('file.videos')}`, gallerySources, (file, index) => (
-          <FileThumbnail key={file.id || file.uri} uri={file.uri} type={file.type} title={`${t('file.image')} ${index + 1}`} onPress={() => navigation.navigate('VideoPlayer', { videoId: file.id || file.uri, videoTitle: work.work_title, videoUri: file.uri, videoCover: coverImage, mediaType: file.type })} />
-        ))}
+        {renderFileRow(`${t('file.photos')} / ${t('file.videos')}`, gallerySources, (file, index) => {
+          const episode = file.type === 'video' ? episodesById.get(String(file.id)) : null;
+          return (
+            <FileThumbnail key={file.id || file.uri} uri={file.uri} type={file.type} title={episode?.partTitle || `${t('file.image')} ${index + 1}`} onPress={() => {
+              if (file.type === 'video') setQueue(collections.videoEpisodes);
+              navigation.navigate('VideoPlayer', { videoId: file.id || file.uri, videoTitle: episode?.partTitle || work.work_title, videoUri: file.uri, videoCover: episode?.artwork || coverImage, mediaType: file.type });
+            }} />
+          );
+        })}
       </View>
     );
   };

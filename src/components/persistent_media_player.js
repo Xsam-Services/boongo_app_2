@@ -10,7 +10,8 @@ import useColors from '../hooks/useColors';
 const PersistentMediaPlayer = ({ currentRouteName, onOpen }) => {
   const COLORS = useColors();
   const insets = useSafeAreaInsets();
-  const { activeMedia, playPause, seekBy, status, stop, videoPlayer } = useMediaPlayback();
+  const { activeMedia, hasNext, next, playPause, previous, queue, seekBy, status, stop, videoPlayer } = useMediaPlayback();
+  const inQueue = queue.length > 1;
 
   if (!activeMedia) return null;
   if (activeMedia.kind === 'audio' && currentRouteName === 'Audio') return null;
@@ -36,6 +37,11 @@ const PersistentMediaPlayer = ({ currentRouteName, onOpen }) => {
           <Pressable accessibilityLabel={status.playing ? 'Pause' : 'Lecture'} onPress={playPause} style={styles.videoButton}>
             <Icon color="#ffffff" name={status.playing ? 'pause' : 'play'} size={22} />
           </Pressable>
+          {inQueue ? (
+            <Pressable accessibilityLabel="Épisode suivant" disabled={!hasNext} onPress={next} style={[styles.videoButton, !hasNext && styles.disabled]}>
+              <Icon color="#ffffff" name="skip-next" size={22} />
+            </Pressable>
+          ) : null}
           <Pressable accessibilityLabel="Fermer le lecteur" onPress={stop} style={styles.videoButton}>
             <Icon color="#ffffff" name="close" size={22} />
           </Pressable>
@@ -59,15 +65,27 @@ const PersistentMediaPlayer = ({ currentRouteName, onOpen }) => {
           {activeMedia.artist ? <Text numberOfLines={1} style={[styles.artist, { color: COLORS.dark }]}>{activeMedia.artist}</Text> : null}
         </View>
       </Pressable>
-      <Pressable accessibilityLabel="Reculer de 10 secondes" onPress={() => seekBy(-10)} style={styles.audioButton}>
-        <Icon color={COLORS.dark} name="rewind-10" size={21} />
-      </Pressable>
+      {inQueue ? (
+        <Pressable accessibilityLabel="Piste précédente" onPress={previous} style={styles.audioButton}>
+          <Icon color={COLORS.dark} name="skip-previous" size={23} />
+        </Pressable>
+      ) : (
+        <Pressable accessibilityLabel="Reculer de 10 secondes" onPress={() => seekBy(-10)} style={styles.audioButton}>
+          <Icon color={COLORS.dark} name="rewind-10" size={21} />
+        </Pressable>
+      )}
       <Pressable accessibilityLabel={status.playing ? 'Pause' : 'Lecture'} onPress={playPause} style={[styles.playButton, { backgroundColor: COLORS.primary }]}>
         <Icon color="#ffffff" name={status.playing ? 'pause' : 'play'} size={24} />
       </Pressable>
-      <Pressable accessibilityLabel="Avancer de 10 secondes" onPress={() => seekBy(10)} style={styles.audioButton}>
-        <Icon color={COLORS.dark} name="fast-forward-10" size={21} />
-      </Pressable>
+      {inQueue ? (
+        <Pressable accessibilityLabel="Piste suivante" disabled={!hasNext} onPress={next} style={[styles.audioButton, !hasNext && styles.disabled]}>
+          <Icon color={COLORS.dark} name="skip-next" size={23} />
+        </Pressable>
+      ) : (
+        <Pressable accessibilityLabel="Avancer de 10 secondes" onPress={() => seekBy(10)} style={styles.audioButton}>
+          <Icon color={COLORS.dark} name="fast-forward-10" size={21} />
+        </Pressable>
+      )}
       <Pressable accessibilityLabel="Fermer le lecteur" onPress={stop} style={styles.audioButton}>
         <Icon color={COLORS.dark} name="close" size={21} />
       </Pressable>
@@ -88,6 +106,7 @@ const styles = StyleSheet.create({
   audioDetails: { alignItems: 'center', flex: 1, flexDirection: 'row', minWidth: 0 },
   audioFloating: { alignItems: 'center', borderRadius: 16, borderWidth: 1, elevation: 8, flexDirection: 'row', left: 12, minHeight: 64, padding: 9, position: 'absolute', right: 12, shadowColor: '#000000', shadowOffset: { height: 3, width: 0 }, shadowOpacity: 0.2, shadowRadius: 7, zIndex: 100 },
   copy: { flex: 1, marginLeft: 9 },
+  disabled: { opacity: 0.4 },
   playButton: { alignItems: 'center', borderRadius: 20, height: 40, justifyContent: 'center', width: 40 },
   progressTrack: { bottom: 0, height: 3, left: 12, overflow: 'hidden', position: 'absolute', right: 12 },
   progressValue: { height: '100%' },

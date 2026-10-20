@@ -14,15 +14,21 @@ import SoundPlayer from '../components/sound_player';
 
 const AudioScreen = ({ route }) => {
   const COLORS = useColors();
-  const { prepareAudio } = useMediaPlayback();
-  const { audioId, audioTitle, audioAuthor, audioUrl, mediaCover } = route.params;
+  const { activeMedia, prepareAudio, queue } = useMediaPlayback();
+  const params = route.params;
   const media = useMemo(() => ({
-    artwork: mediaCover,
-    artist: audioAuthor,
-    id: audioId || audioUrl,
-    title: audioTitle,
-    uri: audioUrl,
-  }), [audioAuthor, audioId, audioTitle, audioUrl, mediaCover]);
+    artwork: params.mediaCover,
+    artist: params.audioAuthor,
+    id: params.audioId || params.audioUrl,
+    title: params.audioTitle,
+    uri: params.audioUrl,
+  }), [params.audioAuthor, params.audioId, params.audioTitle, params.audioUrl, params.mediaCover]);
+  const current = queue.length > 1 && activeMedia?.kind === 'audio' ? activeMedia : media;
+  const audioId = current.id;
+  const audioTitle = current.title;
+  const audioAuthor = current.artist;
+  const audioUrl = current.uri;
+  const mediaCover = current.artwork;
 
   useEffect(() => {
     prepareAudio(media);

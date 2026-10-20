@@ -15,15 +15,14 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
 import HeaderComponent from './header';
 import { useMediaPlayback } from '../contexts/MediaPlaybackContext';
+import { isVideoFile } from '../utils/mediaCollection';
 import useColors from '../hooks/useColors';
-
-const isVideoFile = url => ['.mp4', '.mov', '.avi', '.webm', '.mkv', '.m3u8', '.mpd'].some(extension => url?.toLowerCase().includes(extension));
 
 const VideoPlayerScreen = ({ route }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
-  const { activeMedia, pause, playVideo, status, videoPlayer } = useMediaPlayback();
-  const { mediaType, videoCover, videoId, videoTitle, videoUri } = route.params;
+  const { activeMedia, hasNext, hasPrevious, next, pause, playVideo, previous, queue, queueIndex, status, videoPlayer } = useMediaPlayback();
+  const { mediaType, videoCover, videoId, videoTitle: routeVideoTitle, videoUri } = route.params;
   const { width } = Dimensions.get('window');
   const [youtubePlaying, setYoutubePlaying] = useState(false);
   const [imageSize, setImageSize] = useState(null);
@@ -36,10 +35,12 @@ const VideoPlayerScreen = ({ route }) => {
   const media = useMemo(() => ({
     artwork: videoCover,
     id: videoId || videoUri,
-    title: videoTitle,
+    title: routeVideoTitle,
     uri: videoUri,
-  }), [videoCover, videoId, videoTitle, videoUri]);
-  const isActiveVideo = activeMedia?.kind === 'video' && activeMedia.id === String(media.id);
+  }), [routeVideoTitle, videoCover, videoId, videoUri]);
+  const inQueue = queue.length > 1 && activeMedia?.kind === 'video';
+  const videoTitle = inQueue ? activeMedia.title : routeVideoTitle;
+  const isActiveVideo = activeMedia?.kind === 'video' && (inQueue || activeMedia.id === String(media.id));
   const nativeVideoState = isActiveVideo && status.error ? 'error' : isActiveVideo && status.isLoaded ? 'ready' : 'loading';
 
   useEffect(() => {
@@ -71,7 +72,7 @@ const VideoPlayerScreen = ({ route }) => {
       setYoutubeState('loading');
       setVideoKey(currentKey => currentKey + 1);
     } else {
-      playVideo(media, true);
+      playVideo(inQueue ? activeMedia : media, true);
     }
   };
 
@@ -136,6 +137,19 @@ const VideoPlayerScreen = ({ route }) => {
           )}
         </View>
         {!isVideo && !imageError && !imageSize ? <ActivityIndicator color={COLORS.primary} style={styles.loader} /> : null}
+        {inQueue ? (
+          <View style={styles.episodeNav}>
+            <TouchableOpacity accessibilityRole="button" disabled={!hasPrevious} onPress={previous} style={[styles.episodeButton, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
+              <Icon name="skip-previous" size={22} color={COLORS.dark} />
+              <Text style={[styles.episodeButtonText, { color: COLORS.black }]}>{t('media.previous')}</Text>
+            </TouchableOpacity>
+            <Text style={[styles.episodePosition, { color: COLORS.dark }]}>{t('media.position', { current: queueIndex + 1, total: queue.length })}</Text>
+            <TouchableOpacity accessibilityRole="button" disabled={!hasNext} onPress={next} style={[styles.episodeButton, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }, !hasNext && styles.episodeButtonDisabled]}>
+              <Text style={[styles.episodeButtonText, { color: COLORS.black }]}>{t('media.next_episode')}</Text>
+              <Icon name="skip-next" size={22} color={COLORS.dark} />
+            </TouchableOpacity>
+          </View>
+        ) : null}
         <Text style={[styles.hint, { color: COLORS.dark }]}>{isVideo ? t('media.description') : 'Pincez l’image pour zoomer.'}</Text>
       </ScrollView>
     </SafeAreaView>
@@ -158,6 +172,11 @@ const styles = StyleSheet.create({
   placeholder: { alignItems: 'center', aspectRatio: 16 / 9, justifyContent: 'center', width: '100%' },
   placeholderText: { color: '#ffffff', fontSize: 14, marginTop: 10 },
   loader: { marginTop: 16 },
+  episodeNav: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginTop: 14 },
+  episodeButton: { alignItems: 'center', borderRadius: 16, borderWidth: 1, flexDirection: 'row', minHeight: 40, paddingHorizontal: 10 },
+  episodeButtonDisabled: { opacity: 0.4 },
+  episodeButtonText: { fontSize: 12, fontWeight: '800', marginHorizontal: 4 },
+  episodePosition: { fontSize: 12, fontWeight: '700' },
   hint: { fontSize: 13, lineHeight: 19, marginTop: 14, textAlign: 'center' },
   youtubeControl: { alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.72)', borderRadius: 22, bottom: 10, height: 44, justifyContent: 'center', position: 'absolute', right: 10, width: 44 },
 });

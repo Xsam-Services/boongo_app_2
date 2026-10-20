@@ -21,7 +21,7 @@ const FileThumbnail = ({ uri, type, title, onPress }) => {
                 </View>
             )}
 
-            <Text style={[styles.label, { color: COLORS.white }]}>{title}</Text>
+            <Text numberOfLines={1} style={[styles.label, { color: COLORS.white }]}>{title}</Text>
         </TouchableOpacity>
     );
 };
