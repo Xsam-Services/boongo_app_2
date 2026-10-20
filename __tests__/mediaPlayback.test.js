@@ -158,6 +158,22 @@ describe('MediaPlaybackProvider', () => {
     expect(api.activeMedia).toMatchObject({ id: 'video-1', kind: 'video' });
   });
 
+  test('retries play() when the video becomes ready but did not start', async () => {
+    await renderProvider();
+    await ReactTestRenderer.act(async () => api.playVideo({ id: 'video-2', title: 'Vidéo 2', uri: 'https://example.test/video-2.mp4' }));
+    mockVideoPlayer.play.mockClear();
+
+    await ReactTestRenderer.act(async () => mockVideoListeners.playingChange({ isPlaying: true }));
+    await ReactTestRenderer.act(async () => mockVideoListeners.playingChange({ isPlaying: false }));
+    await ReactTestRenderer.act(async () => mockVideoListeners.statusChange({ error: null, status: 'readyToPlay' }));
+    expect(mockVideoPlayer.play).toHaveBeenCalledTimes(1);
+
+    // A transient playing flag during loading must not cancel the retry, and it only happens once.
+    mockVideoPlayer.play.mockClear();
+    await ReactTestRenderer.act(async () => mockVideoListeners.statusChange({ error: null, status: 'readyToPlay' }));
+    expect(mockVideoPlayer.play).not.toHaveBeenCalled();
+  });
+
   test('persists audio progress when the player is closed', async () => {
     await renderProvider();
     await ReactTestRenderer.act(async () => api.prepareAudio(audio));

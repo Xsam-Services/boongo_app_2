@@ -40,6 +40,7 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
   const loadSequenceRef = useRef(0);
   const completedMediaRef = useRef(null);
   const finishHandledRef = useRef(false);
+  const pendingVideoPlayRef = useRef(null);
   const queueRef = useRef([]);
   const advanceRef = useRef(null);
   const [queue, setQueueState] = useState([]);
@@ -90,6 +91,7 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
     audioPlayer.pause();
     audioPlayer.clearLockScreenControls();
     videoPlayer.pause();
+    pendingVideoPlayRef.current = null;
     audioPlayer.replace({ uri: decodeMediaUri(normalizedMedia.uri), name: normalizedMedia.title });
     audioPlayer.setActiveForLockScreen(true, {
       artworkUrl: normalizedMedia.artwork,
@@ -137,6 +139,9 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
     setPendingAudioStart(null);
     if (currentMedia?.kind === 'audio') deactivateAudio(true);
     videoPlayer.pause();
+    // Keep the intent to play until the player is ready: a play() issued during the source swap
+    // is sometimes lost, notably when chaining queue items.
+    pendingVideoPlayRef.current = normalizedMedia.id;
     updateActiveMedia(normalizedMedia);
     setVideoStatus(EMPTY_VIDEO_STATUS);
 
@@ -225,6 +230,7 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
 
   const stop = useCallback(() => {
     loadSequenceRef.current += 1;
+    pendingVideoPlayRef.current = null;
     const media = activeMediaRef.current;
     if (media?.kind === 'audio') deactivateAudio(true);
     videoPlayer.pause();
@@ -249,6 +255,12 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
         isBuffering: status === 'loading',
         isLoaded: status === 'readyToPlay',
       }));
+      if (status === 'readyToPlay' && pendingVideoPlayRef.current) {
+        const shouldPlay = pendingVideoPlayRef.current === getMediaIdentity(activeMediaRef.current);
+        pendingVideoPlayRef.current = null;
+        // The player can flip playing on and off while loading and end up ready but stopped.
+        if (shouldPlay && !videoPlayer.playing) videoPlayer.play();
+      }
     });
     const playingSubscription = videoPlayer.addListener('playingChange', ({ isPlaying }) => {
       setVideoStatus(current => ({ ...current, playing: isPlaying }));
