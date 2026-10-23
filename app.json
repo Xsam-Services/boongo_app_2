@@ -3,7 +3,7 @@
     "name": "Boongo",
     "slug": "boongo_app",
     "version": "1.3.3",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "ios": {

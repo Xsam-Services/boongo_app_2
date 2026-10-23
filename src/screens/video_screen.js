@@ -16,15 +16,24 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import HeaderComponent from './header';
 import { useMediaPlayback } from '../contexts/MediaPlaybackContext';
 import { formatDuration, isVideoFile } from '../utils/mediaCollection';
+import { PlayerVideoControls, useControlLabels, useControlsVisibility } from '../components/video_controls';
+import VideoFullscreen from '../components/video_fullscreen';
+import { lockLandscape, lockPortrait } from '../utils/orientation';
+import useMediaProgress from '../hooks/useMediaProgress';
 import useColors from '../hooks/useColors';
 
 const VideoPlayerScreen = ({ route }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
-  const { activeMedia, hasNext, hasPrevious, next, pause, playQueue, playVideo, previous, queue, queueIndex, status, videoPlayer } = useMediaPlayback();
+  const { activeMedia, hasNext, hasPrevious, next, pause, playPause, playQueue, playVideo, previous, queue, queueIndex, seekBy, seekTo, status, videoPlayer } = useMediaPlayback();
   const { mediaType, videoCover, videoId, videoTitle: routeVideoTitle, videoUri } = route.params;
   const { width } = Dimensions.get('window');
   const [youtubePlaying, setYoutubePlaying] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [muted, setMuted] = useState(Boolean(videoPlayer.muted));
+  const labels = useControlLabels();
+  const controls = useControlsVisibility(status.playing);
+  const queueProgress = useMediaProgress(queue);
   const [imageSize, setImageSize] = useState(null);
   const [imageError, setImageError] = useState(false);
   const youtubeId = getVideoId(videoUri || '').id || videoUri?.match(/(?:embed\/|v=|youtu\.be\/)([^?&/]+)/)?.[1];
@@ -66,6 +75,31 @@ const VideoPlayerScreen = ({ route }) => {
     const timeout = setTimeout(() => setYoutubeState('error'), 12000);
     return () => clearTimeout(timeout);
   }, [isYoutube, videoKey, youtubeState, videoUri]);
+
+  useEffect(() => {
+    setMuted(Boolean(videoPlayer.muted));
+    const subscription = videoPlayer.addListener('volumeChange', ({ isMuted }) => setMuted(Boolean(isMuted)));
+    return () => subscription.remove();
+  }, [videoPlayer]);
+
+  // The app stays in portrait: landscape is only for the full-screen player, and leaving this screen
+  // while it is open must also restore portrait.
+  useEffect(() => () => { lockPortrait(); }, []);
+
+  const openFullscreen = async () => {
+    await lockLandscape();
+    setFullscreen(true);
+  };
+
+  const closeFullscreen = async () => {
+    setFullscreen(false);
+    await lockPortrait();
+  };
+
+  const toggleMute = () => {
+    videoPlayer.muted = !videoPlayer.muted;
+    setMuted(Boolean(videoPlayer.muted));
+  };
 
   const retryVideo = () => {
     if (isYoutube) {
@@ -115,14 +149,33 @@ const VideoPlayerScreen = ({ route }) => {
           ) : isVideo ? (
             <View style={styles.videoContainer}>
               {isActiveVideo ? (
-                <VideoView
-                  allowsPictureInPicture
-                  contentFit="contain"
-                  fullscreenOptions={{ enable: true }}
-                  nativeControls
-                  player={videoPlayer}
-                  startsPictureInPictureAutomatically
-                  style={styles.video}
+                !fullscreen ? (
+                  <VideoView
+                    allowsPictureInPicture
+                    contentFit="contain"
+                    fullscreenOptions={{ enable: false }}
+                    nativeControls={false}
+                    player={videoPlayer}
+                    startsPictureInPictureAutomatically
+                    style={styles.video}
+                  />
+                ) : <View style={styles.video} />
+              ) : null}
+              {isActiveVideo && playerState === 'ready' && !fullscreen ? (
+                <PlayerVideoControls
+                  currentTime={status.currentTime}
+                  duration={status.duration}
+                  labels={labels}
+                  muted={muted}
+                  onFullscreen={openFullscreen}
+                  onPlayPause={playPause}
+                  onSeek={seekTo}
+                  onSeekBy={seekBy}
+                  onToggle={controls.toggle}
+                  onToggleMute={toggleMute}
+                  onTouch={controls.touch}
+                  playing={status.playing}
+                  visible={controls.visible}
                 />
               ) : null}
               {playerState === 'loading' ? <View style={styles.videoOverlay}><ActivityIndicator color="#ffffff" /><Text style={styles.videoOverlayText}>{t('loading')}</Text></View> : null}
@@ -159,6 +212,7 @@ const VideoPlayerScreen = ({ route }) => {
             {queue.map((episode, index) => {
               const isCurrent = index === queueIndex;
               const duration = formatDuration(episode.duration);
+              const entry = queueProgress[episode.id];
               return (
                 <TouchableOpacity key={episode.id} accessibilityRole="button" accessibilityState={{ selected: isCurrent }} activeOpacity={0.78} onPress={() => !isCurrent && playQueue(queue, index)} style={[styles.episodeRow, { borderColor: COLORS.light_secondary }, isCurrent && { backgroundColor: COLORS.light_primary }]}>
                   {episode.artwork ? <Image source={{ uri: episode.artwork }} style={styles.episodeThumb} resizeMode="cover" /> : (
@@ -166,14 +220,31 @@ const VideoPlayerScreen = ({ route }) => {
                   )}
                   <View style={styles.episodeCopy}>
                     <Text numberOfLines={2} style={[styles.episodeTitle, { color: isCurrent ? COLORS.primary : COLORS.black }]}>{index + 1}. {episode.title}</Text>
-                    {isCurrent ? <Text style={[styles.episodeMeta, { color: COLORS.primary }]}>{t('media.playing')}</Text> : duration ? <Text style={[styles.episodeMeta, { color: COLORS.dark }]}>{duration}</Text> : null}
+                    {isCurrent ? <Text style={[styles.episodeMeta, { color: COLORS.primary }]}>{t('media.playing')}</Text> : entry?.completed ? <Text style={[styles.episodeMeta, { color: COLORS.dark }]}>{t('media.completed')}{duration ? ` · ${duration}` : ''}</Text> : duration ? <Text style={[styles.episodeMeta, { color: COLORS.dark }]}>{duration}</Text> : null}
+                    {!isCurrent && entry && !entry.completed ? (
+                      <View style={[styles.episodeTrack, { backgroundColor: COLORS.light_secondary }]}><View style={[styles.episodeValue, { backgroundColor: COLORS.primary, width: `${Math.round(entry.ratio * 100)}%` }]} /></View>
+                    ) : null}
                   </View>
-                  <Icon name={isCurrent ? (status.playing ? 'equalizer' : 'pause-circle-outline') : 'play-circle-outline'} size={24} color={isCurrent ? COLORS.primary : COLORS.dark} />
+                  <Icon name={isCurrent ? (status.playing ? 'equalizer' : 'pause-circle-outline') : entry?.completed ? 'check-circle' : 'play-circle-outline'} size={24} color={isCurrent ? COLORS.primary : entry?.completed ? COLORS.success : COLORS.dark} />
                 </TouchableOpacity>
               );
             })}
           </View>
         ) : null}
+        <VideoFullscreen
+          currentTime={status.currentTime}
+          duration={status.duration}
+          muted={muted}
+          onClose={closeFullscreen}
+          onPlayPause={playPause}
+          onSeek={seekTo}
+          onSeekBy={seekBy}
+          onToggleMute={toggleMute}
+          player={videoPlayer}
+          playing={status.playing}
+          title={videoTitle}
+          visible={fullscreen}
+        />
         <Text style={[styles.hint, { color: COLORS.dark }]}>{isVideo ? t('media.description') : 'Pincez l’image pour zoomer.'}</Text>
       </ScrollView>
     </SafeAreaView>
@@ -209,6 +280,8 @@ const styles = StyleSheet.create({
   episodeCopy: { flex: 1, marginHorizontal: 12 },
   episodeTitle: { fontSize: 14, fontWeight: '700', lineHeight: 19 },
   episodeMeta: { fontSize: 12, marginTop: 2 },
+  episodeTrack: { borderRadius: 2, height: 3, marginTop: 6, overflow: 'hidden' },
+  episodeValue: { height: '100%' },
   episodePosition: { fontSize: 12, fontWeight: '700' },
   hint: { fontSize: 13, lineHeight: 19, marginTop: 14, textAlign: 'center' },
   youtubeControl: { alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.72)', borderRadius: 22, bottom: 10, height: 44, justifyContent: 'center', position: 'absolute', right: 10, width: 44 },

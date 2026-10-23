@@ -6,12 +6,15 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
 import { useMediaPlayback } from '../contexts/MediaPlaybackContext';
 import useColors from '../hooks/useColors';
+import { MiniVideoControls, useControlLabels, useControlsVisibility } from './video_controls';
 
 const PersistentMediaPlayer = ({ currentRouteName, onOpen }) => {
   const COLORS = useColors();
   const insets = useSafeAreaInsets();
-  const { activeMedia, hasNext, next, playPause, previous, queue, seekBy, status, stop, videoPlayer } = useMediaPlayback();
+  const { activeMedia, hasNext, next, playPause, previous, queue, queueIndex, seekBy, status, stop, videoPlayer } = useMediaPlayback();
   const inQueue = queue.length > 1;
+  const labels = useControlLabels();
+  const controls = useControlsVisibility(status.playing);
 
   if (!activeMedia) return null;
   if (activeMedia.kind === 'audio' && currentRouteName === 'Audio') return null;
@@ -21,8 +24,8 @@ const PersistentMediaPlayer = ({ currentRouteName, onOpen }) => {
 
   if (activeMedia.kind === 'video') {
     return (
-      <View style={[styles.videoFloating, { bottom: Math.max(insets.bottom, 12), backgroundColor: COLORS.black }]}>
-        <Pressable accessibilityLabel="Ouvrir la vidéo" onPress={() => onOpen(activeMedia)} style={styles.videoSurface}>
+      <View style={[styles.videoFloating, { bottom: Math.max(insets.bottom, 12) }]}>
+        <View style={styles.videoSurface}>
           <VideoView
             allowsPictureInPicture
             contentFit="contain"
@@ -31,20 +34,25 @@ const PersistentMediaPlayer = ({ currentRouteName, onOpen }) => {
             startsPictureInPictureAutomatically
             style={styles.video}
           />
-        </Pressable>
+          <MiniVideoControls
+            hasNext={hasNext}
+            inQueue={inQueue}
+            labels={labels}
+            onClose={stop}
+            onExpand={() => onOpen(activeMedia)}
+            onNext={() => { controls.touch(); next(); }}
+            onPlayPause={() => { controls.touch(); playPause(); }}
+            onPrevious={() => { controls.touch(); previous(); }}
+            onSeekBy={seconds => { controls.touch(); seekBy(seconds); }}
+            onToggle={controls.toggle}
+            playing={status.playing}
+            progress={progress}
+            visible={controls.visible}
+          />
+        </View>
         <View style={styles.videoActions}>
           <Text numberOfLines={1} style={styles.videoTitle}>{activeMedia.title}</Text>
-          <Pressable accessibilityLabel={status.playing ? 'Pause' : 'Lecture'} onPress={playPause} style={styles.videoButton}>
-            <Icon color="#ffffff" name={status.playing ? 'pause' : 'play'} size={22} />
-          </Pressable>
-          {inQueue ? (
-            <Pressable accessibilityLabel="Épisode suivant" disabled={!hasNext} onPress={next} style={[styles.videoButton, !hasNext && styles.disabled]}>
-              <Icon color="#ffffff" name="skip-next" size={22} />
-            </Pressable>
-          ) : null}
-          <Pressable accessibilityLabel="Fermer le lecteur" onPress={stop} style={styles.videoButton}>
-            <Icon color="#ffffff" name="close" size={22} />
-          </Pressable>
+          {inQueue && queueIndex >= 0 ? <Text style={styles.videoPosition}>{queueIndex + 1}/{queue.length}</Text> : null}
         </View>
       </View>
     );
@@ -112,9 +120,9 @@ const styles = StyleSheet.create({
   progressValue: { height: '100%' },
   title: { fontSize: 13, fontWeight: '800' },
   video: { height: '100%', width: '100%' },
-  videoActions: { alignItems: 'center', flexDirection: 'row', minHeight: 42, paddingHorizontal: 8 },
-  videoButton: { alignItems: 'center', height: 38, justifyContent: 'center', width: 38 },
-  videoFloating: { borderRadius: 16, elevation: 9, overflow: 'hidden', position: 'absolute', right: 12, shadowColor: '#000000', shadowOffset: { height: 3, width: 0 }, shadowOpacity: 0.25, shadowRadius: 8, width: 230, zIndex: 100 },
+  videoActions: { alignItems: 'center', flexDirection: 'row', minHeight: 34, paddingHorizontal: 10 },
+  videoFloating: { backgroundColor: '#0d0f14', borderRadius: 16, elevation: 9, overflow: 'hidden', position: 'absolute', right: 12, shadowColor: '#000000', shadowOffset: { height: 3, width: 0 }, shadowOpacity: 0.25, shadowRadius: 8, width: 230, zIndex: 100 },
   videoSurface: { aspectRatio: 16 / 9, width: '100%' },
+  videoPosition: { color: 'rgba(255,255,255,0.7)', fontSize: 11, fontWeight: '700', marginLeft: 8 },
   videoTitle: { color: '#ffffff', flex: 1, fontSize: 12, fontWeight: '700' },
 });

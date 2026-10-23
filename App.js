@@ -21,6 +21,7 @@ import OnboardingScreen from './src/screens/onboarding/OnboardingScreen';
 import { DrawerNavigation } from './src/navigations/DrawerNavigation';
 import { LoginStackNavigation } from './src/navigations/LoginStackNavigation';
 import './src/services/i18next';
+import { lockPortrait } from './src/utils/orientation';
 
 const navigationRef = createNavigationContainerRef();
 
@@ -33,6 +34,11 @@ const App = () => {
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 4000);
     return () => clearTimeout(timer);
+  }, []);
+
+  // The app stays in portrait; only the full-screen video player rotates to landscape.
+  useEffect(() => {
+    lockPortrait();
   }, []);
 
   // Vander Otis
