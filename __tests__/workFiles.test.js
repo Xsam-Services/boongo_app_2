@@ -1,4 +1,4 @@
-import { buildUploadForm, getFileKind, isDefaultCover, listWorkFiles, mapFileTypeIds } from '../src/utils/workFiles';
+import { buildFileMetaPayload, buildUploadForm, getFileKind, isDefaultCover, listWorkFiles, mapFileTypeIds } from '../src/utils/workFiles';
 
 // React Native's FormData accepts { uri, name, type } file objects; Node's does not, so use a minimal stand-in.
 global.FormData = class FakeFormData {
@@ -37,18 +37,32 @@ describe('buildUploadForm', () => {
     expect(form.work_id).toBe('38');
     expect(form.image_file_type_id).toBe('6');
     expect(form.video_file_url).toMatchObject({ name: 'e1.mp4', type: 'video/mp4', uri: 'file:///e1.mp4' });
+    expect(form.file_name).toBeUndefined();
+  });
+
+  it('sends the title as file_name because upload_files ignores part_title', () => {
+    const form = fields(buildUploadForm({ workId: 1, file: { name: 'a.mp3', type: 'audio/mpeg', uri: 'file:///a.mp3' }, title: '  Intro  ' }));
+
+    expect(form.file_name).toBe('Intro');
     expect(form.part_title).toBeUndefined();
   });
 
-  it('uses the audio and document fields and trims the part title', () => {
+  it('uses the audio and document fields', () => {
     const audio = fields(buildUploadForm({ workId: 1, file: { name: 'a.mp3', type: 'audio/mpeg', uri: 'file:///a.mp3' }, title: '  Intro  ' }));
     const doc = fields(buildUploadForm({ workId: 1, file: { name: 'c.pdf', type: 'application/pdf', uri: 'file:///c.pdf' } }));
 
     expect(audio.audio_file_type_id).toBe('8');
     expect(audio.audio_file_url.uri).toBe('file:///a.mp3');
-    expect(audio.part_title).toBe('Intro');
     expect(doc.document_file_type_id).toBe('7');
     expect(doc.document_file_url.name).toBe('c.pdf');
+  });
+});
+
+describe('buildFileMetaPayload', () => {
+  it('only carries the given metadata and never a cover', () => {
+    expect(buildFileMetaPayload({ fileId: 9, title: ' Piste 1 ', position: 2, mediaLength: 184.6 })).toEqual({ id: 9, part_title: 'Piste 1', position: 2, media_length: 185 });
+    expect(buildFileMetaPayload({ fileId: 9 })).toEqual({ id: 9 });
+    expect(buildFileMetaPayload({ fileId: 9, title: '  ', position: NaN, mediaLength: 0 })).toEqual({ id: 9 });
   });
 });
 

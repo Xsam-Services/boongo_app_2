@@ -382,6 +382,7 @@
         "no_files": "No files yet.",
         "send_failed": "The upload failed.",
         "load_failed": "Unable to load the work files.",
+        "meta_failed": "The file was uploaded, but its title or order could not be saved.",
         "work_created": "Work created. Now add its files."
     },
     "navigation": {

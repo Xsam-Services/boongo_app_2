@@ -2,6 +2,9 @@ const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.avi', '.webm', '.mkv', '.m3u8', '.mp
 
 export const isVideoFile = url => VIDEO_EXTENSIONS.some(extension => url?.toLowerCase().includes(extension));
 
+// The API answers with its default image when a file or a work has no cover of its own.
+export const isDefaultCover = url => !url || /\/assets\/img\/cover\.png/.test(String(url));
+
 export const formatDuration = seconds => {
   if (!Number.isFinite(seconds) || seconds <= 0) return '';
 
@@ -34,10 +37,17 @@ const fileNameTitle = fileName => {
   return name || '';
 };
 
-const compareById = (first, second) => {
-  const a = Number(first.id);
-  const b = Number(second.id);
-  return Number.isFinite(a) && Number.isFinite(b) ? a - b : 0;
+// Explicit positions first (ascending), then the files without one by id.
+const compareByPosition = (first, second) => {
+  const a = Number(first.position);
+  const b = Number(second.position);
+  const hasA = first.position !== null && first.position !== undefined && Number.isFinite(a);
+  const hasB = second.position !== null && second.position !== undefined && Number.isFinite(b);
+  if (hasA && hasB && a !== b) return a - b;
+  if (hasA !== hasB) return hasA ? -1 : 1;
+  const idA = Number(first.id);
+  const idB = Number(second.id);
+  return Number.isFinite(idA) && Number.isFinite(idB) ? idA - idB : 0;
 };
 
 const toItem = (file, index, kind, work, labels, workCover) => {
@@ -49,7 +59,7 @@ const toItem = (file, index, kind, work, labels, workCover) => {
 
   return {
     artist: work?.author || '',
-    artwork: file.part_cover_url || workCover || undefined,
+    artwork: (!isDefaultCover(file.part_cover_url) && file.part_cover_url) || workCover || undefined,
     duration: parseDuration(file.media_length),
     id: String(file.id || file.file_url),
     kind,
@@ -62,15 +72,15 @@ const toItem = (file, index, kind, work, labels, workCover) => {
 
 /**
  * Splits the files of a work into an audio album and a video series.
- * Order follows the API (ascending file id) because no explicit order field exists yet.
+ * Order follows the files' position when set, then their id.
  */
 export const buildCollections = (work, options = {}) => {
   const labels = { audio: 'Piste', video: 'Épisode', ...options.labels };
   const workCover = options.workCover || work?.photo_url;
   const withUrl = file => Boolean(file?.file_url);
 
-  const audioFiles = [...(work?.audios || [])].filter(withUrl).sort(compareById);
-  const videoFiles = [...(work?.images || [])].filter(file => withUrl(file) && isVideoFile(file.file_url)).sort(compareById);
+  const audioFiles = [...(work?.audios || [])].filter(withUrl).sort(compareByPosition);
+  const videoFiles = [...(work?.images || [])].filter(file => withUrl(file) && isVideoFile(file.file_url)).sort(compareByPosition);
 
   return {
     audioTracks: audioFiles.map((file, index) => toItem(file, index, 'audio', work, labels, workCover)),

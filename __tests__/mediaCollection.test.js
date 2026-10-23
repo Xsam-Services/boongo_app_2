@@ -1,4 +1,4 @@
-import { buildCollections, formatDuration, isCollection, isVideoFile, resolveQueuePosition } from '../src/utils/mediaCollection';
+import { buildCollections, formatDuration, isCollection, isDefaultCover, isVideoFile, resolveQueuePosition } from '../src/utils/mediaCollection';
 
 const work = {
   id: 7,
@@ -54,6 +54,33 @@ describe('buildCollections titles', () => {
     });
 
     expect(videoEpisodes.map(episode => episode.title)).toEqual(['Épisode 1', 'Épisode 2']);
+  });
+});
+
+describe('buildCollections ordering and covers', () => {
+  it('orders by position, then by id for files without one', () => {
+    const { audioTracks } = buildCollections({
+      audios: [
+        { id: 1, file_url: 'a.mp3', position: null },
+        { id: 2, file_url: 'b.mp3', position: 2 },
+        { id: 3, file_url: 'c.mp3', position: 1 },
+        { id: 4, file_url: 'd.mp3' },
+      ],
+    });
+
+    expect(audioTracks.map(track => track.id)).toEqual(['3', '2', '1', '4']);
+  });
+
+  it('ignores the placeholder cover returned by the API', () => {
+    const { audioTracks } = buildCollections({
+      audios: [
+        { id: 1, file_url: 'a.mp3', part_cover_url: 'https://boongo7.com/assets/img/cover.png' },
+        { id: 2, file_url: 'b.mp3', part_cover_url: 'https://cdn/b.png' },
+      ],
+    }, { workCover: 'https://cdn/work.png' });
+
+    expect(audioTracks.map(track => track.artwork)).toEqual(['https://cdn/work.png', 'https://cdn/b.png']);
+    expect(isDefaultCover('https://boongo7.com/assets/img/cover.png')).toBe(true);
   });
 });
 

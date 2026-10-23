@@ -382,6 +382,7 @@
         "no_files": "Aucun fichier pour l’instant.",
         "send_failed": "L’envoi a échoué.",
         "load_failed": "Impossible de charger les fichiers de l’œuvre.",
+        "meta_failed": "Le fichier est envoyé, mais son titre ou son ordre n’a pas pu être enregistré.",
         "work_created": "Œuvre créée. Ajoutez maintenant ses fichiers."
     },
     "navigation": {

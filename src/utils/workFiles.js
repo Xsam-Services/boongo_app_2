@@ -1,6 +1,9 @@
 import axios from 'axios';
 
 import { API } from '../tools/constants';
+import { isDefaultCover } from './mediaCollection';
+
+export { isDefaultCover };
 
 // Ids of the "Type de fichier" group, used when the list cannot be fetched.
 export const DEFAULT_FILE_TYPE_IDS = { audio: 8, document: 7, image: 6 };
@@ -51,11 +54,10 @@ export const buildUploadForm = ({ workId, file, title, typeIds = DEFAULT_FILE_TY
   form.append('work_id', String(workId));
   form.append(typeField, String(typeIds[typeKey]));
   form.append(fileField, { name: file.name || `fichier.${extensionOf(file.uri) || 'bin'}`, type: file.type || 'application/octet-stream', uri: file.uri });
-  if (title && title.trim()) form.append('part_title', title.trim());
+  // upload_files stores file_name but ignores part_title: send the title as the name so files stay distinguishable.
+  if (title && title.trim()) form.append('file_name', title.trim());
   return form;
 };
-
-export const isDefaultCover = url => !url || /\/assets\/img\/cover\.png/.test(String(url));
 
 const authHeaders = token => ({ 'X-localization': 'fr', Authorization: `Bearer ${token}` });
 
@@ -94,3 +96,51 @@ export const uploadWorkCover = (workId, cover, token) => axios.put(
   `work_id=${workId}&file_name=${encodeURIComponent(cover.name)}&image_64=${encodeURIComponent(cover.value)}`,
   { headers: { ...authHeaders(token), 'Content-Type': 'application/x-www-form-urlencoded' } },
 );
+
+/**
+ * Only the fields that were given: a PUT with part_cover_image64 changes the type and name of the file,
+ * so the cover is deliberately never part of this payload.
+ */
+export const buildFileMetaPayload = ({ fileId, title, position, mediaLength }) => {
+  const payload = { id: fileId };
+  if (title && title.trim()) payload.part_title = title.trim();
+  if (Number.isFinite(position)) payload.position = position;
+  if (Number.isFinite(mediaLength) && mediaLength > 0) payload.media_length = Math.round(mediaLength);
+  return payload;
+};
+
+export const updateFileMeta = (meta, token) => axios.put(
+  `${API.boongo_url}/file/${meta.fileId}`,
+  buildFileMetaPayload(meta),
+  { headers: authHeaders(token) },
+);
+
+const nextPosition = (files, kind) => {
+  const same = files.filter(file => file.kind === kind);
+  const highest = same.reduce((max, file) => Math.max(max, Number(file.position) || 0), 0);
+  return Math.max(highest, same.length) + 1;
+};
+
+/**
+ * Uploads a file, finds it again in the work, then sets its title, position and duration.
+ * The upload answer does not give the new file id, so it is found by comparing the work before and after.
+ * Resolves with { metaSaved, remoteFiles }: the file is uploaded even when the metadata step fails.
+ */
+export const uploadFileWithMeta = async ({ workId, file, title, mediaLength, typeIds, token, onProgress }) => {
+  const before = listWorkFiles(await fetchWork(workId, token));
+  await uploadWorkFile({ file, onProgress, title, token, typeIds, workId });
+  const after = listWorkFiles(await fetchWork(workId, token));
+  const known = new Set(before.map(item => item.id));
+  const added = after.find(item => !known.has(item.id));
+  const kind = getFileKind(file);
+  if (!added) return { metaSaved: false, remoteFiles: after };
+
+  // Only audio tracks and video episodes are ordered.
+  const position = kind === 'audio' || kind === 'video' ? nextPosition(before, kind) : undefined;
+  try {
+    await updateFileMeta({ fileId: added.id, mediaLength, position, title }, token);
+    return { metaSaved: true, remoteFiles: after };
+  } catch (error) {
+    return { metaSaved: false, remoteFiles: after };
+  }
+};

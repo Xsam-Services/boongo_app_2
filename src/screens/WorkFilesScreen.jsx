@@ -19,7 +19,7 @@ import {
   getFileKind,
   listWorkFiles,
   mapFileTypeIds,
-  uploadWorkFile,
+  uploadFileWithMeta,
 } from '../utils/workFiles';
 
 const KIND_ICONS = { audio: 'music-note', document: 'file-pdf-box', image: 'image-outline', video: 'video-outline' };
@@ -126,7 +126,7 @@ const WorkFilesScreen = ({ navigation, route }) => {
     const before = remoteCountRef.current;
     updateItem(item.key, { error: '', progress: 0, status: 'uploading' });
     try {
-      await uploadWorkFile({
+      const { metaSaved } = await uploadFileWithMeta({
         file: { name: item.name, type: item.type, uri: item.uri },
         onProgress: progress => updateItem(item.key, { progress }),
         title: item.title,
@@ -136,6 +136,7 @@ const WorkFilesScreen = ({ navigation, route }) => {
       });
       removeItem(item.key);
       await refresh();
+      if (!metaSaved) setError(t('work_steps.meta_failed'));
     } catch (uploadError) {
       // The server may store the file and still answer with an error: check before offering a retry.
       let stored = false;
