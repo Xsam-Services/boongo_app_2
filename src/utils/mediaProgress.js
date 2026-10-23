@@ -28,3 +28,23 @@ export const getResumePosition = (storedValue, knownDuration = 0) => {
     return 0;
   }
 };
+
+/**
+ * Summarises a stored progress value for display: how far the user got and whether they finished.
+ * A value left within the completion threshold of the end counts as finished.
+ */
+export const getProgressSummary = storedValue => {
+  if (!storedValue) return { completed: false, position: 0, ratio: 0 };
+
+  try {
+    const parsed = JSON.parse(storedValue);
+    const position = Number(parsed?.position) || 0;
+    const duration = Number(parsed?.duration) || 0;
+    if (duration <= 0 || position <= MINIMUM_RESUME_POSITION) return { completed: false, position: 0, ratio: 0 };
+
+    const completed = duration - position <= COMPLETION_THRESHOLD;
+    return { completed, position, ratio: completed ? 1 : Math.min(1, position / duration) };
+  } catch {
+    return { completed: false, position: 0, ratio: 0 };
+  }
+};

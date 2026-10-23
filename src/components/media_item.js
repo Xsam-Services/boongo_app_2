@@ -14,7 +14,7 @@ import Toast from 'react-native-toast-message';
 import { AuthContext } from '../contexts/AuthContext';
 import useColors from '../hooks/useColors';
 import { API } from '../tools/constants';
-import { buildCollections, isCollection } from '../utils/mediaCollection';
+import { buildCollections, hasPlayableMedia } from '../utils/mediaCollection';
 
 const getUserLike = (likes, userId) => (likes || []).find((like) =>
   Number(like.user_id ?? like.user?.id) === Number(userId)
@@ -31,6 +31,8 @@ const MediaItemComponent = ({ item }) => {
   const collections = useMemo(() => buildCollections(item), [item]);
   const hasAlbum = collections.audioTracks.length > 1;
   const hasSeries = collections.videoEpisodes.length > 1;
+  const singleAudio = collections.audioTracks.length === 1;
+  const singleVideo = collections.videoEpisodes.length === 1;
   const [hasLiked, setHasLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(item.likes?.length || 0);
   const [likeId, setLikeId] = useState(null);
@@ -123,7 +125,7 @@ const MediaItemComponent = ({ item }) => {
     );
   }
 
-  const openDetails = () => navigation.navigate(isCollection(collections) ? 'MediaCollection' : 'WorkData', { itemId: item.id });
+  const openDetails = () => navigation.navigate(hasPlayableMedia(collections) ? 'MediaCollection' : 'WorkData', { itemId: item.id });
 
   return (
     <TouchableOpacity activeOpacity={0.84} style={[styles.card, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]} onPress={openDetails}>
@@ -138,6 +140,8 @@ const MediaItemComponent = ({ item }) => {
             <Icon name="play-box-multiple-outline" size={15} color={COLORS.primary} />
             <Text style={[styles.meta, { color: COLORS.primary }]}>Média</Text>
             {hasAlbum ? <Text style={[styles.badge, { backgroundColor: COLORS.light_primary, color: COLORS.primary }]}>{t('media.album')} · {t('media.tracks_count', { count: collections.audioTracks.length })}</Text> : null}
+            {singleAudio ? <Text style={[styles.badge, { backgroundColor: COLORS.light_primary, color: COLORS.primary }]}>{t('file.audio')}</Text> : null}
+            {singleVideo ? <Text style={[styles.badge, { backgroundColor: COLORS.light_primary, color: COLORS.primary }]}>{t('file.video')}</Text> : null}
             {hasSeries ? <Text style={[styles.badge, { backgroundColor: COLORS.light_primary, color: COLORS.primary }]}>{t('media.series')} · {t('media.episodes_count', { count: collections.videoEpisodes.length })}</Text> : null}
           </View>
           <Text style={[styles.title, { color: COLORS.black }]} numberOfLines={2}>{item.work_title}</Text>

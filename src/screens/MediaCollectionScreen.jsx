@@ -12,8 +12,9 @@ import { AuthContext } from '../contexts/AuthContext';
 import { useMediaPlayback } from '../contexts/MediaPlaybackContext';
 import { API } from '../tools/constants';
 import { sanitizeImageUri } from '../tools/image_source';
-import { buildCollections, formatDuration } from '../utils/mediaCollection';
+import { buildCollections, formatDuration, pickResumeIndex } from '../utils/mediaCollection';
 import useColors from '../hooks/useColors';
+import useMediaProgress from '../hooks/useMediaProgress';
 import HeaderComponent from './header';
 
 const getLanguage = () => RNLocalize.getLocales()[0]?.languageCode || 'fr';
@@ -60,6 +61,9 @@ const MediaCollectionScreen = ({ navigation, route }) => {
     workCover: coverImage,
   }), [coverImage, t, work]);
 
+  const audioProgress = useMediaProgress(collections.audioTracks);
+  const videoProgress = useMediaProgress(collections.videoEpisodes);
+
   const isPrivate = Number(work?.is_public) === 0;
   const hasAccessPass = userInfo.has_valid_subscription || userInfo.has_active_code;
   const hasPaidConsultation = userInfo.valid_consultations?.some(consultation => consultation.id === work?.id);
@@ -72,16 +76,20 @@ const MediaCollectionScreen = ({ navigation, route }) => {
     if (!canPlay || !items[index]) return;
 
     playQueue(items, index);
-    if (items[index].kind === 'video') {
-      const episode = items[index];
-      navigation.navigate('VideoPlayer', { mediaType: 'video', videoCover: episode.artwork, videoId: episode.id, videoTitle: episode.title, videoUri: episode.uri });
+    const item = items[index];
+    if (item.kind === 'video') {
+      navigation.navigate('VideoPlayer', { mediaType: 'video', videoCover: item.artwork, videoId: item.id, videoTitle: item.title, videoUri: item.uri });
+    } else {
+      navigation.navigate('Audio', { audioAuthor: item.artist, audioId: item.id, audioTitle: item.title, audioUrl: item.uri, mediaCover: item.artwork });
     }
   };
 
-  const renderSection = (kind, items) => {
+  const renderSection = (kind, items, progress) => {
     if (!items.length) return null;
 
     const isAlbum = kind === 'audio';
+    const several = items.length > 1;
+    const resume = pickResumeIndex(items, progress);
     return (
       <View key={kind} style={[styles.section, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
         <View style={styles.sectionHeader}>
@@ -89,17 +97,18 @@ const MediaCollectionScreen = ({ navigation, route }) => {
             <Icon name={isAlbum ? 'album' : 'movie-open-play-outline'} size={22} color={COLORS.primary} />
           </View>
           <View style={styles.sectionCopy}>
-            <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{isAlbum ? t('media.album') : t('media.series')}</Text>
-            <Text style={[styles.sectionMeta, { color: COLORS.dark }]}>{t(isAlbum ? 'media.tracks_count' : 'media.episodes_count', { count: items.length })}</Text>
+            <Text style={[styles.sectionTitle, { color: COLORS.black }]}>{several ? (isAlbum ? t('media.album') : t('media.series')) : (isAlbum ? t('file.audio') : t('file.video'))}</Text>
+            <Text style={[styles.sectionMeta, { color: COLORS.dark }]}>{several ? t(isAlbum ? 'media.tracks_count' : 'media.episodes_count', { count: items.length }) : formatDuration(items[0].duration)}</Text>
           </View>
-          <TouchableOpacity accessibilityRole="button" disabled={!canPlay} onPress={() => playItem(items, 0)} style={[styles.playAll, { backgroundColor: COLORS.primary }, !canPlay && styles.disabled]}>
+          <TouchableOpacity accessibilityRole="button" disabled={!canPlay} onPress={() => playItem(items, resume.index)} style={[styles.playAll, { backgroundColor: COLORS.primary }, !canPlay && styles.disabled]}>
             <Icon name="play" size={18} color="#ffffff" />
-            <Text style={styles.playAllText}>{t('media.play_all')}</Text>
+            <Text style={styles.playAllText}>{resume.resuming ? t('media.resume') : (several ? t('media.play_all') : t('media.play'))}</Text>
           </TouchableOpacity>
         </View>
         {items.map((item, index) => {
           const isCurrent = activeMedia?.kind === item.kind && String(activeMedia.id) === item.id;
           const duration = formatDuration(item.duration);
+          const entry = progress?.[item.id];
           return (
             <TouchableOpacity key={item.id} accessibilityRole="button" activeOpacity={0.78} disabled={!canPlay} onPress={() => playItem(items, index)} style={[styles.row, { borderColor: COLORS.light_secondary }, isCurrent && { backgroundColor: COLORS.light_primary }, !canPlay && styles.disabled]}>
               {item.artwork ? <Image source={{ uri: item.artwork }} style={styles.thumb} resizeMode="cover" /> : (
@@ -109,7 +118,12 @@ const MediaCollectionScreen = ({ navigation, route }) => {
               )}
               <View style={styles.rowCopy}>
                 <Text numberOfLines={2} style={[styles.rowTitle, { color: isCurrent ? COLORS.primary : COLORS.black }]}>{index + 1}. {item.title}</Text>
-                {isCurrent ? <Text style={[styles.rowMeta, { color: COLORS.primary }]}>{t('media.playing')}</Text> : duration ? <Text style={[styles.rowMeta, { color: COLORS.dark }]}>{duration}</Text> : null}
+                {isCurrent ? <Text style={[styles.rowMeta, { color: COLORS.primary }]}>{t('media.playing')}</Text> : entry?.completed ? (
+                  <View style={styles.doneRow}><Icon name="check-circle" size={14} color={COLORS.success} /><Text style={[styles.rowMeta, styles.doneText, { color: COLORS.dark }]}>{t('media.completed')}</Text></View>
+                ) : duration ? <Text style={[styles.rowMeta, { color: COLORS.dark }]}>{duration}</Text> : null}
+                {!isCurrent && entry && !entry.completed ? (
+                  <View style={[styles.rowTrack, { backgroundColor: COLORS.light_secondary }]}><View style={[styles.rowValue, { backgroundColor: COLORS.primary, width: `${Math.round(entry.ratio * 100)}%` }]} /></View>
+                ) : null}
               </View>
               <Icon name={isCurrent && status.playing ? 'equalizer' : isAlbum ? 'play-circle-outline' : 'chevron-right'} size={isAlbum ? 26 : 22} color={isCurrent ? COLORS.primary : COLORS.dark} />
             </TouchableOpacity>
@@ -146,8 +160,8 @@ const MediaCollectionScreen = ({ navigation, route }) => {
               <Text style={[styles.lockedText, { color: COLORS.black }]}>{t('media.locked')}</Text>
             </TouchableOpacity>
           ) : null}
-          {renderSection('audio', collections.audioTracks)}
-          {renderSection('video', collections.videoEpisodes)}
+          {renderSection('audio', collections.audioTracks, audioProgress)}
+          {renderSection('video', collections.videoEpisodes, videoProgress)}
         </ScrollView>
       )}
     </SafeAreaView>
@@ -180,6 +194,10 @@ const styles = StyleSheet.create({
   thumb: { borderRadius: 10, height: 48, width: 48 },
   thumbFallback: { alignItems: 'center', justifyContent: 'center' },
   rowCopy: { flex: 1, marginHorizontal: 12 },
+  doneRow: { alignItems: 'center', flexDirection: 'row', marginTop: 2 },
+  doneText: { marginLeft: 4, marginTop: 0 },
+  rowTrack: { borderRadius: 2, height: 3, marginTop: 6, overflow: 'hidden' },
+  rowValue: { height: '100%' },
   rowTitle: { fontSize: 14, fontWeight: '700', lineHeight: 19 },
   rowMeta: { fontSize: 12, marginTop: 2 },
   disabled: { opacity: 0.5 },

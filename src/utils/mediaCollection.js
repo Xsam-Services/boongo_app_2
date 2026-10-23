@@ -109,3 +109,24 @@ export const resolveQueuePosition = (items, activeMedia) => {
     total: items.length,
   };
 };
+
+export const hasPlayableMedia = collections => (
+  (collections?.audioTracks?.length || 0) > 0 || (collections?.videoEpisodes?.length || 0) > 0
+);
+
+/**
+ * Where "play" should start in a list: the first item left half-way, else the first one not
+ * finished yet, else the beginning. `resuming` tells whether the user already started the list.
+ */
+export const pickResumeIndex = (items, progress) => {
+  const list = items || [];
+  const partial = list.findIndex(item => {
+    const entry = progress?.[item.id];
+    return Boolean(entry) && !entry.completed && entry.ratio > 0;
+  });
+  if (partial >= 0) return { index: partial, resuming: true };
+
+  const unfinished = list.findIndex(item => !progress?.[item.id]?.completed);
+  if (unfinished < 0) return { index: 0, resuming: false };
+  return { index: unfinished, resuming: unfinished > 0 };
+};

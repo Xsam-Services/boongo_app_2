@@ -63,6 +63,31 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
     }
   }, [audioPlayer, userId]);
 
+  const persistVideoProgress = useCallback(async (media = activeMediaRef.current) => {
+    if (!media || media.kind !== 'video') return;
+
+    try {
+      await AsyncStorage.setItem(
+        getMediaProgressKey(userId, media),
+        serializeMediaProgress(videoPlayer.currentTime, videoPlayer.duration),
+      );
+    } catch {
+      // Playback must remain usable if local storage is unavailable.
+    }
+  }, [userId, videoPlayer]);
+
+  const markVideoCompleted = useCallback(async () => {
+    const media = activeMediaRef.current;
+    if (media?.kind !== 'video') return;
+
+    const duration = Number(videoPlayer.duration) || 0;
+    try {
+      await AsyncStorage.setItem(getMediaProgressKey(userId, media), serializeMediaProgress(duration, duration));
+    } catch {
+      // Playback must remain usable if local storage is unavailable.
+    }
+  }, [userId, videoPlayer]);
+
   const deactivateAudio = useCallback((saveProgress = true) => {
     if (saveProgress) persistAudioProgress();
     audioPlayer.pause();
@@ -88,6 +113,7 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
     loadSequenceRef.current += 1;
     const sequence = loadSequenceRef.current;
     if (currentMedia?.kind === 'audio') persistAudioProgress(currentMedia);
+    if (currentMedia?.kind === 'video') persistVideoProgress(currentMedia);
     audioPlayer.pause();
     audioPlayer.clearLockScreenControls();
     videoPlayer.pause();
@@ -119,7 +145,7 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
             : current);
         }
       });
-  }, [audioPlayer, pendingAudioStart, persistAudioProgress, updateActiveMedia, userId, videoPlayer]);
+  }, [audioPlayer, pendingAudioStart, persistAudioProgress, persistVideoProgress, updateActiveMedia, userId, videoPlayer]);
 
   const playAudio = useCallback(media => {
     prepareAudio(media, true);
@@ -138,6 +164,7 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
     loadSequenceRef.current += 1;
     setPendingAudioStart(null);
     if (currentMedia?.kind === 'audio') deactivateAudio(true);
+    if (currentMedia?.kind === 'video') persistVideoProgress(currentMedia);
     videoPlayer.pause();
     // Keep the intent to play until the player is ready: a play() issued during the source swap
     // is sometimes lost, notably when chaining queue items.
@@ -154,11 +181,20 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
         },
         uri: decodeMediaUri(normalizedMedia.uri),
       });
+      if (getMediaIdentity(activeMediaRef.current) !== normalizedMedia.id) return;
+
+      // Start where the user stopped last time, unless they had (nearly) finished it.
+      try {
+        const resumeAt = getResumePosition(await AsyncStorage.getItem(getMediaProgressKey(userId, normalizedMedia)), videoPlayer.duration);
+        if (resumeAt > 0 && getMediaIdentity(activeMediaRef.current) === normalizedMedia.id) videoPlayer.currentTime = resumeAt;
+      } catch {
+        // Starting from the beginning is a fine fallback.
+      }
       if (getMediaIdentity(activeMediaRef.current) === normalizedMedia.id) videoPlayer.play();
     } catch (error) {
       setVideoStatus(current => ({ ...current, error, isBuffering: false }));
     }
-  }, [deactivateAudio, updateActiveMedia, videoPlayer]);
+  }, [deactivateAudio, persistVideoProgress, updateActiveMedia, userId, videoPlayer]);
 
   const pause = useCallback(() => {
     const media = activeMediaRef.current;
@@ -167,8 +203,9 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
       persistAudioProgress(media);
     } else if (media?.kind === 'video') {
       videoPlayer.pause();
+      persistVideoProgress(media);
     }
-  }, [audioPlayer, persistAudioProgress, videoPlayer]);
+  }, [audioPlayer, persistAudioProgress, persistVideoProgress, videoPlayer]);
 
   const playPause = useCallback(() => {
     const media = activeMediaRef.current;
@@ -179,7 +216,7 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
         audioPlayer.play();
       }
     } else if (media?.kind === 'video') {
-      if (videoPlayer.playing) videoPlayer.pause();
+      if (videoPlayer.playing) pause();
       else videoPlayer.play();
     }
   }, [audioPlayer, pause, videoPlayer]);
@@ -233,10 +270,11 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
     pendingVideoPlayRef.current = null;
     const media = activeMediaRef.current;
     if (media?.kind === 'audio') deactivateAudio(true);
+    if (media?.kind === 'video') persistVideoProgress(media);
     videoPlayer.pause();
     setPendingAudioStart(null);
     updateActiveMedia(null);
-  }, [deactivateAudio, updateActiveMedia, videoPlayer]);
+  }, [deactivateAudio, persistVideoProgress, updateActiveMedia, videoPlayer]);
 
   useEffect(() => {
     setAudioModeAsync({
@@ -270,6 +308,7 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
     });
     const endSubscription = videoPlayer.addListener('playToEnd', () => {
       setVideoStatus(current => ({ ...current, currentTime: current.duration, playing: false }));
+      markVideoCompleted();
       advanceRef.current?.();
     });
 
@@ -279,7 +318,7 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
       timeSubscription.remove();
       endSubscription.remove();
     };
-  }, [videoPlayer]);
+  }, [markVideoCompleted, videoPlayer]);
 
   useEffect(() => {
     if (!pendingAudioStart?.ready || !audioStatus.isLoaded) return;
@@ -303,6 +342,12 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
   }, [activeMedia, audioStatus.playing, persistAudioProgress]);
 
   useEffect(() => {
+    if (activeMedia?.kind !== 'video' || !videoStatus.playing) return undefined;
+    const interval = setInterval(() => persistVideoProgress(activeMedia), 5000);
+    return () => clearInterval(interval);
+  }, [activeMedia, persistVideoProgress, videoStatus.playing]);
+
+  useEffect(() => {
     if (!audioStatus.didJustFinish) {
       finishHandledRef.current = false;
       return;
@@ -313,7 +358,8 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
     if (completedMediaRef.current === mediaId) return;
 
     completedMediaRef.current = mediaId;
-    AsyncStorage.removeItem(getMediaProgressKey(userId, activeMedia)).catch(() => {});
+    const duration = Number(audioPlayer.duration) || 0;
+    AsyncStorage.setItem(getMediaProgressKey(userId, activeMedia), serializeMediaProgress(duration, duration)).catch(() => {});
     audioPlayer.seekTo(0);
     advanceRef.current?.();
   }, [activeMedia, audioPlayer, audioStatus.didJustFinish, userId]);
@@ -325,12 +371,13 @@ export const MediaPlaybackProvider = ({ children, userId }) => {
   useEffect(() => () => {
     const media = activeMediaRef.current;
     if (media?.kind === 'audio') persistAudioProgress(media);
+    if (media?.kind === 'video') persistVideoProgress(media);
     try {
       audioPlayer.clearLockScreenControls();
     } catch {
       // The native player may already be released when the provider unmounts (e.g. dev reload).
     }
-  }, [audioPlayer, persistAudioProgress]);
+  }, [audioPlayer, persistAudioProgress, persistVideoProgress]);
 
   const status = useMemo(() => activeMedia?.kind === 'video' ? videoStatus : ({
     currentTime: audioStatus.currentTime || 0,

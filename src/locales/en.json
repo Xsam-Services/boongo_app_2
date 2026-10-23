@@ -354,6 +354,18 @@
         "position": "{{current}} / {{total}}",
         "locked": "Subscribe or unlock this work to play it.",
         "details": "View details",
+        "play": "Play",
+        "pause": "Pause",
+        "back_10": "Back 10 seconds",
+        "forward_10": "Forward 10 seconds",
+        "mute": "Mute",
+        "unmute": "Unmute",
+        "fullscreen": "Full screen",
+        "expand_player": "Open the player",
+        "close_player": "Close the player",
+        "toggle_controls": "Show or hide controls",
+        "resume": "Resume",
+        "completed": "Completed",
         "playing": "Now playing"
     },
     "work_steps": {

@@ -354,6 +354,18 @@
         "position": "{{current}} / {{total}}",
         "locked": "Abonnez-vous ou débloquez cette œuvre pour la lire.",
         "details": "Voir les détails",
+        "play": "Lecture",
+        "pause": "Pause",
+        "back_10": "Reculer de 10 secondes",
+        "forward_10": "Avancer de 10 secondes",
+        "mute": "Couper le son",
+        "unmute": "Remettre le son",
+        "fullscreen": "Plein écran",
+        "expand_player": "Ouvrir le lecteur",
+        "close_player": "Fermer le lecteur",
+        "toggle_controls": "Afficher ou masquer les commandes",
+        "resume": "Reprendre",
+        "completed": "Terminé",
         "playing": "En lecture"
     },
     "work_steps": {

@@ -102,6 +102,7 @@ describe('MediaPlaybackProvider', () => {
     mockAudioPlayer.currentTime = 0;
     mockAudioPlayer.playing = false;
     mockVideoPlayer.playing = false;
+    mockVideoPlayer.currentTime = 0;
     api = null;
   });
 
@@ -172,6 +173,49 @@ describe('MediaPlaybackProvider', () => {
     mockVideoPlayer.play.mockClear();
     await ReactTestRenderer.act(async () => mockVideoListeners.statusChange({ error: null, status: 'readyToPlay' }));
     expect(mockVideoPlayer.play).not.toHaveBeenCalled();
+  });
+
+  test('resumes a video where the user stopped', async () => {
+    const video = { id: 'video-resume', title: 'Vidéo', uri: 'https://example.test/video-resume.mp4' };
+    mockStorage.set(getMediaProgressKey(7, video), serializeMediaProgress(120, 600));
+    await renderProvider();
+
+    await ReactTestRenderer.act(async () => api.playVideo(video));
+
+    expect(mockVideoPlayer.currentTime).toBe(120);
+    expect(mockVideoPlayer.play).toHaveBeenCalled();
+  });
+
+  test('starts a video over when it was nearly finished', async () => {
+    const video = { id: 'video-done', title: 'Vidéo', uri: 'https://example.test/video-done.mp4' };
+    mockStorage.set(getMediaProgressKey(7, video), serializeMediaProgress(595, 600));
+    await renderProvider();
+
+    await ReactTestRenderer.act(async () => api.playVideo(video));
+
+    expect(mockVideoPlayer.currentTime).toBe(0);
+  });
+
+  test('saves the video position when it is paused', async () => {
+    const video = { id: 'video-pause', title: 'Vidéo', uri: 'https://example.test/video-pause.mp4' };
+    await renderProvider();
+    await ReactTestRenderer.act(async () => api.playVideo(video));
+    mockVideoPlayer.currentTime = 42;
+    mockVideoPlayer.playing = true;
+
+    await ReactTestRenderer.act(async () => api.playPause());
+
+    expect(AsyncStorage.setItem).toHaveBeenCalledWith(getMediaProgressKey(7, video), expect.stringContaining('"position":42'));
+  });
+
+  test('marks a video as completed when it ends', async () => {
+    const video = { id: 'video-end', title: 'Vidéo', uri: 'https://example.test/video-end.mp4' };
+    await renderProvider();
+    await ReactTestRenderer.act(async () => api.playVideo(video));
+
+    await ReactTestRenderer.act(async () => mockVideoListeners.playToEnd());
+
+    expect(AsyncStorage.setItem).toHaveBeenCalledWith(getMediaProgressKey(7, video), expect.stringContaining('"position":600'));
   });
 
   test('persists audio progress when the player is closed', async () => {

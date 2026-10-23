@@ -354,6 +354,18 @@
         "position": "{{current}} / {{total}}",
         "locked": "Komisalisa to kofungola mosala oyo mpo na kotanga yango.",
         "details": "Tala makambo",
+        "play": "Tanga",
+        "pause": "Telema",
+        "back_10": "Zonga sekonde 10",
+        "forward_10": "Koma liboso sekonde 10",
+        "mute": "Kata mongongo",
+        "unmute": "Zongisa mongongo",
+        "fullscreen": "Ecran mobimba",
+        "expand_player": "Fungola lecteur",
+        "close_player": "Kanga lecteur",
+        "toggle_controls": "Telemisa to bomba ba commande",
+        "resume": "Kokoba",
+        "completed": "Esili",
         "playing": "Ezali kotanga"
     },
     "work_steps": {

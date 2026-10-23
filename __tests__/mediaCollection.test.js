@@ -1,4 +1,4 @@
-import { buildCollections, formatDuration, isCollection, isDefaultCover, isVideoFile, resolveQueuePosition } from '../src/utils/mediaCollection';
+import { buildCollections, formatDuration, hasPlayableMedia, isCollection, isDefaultCover, isVideoFile, pickResumeIndex, resolveQueuePosition } from '../src/utils/mediaCollection';
 
 const work = {
   id: 7,
@@ -114,5 +114,37 @@ describe('formatDuration', () => {
     expect(formatDuration(3725)).toBe('1:02:05');
     expect(formatDuration(0)).toBe('');
     expect(formatDuration(NaN)).toBe('');
+  });
+});
+
+describe('pickResumeIndex', () => {
+  const items = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+
+  it('starts from the beginning when nothing was played', () => {
+    expect(pickResumeIndex(items, {})).toEqual({ index: 0, resuming: false });
+  });
+
+  it('resumes the item left half-way', () => {
+    const progress = { a: { completed: true, ratio: 1 }, b: { completed: false, ratio: 0.4 } };
+    expect(pickResumeIndex(items, progress)).toEqual({ index: 1, resuming: true });
+  });
+
+  it('moves to the next unfinished item after completed ones', () => {
+    const progress = { a: { completed: true, ratio: 1 }, b: { completed: true, ratio: 1 } };
+    expect(pickResumeIndex(items, progress)).toEqual({ index: 2, resuming: true });
+  });
+
+  it('starts over once everything is completed', () => {
+    const progress = { a: { completed: true }, b: { completed: true }, c: { completed: true } };
+    expect(pickResumeIndex(items, progress)).toEqual({ index: 0, resuming: false });
+  });
+});
+
+describe('hasPlayableMedia', () => {
+  it('is true as soon as there is one audio or one video', () => {
+    expect(hasPlayableMedia({ audioTracks: [{}], videoEpisodes: [] })).toBe(true);
+    expect(hasPlayableMedia({ audioTracks: [], videoEpisodes: [{}] })).toBe(true);
+    expect(hasPlayableMedia({ audioTracks: [], videoEpisodes: [] })).toBe(false);
+    expect(hasPlayableMedia(null)).toBe(false);
   });
 });
