@@ -1,25 +1,28 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Modal, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Modal, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { pick, types as docTypes, isErrorWithCode, errorCodes } from '@react-native-documents/picker';
 import * as ImagePicker from 'expo-image-picker';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 
 import { AuthContext } from '../contexts/AuthContext';
-import { API } from '../tools/constants';
 import useColors from '../hooks/useColors';
 import HeaderComponent from './header';
+import { formatDuration, isDefaultCover } from '../utils/mediaCollection';
+import { measureAudioDuration, secondsFromMilliseconds } from '../utils/mediaDuration';
 import {
   ACCEPTED_EXTENSIONS,
-  DEFAULT_FILE_TYPE_IDS,
+  computeMove,
   deleteWorkFile,
   fetchWork,
   getFileKind,
+  isBatchKind,
   listWorkFiles,
-  mapFileTypeIds,
-  uploadFileWithMeta,
+  nextPosition,
+  updateFileCover,
+  updateFilePosition,
+  uploadWorkBatch,
 } from '../utils/workFiles';
 
 const KIND_ICONS = { audio: 'music-note', document: 'file-pdf-box', image: 'image-outline', video: 'video-outline' };
@@ -29,36 +32,35 @@ const WorkFilesScreen = ({ navigation, route }) => {
   const COLORS = useColors();
   const { t } = useTranslation();
   const { userInfo } = useContext(AuthContext);
-  const { workId } = route.params;
+  const { workId, manage = false } = route.params;
   const token = userInfo?.api_token;
   const [work, setWork] = useState(null);
   const [remoteFiles, setRemoteFiles] = useState([]);
   const [items, setItems] = useState([]);
-  const [typeIds, setTypeIds] = useState(DEFAULT_FILE_TYPE_IDS);
   const [loading, setLoading] = useState(true);
   const [picking, setPicking] = useState(false);
   const [sending, setSending] = useState(false);
   const [sheetVisible, setSheetVisible] = useState(false);
   const [error, setError] = useState('');
+  const [busyId, setBusyId] = useState(null);
   const remoteCountRef = useRef(0);
+  const remoteFilesRef = useRef([]);
 
-  const refresh = useCallback(async () => {
-    const data = await fetchWork(workId, token);
+  const applyWork = useCallback(data => {
     const files = listWorkFiles(data);
     remoteCountRef.current = files.length;
+    remoteFilesRef.current = files;
     setWork(data);
     setRemoteFiles(files);
     return files;
-  }, [token, workId]);
+  }, []);
+
+  const refresh = useCallback(async () => applyWork(await fetchWork(workId, token)), [applyWork, token, workId]);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [types] = await Promise.all([
-          axios.get(`${API.boongo_url}/type/find_by_group/${encodeURIComponent('Type de fichier')}`, { headers: { 'X-localization': 'fr' } }).catch(() => null),
-          refresh(),
-        ]);
-        if (types?.data?.data) setTypeIds(mapFileTypeIds(types.data.data));
+        await refresh();
       } catch (loadError) {
         setError(t('work_steps.load_failed'));
       } finally {
@@ -73,16 +75,23 @@ const WorkFilesScreen = ({ navigation, route }) => {
 
   const addPicked = picked => {
     const stamp = Date.now();
-    setItems(current => [...current, ...picked.map((file, index) => ({
+    const added = picked.map((file, index) => ({
+      cover: null,
       key: `${stamp}-${index}`,
       kind: getFileKind(file),
+      mediaLength: file.mediaLength || 0,
       name: file.name || `fichier-${index + 1}`,
       progress: 0,
       status: 'pending',
       title: '',
       type: file.type,
       uri: file.uri,
-    }))]);
+    }));
+    setItems(current => [...current, ...added]);
+    // Audio length is read from the file itself; videos already come with theirs from the library.
+    added.filter(item => item.kind === 'audio' && !item.mediaLength).forEach(item => {
+      measureAudioDuration(item.uri).then(seconds => seconds && updateItem(item.key, { mediaLength: seconds }));
+    });
   };
 
   const closeSheet = action => {
@@ -100,6 +109,7 @@ const WorkFilesScreen = ({ navigation, route }) => {
           name: asset.fileName || `${mediaType === 'images' ? 'image' : 'video'}-${index + 1}.${asset.mimeType?.split('/')[1] || (mediaType === 'images' ? 'jpg' : 'mp4')}`,
           type: asset.mimeType || (mediaType === 'images' ? 'image/jpeg' : 'video/mp4'),
           uri: asset.uri,
+          mediaLength: secondsFromMilliseconds(asset.duration),
         })));
       }
     } catch (pickerError) {
@@ -124,19 +134,20 @@ const WorkFilesScreen = ({ navigation, route }) => {
 
   const sendItem = async item => {
     const before = remoteCountRef.current;
+    const file = { name: item.name, type: item.type, uri: item.uri };
+    const onProgress = progress => updateItem(item.key, { progress });
     updateItem(item.key, { error: '', progress: 0, status: 'uploading' });
     try {
-      const { metaSaved } = await uploadFileWithMeta({
-        file: { name: item.name, type: item.type, uri: item.uri },
-        onProgress: progress => updateItem(item.key, { progress }),
-        title: item.title,
+      // Title, position, length and cover travel with the file: one call, and the answer is the whole work.
+      const data = await uploadWorkBatch({
+        entries: [{ cover: item.cover, file, mediaLength: item.mediaLength, position: nextPosition(remoteFilesRef.current, item.kind), title: item.title }],
+        onProgress,
         token,
-        typeIds,
         workId,
       });
+      if (data?.audios || data?.images) applyWork(data);
+      else await refresh();
       removeItem(item.key);
-      await refresh();
-      if (!metaSaved) setError(t('work_steps.meta_failed'));
     } catch (uploadError) {
       // The server may store the file and still answer with an error: check before offering a retry.
       let stored = false;
@@ -179,11 +190,59 @@ const WorkFilesScreen = ({ navigation, route }) => {
     },
   ]);
 
+  const pickCover = async (withBase64 = false) => {
+    const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: false, base64: withBase64, mediaTypes: ['images'], quality: 0.8 });
+    return result.canceled ? null : result.assets?.[0] || null;
+  };
+
+  const setItemCover = async item => {
+    try {
+      const asset = await pickCover();
+      if (!asset) return;
+      updateItem(item.key, { cover: { name: asset.fileName || 'couverture.jpg', type: asset.mimeType || 'image/jpeg', uri: asset.uri } });
+    } catch (pickerError) {
+      setError('Impossible de sélectionner cette image.');
+    }
+  };
+
+  const changeFileCover = async file => {
+    try {
+      const asset = await pickCover(true);
+      if (!asset?.base64) return;
+      setBusyId(file.id);
+      await updateFileCover(file.id, `data:${asset.mimeType || 'image/jpeg'};base64,${asset.base64}`, token);
+      await refresh();
+    } catch (coverError) {
+      setError(coverError.response?.data?.message || t('work_steps.edit_failed'));
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const moveFile = async (file, direction) => {
+    const changes = computeMove(remoteFilesRef.current, file.id, direction);
+    if (!changes.length) return;
+
+    setBusyId(file.id);
+    try {
+      await Promise.all(changes.map(change => updateFilePosition(change.id, change.position, token)));
+      await refresh();
+    } catch (moveError) {
+      setError(moveError.response?.data?.message || t('work_steps.edit_failed'));
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   const finish = () => {
+    if (manage && !items.length) {
+      navigation.goBack();
+      return;
+    }
     if (items.length) {
       Alert.alert(t('work_steps.pending_title'), t('work_steps.pending_message'), [
         { style: 'cancel', text: t('work_steps.cancel') },
-        { onPress: () => navigation.popToTop(), text: t('work_steps.finish_anyway') },
+        { onPress: () => (manage ? navigation.goBack() : navigation.popToTop()), text: t('work_steps.finish_anyway') },
       ]);
       return;
     }
@@ -203,7 +262,10 @@ const WorkFilesScreen = ({ navigation, route }) => {
     <View key={item.key} style={[styles.card, { backgroundColor: COLORS.white, borderColor: item.status === 'error' ? COLORS.danger : COLORS.light_secondary }]}>
       <View style={styles.row}>
         <View style={[styles.icon, { backgroundColor: COLORS.light_primary }]}><Icon name={KIND_ICONS[item.kind]} size={22} color={COLORS.primary} /></View>
-        <Text numberOfLines={1} style={[styles.name, { color: COLORS.black }]}>{item.name}</Text>
+        <View style={styles.nameBlock}>
+          <Text numberOfLines={1} style={[styles.nameText, { color: COLORS.black }]}>{item.name}</Text>
+          {item.mediaLength ? <Text style={[styles.hint, { color: COLORS.dark }]}>{formatDuration(item.mediaLength)}</Text> : null}
+        </View>
         {item.status !== 'uploading' ? (
           <TouchableOpacity accessibilityLabel={t('work_steps.remove')} onPress={() => removeItem(item.key)}><Icon name="close" size={20} color={COLORS.danger} /></TouchableOpacity>
         ) : <ActivityIndicator size="small" color={COLORS.primary} />}
@@ -216,6 +278,15 @@ const WorkFilesScreen = ({ navigation, route }) => {
         style={[styles.input, { borderColor: COLORS.light_secondary, color: COLORS.black }]}
         value={item.title}
       />
+      {isBatchKind(item.kind) && item.status !== 'uploading' ? (
+        <View style={styles.coverRow}>
+          <TouchableOpacity accessibilityRole="button" onPress={() => setItemCover(item)} style={[styles.coverButton, { borderColor: COLORS.light_secondary }]}>
+            {item.cover ? <Image source={{ uri: item.cover.uri }} style={styles.coverThumb} /> : <View style={[styles.coverThumb, styles.coverEmpty, { backgroundColor: COLORS.light_primary }]}><Icon name="image-plus" size={18} color={COLORS.primary} /></View>}
+            <Text style={[styles.coverText, { color: COLORS.primary }]}>{item.cover ? t('work_steps.change_cover') : t('work_steps.cover')}</Text>
+          </TouchableOpacity>
+          {item.cover ? <TouchableOpacity accessibilityLabel={t('work_steps.remove_cover')} onPress={() => updateItem(item.key, { cover: null })}><Icon name="close-circle-outline" size={20} color={COLORS.dark} /></TouchableOpacity> : null}
+        </View>
+      ) : null}
       {item.status === 'uploading' ? (
         <View style={[styles.track, { backgroundColor: COLORS.light_secondary }]}><View style={[styles.bar, { backgroundColor: COLORS.primary, width: `${Math.round(item.progress * 100)}%` }]} /></View>
       ) : null}
@@ -242,12 +313,12 @@ const WorkFilesScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: COLORS.light }]} edges={['top']}>
       <StatusBar barStyle={COLORS.bar_style} backgroundColor={COLORS.white} />
-      <HeaderComponent title={t('work_steps.files_title')} />
+      <HeaderComponent title={manage ? t('work_steps.manage_title') : t('work_steps.files_title')} />
       {loading ? <ActivityIndicator size="large" color={COLORS.primary} style={styles.loader} /> : (
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <Text style={[styles.step, { color: COLORS.primary }]}>{t('work_steps.step_label', { current: 2, total: TOTAL_STEPS })}</Text>
+          {manage ? null : <Text style={[styles.step, { color: COLORS.primary }]}>{t('work_steps.step_label', { current: 2, total: TOTAL_STEPS })}</Text>}
           <Text style={[styles.workTitle, { color: COLORS.black }]} numberOfLines={2}>{work?.work_title}</Text>
-          <Text style={[styles.intro, { color: COLORS.dark }]}>{items.length || remoteFiles.length ? t('work_steps.files_intro') : `${t('work_steps.work_created')} ${t('work_steps.files_intro')}`}</Text>
+          <Text style={[styles.intro, { color: COLORS.dark }]}>{items.length || remoteFiles.length || manage ? t('work_steps.files_intro') : `${t('work_steps.work_created')} ${t('work_steps.files_intro')}`}</Text>
           {error ? <View style={[styles.error, { backgroundColor: COLORS.danger_transparent }]}><Icon name="alert-circle-outline" color={COLORS.danger} size={20} /><Text style={[styles.errorMessage, { color: COLORS.black }]}>{error}</Text></View> : null}
 
           <TouchableOpacity disabled={picking || sending} onPress={() => setSheetVisible(true)} style={[styles.add, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
@@ -267,17 +338,38 @@ const WorkFilesScreen = ({ navigation, route }) => {
           ) : null}
 
           <Text style={[styles.section, { color: COLORS.black }]}>{t('work_steps.uploaded')} ({remoteFiles.length})</Text>
-          {remoteFiles.length ? remoteFiles.map((file, index) => (
-            <View key={file.id} style={[styles.card, styles.row, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
-              <View style={[styles.icon, { backgroundColor: COLORS.light_primary }]}><Icon name={KIND_ICONS[file.kind]} size={22} color={COLORS.primary} /></View>
-              <Text numberOfLines={1} style={[styles.name, { color: COLORS.black }]}>{remoteTitle(file, index)}</Text>
-              <TouchableOpacity accessibilityLabel={t('work_steps.delete')} onPress={() => confirmDelete(file)}><Icon name="trash-can-outline" size={21} color={COLORS.danger} /></TouchableOpacity>
-            </View>
-          )) : <Text style={[styles.hint, { color: COLORS.dark }]}>{t('work_steps.no_files')}</Text>}
+          {remoteFiles.length ? remoteFiles.map((file, index) => {
+            const sameKind = remoteFiles.filter(other => other.kind === file.kind);
+            const rank = sameKind.findIndex(other => other.id === file.id);
+            const orderable = isBatchKind(file.kind) && sameKind.length > 1;
+            const hasCover = !isDefaultCover(file.part_cover_url);
+            const busy = busyId === file.id;
+            return (
+              <View key={file.id} style={[styles.card, styles.row, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
+                {hasCover ? <Image source={{ uri: file.part_cover_url }} style={styles.thumb} /> : <View style={[styles.icon, { backgroundColor: COLORS.light_primary }]}><Icon name={KIND_ICONS[file.kind]} size={22} color={COLORS.primary} /></View>}
+                <View style={styles.nameBlock}>
+                  <Text numberOfLines={1} style={[styles.nameText, { color: COLORS.black }]}>{remoteTitle(file, index)}</Text>
+                  {formatDuration(Number(file.media_length)) ? <Text style={[styles.hint, { color: COLORS.dark }]}>{formatDuration(Number(file.media_length))}</Text> : null}
+                </View>
+                {busy ? <ActivityIndicator size="small" color={COLORS.primary} /> : (
+                  <View style={styles.actions}>
+                    {orderable ? (
+                      <>
+                        <TouchableOpacity accessibilityLabel={t('work_steps.move_up')} disabled={rank === 0} hitSlop={6} onPress={() => moveFile(file, -1)} style={[styles.action, rank === 0 && styles.disabled]}><Icon name="chevron-up" size={22} color={COLORS.dark} /></TouchableOpacity>
+                        <TouchableOpacity accessibilityLabel={t('work_steps.move_down')} disabled={rank === sameKind.length - 1} hitSlop={6} onPress={() => moveFile(file, 1)} style={[styles.action, rank === sameKind.length - 1 && styles.disabled]}><Icon name="chevron-down" size={22} color={COLORS.dark} /></TouchableOpacity>
+                      </>
+                    ) : null}
+                    {isBatchKind(file.kind) ? <TouchableOpacity accessibilityLabel={t('work_steps.change_cover')} hitSlop={6} onPress={() => changeFileCover(file)} style={styles.action}><Icon name="image-edit-outline" size={21} color={COLORS.primary} /></TouchableOpacity> : null}
+                    <TouchableOpacity accessibilityLabel={t('work_steps.delete')} hitSlop={6} onPress={() => confirmDelete(file)} style={styles.action}><Icon name="trash-can-outline" size={21} color={COLORS.danger} /></TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            );
+          }) : <Text style={[styles.hint, { color: COLORS.dark }]}>{t('work_steps.no_files')}</Text>}
 
           <View style={styles.footer}>
             <TouchableOpacity disabled={!remoteFiles.length} onPress={() => navigation.navigate('MediaCollection', { itemId: workId, preview: true })} style={[styles.secondary, { borderColor: COLORS.primary }, !remoteFiles.length && styles.disabled]}>
-              <Text style={[styles.secondaryText, { color: COLORS.primary }]}>{t('work_steps.step_label', { current: 3, total: TOTAL_STEPS })} · {t('work_steps.preview')}</Text>
+              <Text style={[styles.secondaryText, { color: COLORS.primary }]}>{manage ? t('work_steps.preview') : `${t('work_steps.step_label', { current: 3, total: TOTAL_STEPS })} · ${t('work_steps.preview')}`}</Text>
             </TouchableOpacity>
             <TouchableOpacity disabled={sending} onPress={finish} style={[styles.primary, { backgroundColor: COLORS.primary }, sending && styles.disabled]}>
               <Text style={styles.primaryText}>{t('work_steps.finish')}</Text>
@@ -319,6 +411,16 @@ const styles = StyleSheet.create({
   row: { alignItems: 'center', flexDirection: 'row' },
   icon: { alignItems: 'center', borderRadius: 14, height: 44, justifyContent: 'center', width: 44 },
   name: { flex: 1, fontSize: 14, fontWeight: '700', marginHorizontal: 12 },
+  nameBlock: { flex: 1, marginHorizontal: 12, minWidth: 0 },
+  nameText: { fontSize: 14, fontWeight: '700' },
+  thumb: { borderRadius: 12, height: 44, width: 44 },
+  actions: { alignItems: 'center', flexDirection: 'row' },
+  action: { alignItems: 'center', height: 36, justifyContent: 'center', width: 34 },
+  coverRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
+  coverButton: { alignItems: 'center', borderRadius: 12, borderWidth: 1, flexDirection: 'row', paddingHorizontal: 8, paddingVertical: 6 },
+  coverThumb: { borderRadius: 8, height: 32, width: 32 },
+  coverEmpty: { alignItems: 'center', justifyContent: 'center' },
+  coverText: { fontSize: 13, fontWeight: '800', marginLeft: 8 },
   input: { borderBottomWidth: 1, fontSize: 14, marginTop: 8, minHeight: 44, paddingVertical: 8 },
   track: { borderRadius: 3, height: 6, marginTop: 10, overflow: 'hidden' },
   bar: { height: '100%' },

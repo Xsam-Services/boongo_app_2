@@ -1,12 +1,9 @@
 import axios from 'axios';
 
 import { API } from '../tools/constants';
-import { isDefaultCover } from './mediaCollection';
+import { compareByPosition, isDefaultCover } from './mediaCollection';
 
 export { isDefaultCover };
-
-// Ids of the "Type de fichier" group, used when the list cannot be fetched.
-export const DEFAULT_FILE_TYPE_IDS = { audio: 8, document: 7, image: 6 };
 
 const EXTENSIONS = {
   audio: ['mp3', 'wav', 'm4a', 'aac'],
@@ -30,35 +27,6 @@ export const getFileKind = ({ name, type } = {}) => {
   return Object.keys(EXTENSIONS).find(kind => EXTENSIONS[kind].includes(extension)) || 'document';
 };
 
-export const mapFileTypeIds = types => {
-  const find = alias => (types || []).find(item => item.alias === alias)?.id;
-  return {
-    audio: find('audio_file') ?? DEFAULT_FILE_TYPE_IDS.audio,
-    document: find('document_file') ?? DEFAULT_FILE_TYPE_IDS.document,
-    image: find('image_file') ?? DEFAULT_FILE_TYPE_IDS.image,
-  };
-};
-
-// The server stores photos and videos under the same "image_file" type.
-const FIELDS_BY_KIND = {
-  audio: ['audio_file_url', 'audio_file_type_id', 'audio'],
-  document: ['document_file_url', 'document_file_type_id', 'document'],
-  image: ['video_file_url', 'image_file_type_id', 'image'],
-  video: ['video_file_url', 'image_file_type_id', 'image'],
-};
-
-export const buildUploadForm = ({ workId, file, title, typeIds = DEFAULT_FILE_TYPE_IDS }) => {
-  const kind = getFileKind(file);
-  const [fileField, typeField, typeKey] = FIELDS_BY_KIND[kind];
-  const form = new FormData();
-  form.append('work_id', String(workId));
-  form.append(typeField, String(typeIds[typeKey]));
-  form.append(fileField, { name: file.name || `fichier.${extensionOf(file.uri) || 'bin'}`, type: file.type || 'application/octet-stream', uri: file.uri });
-  // upload_files stores file_name but ignores part_title: send the title as the name so files stay distinguishable.
-  if (title && title.trim()) form.append('file_name', title.trim());
-  return form;
-};
-
 const authHeaders = token => ({ 'X-localization': 'fr', Authorization: `Bearer ${token}` });
 
 export const fetchWork = async (workId, token) => {
@@ -66,27 +34,20 @@ export const fetchWork = async (workId, token) => {
   return response.data?.data || null;
 };
 
-/** Every file of a work except its cover, in upload order. */
+const KIND_ORDER = ['audio', 'video', 'image', 'document'];
+
+/** Every file of a work except its cover, grouped by kind and ordered by position then id. */
 export const listWorkFiles = work => {
   const cover = work?.photo_url;
   const withKind = (files, kind) => (files || []).map(file => ({ ...file, kind: kind || (file.is_video ? 'video' : 'image') }));
-  return [
+  const all = [
     ...withKind(work?.audios, 'audio'),
     ...withKind(work?.documents, 'document'),
-    ...withKind(work?.images).filter(file => file.file_url !== cover),
-  ].sort((first, second) => Number(first.id) - Number(second.id));
-};
-
-export const uploadWorkFile = async ({ workId, file, title, typeIds, token, onProgress }) => {
-  const response = await axios.post(`${API.boongo_url}/work/upload_files`, buildUploadForm({ workId, file, title, typeIds }), {
-    headers: { ...authHeaders(token), 'Content-Type': 'multipart/form-data' },
-    maxBodyLength: Infinity,
-    onUploadProgress: event => {
-      if (onProgress && event.total) onProgress(Math.min(1, event.loaded / event.total));
-    },
-  });
-  if (response.data?.success === false) throw new Error(response.data.message || 'Envoi impossible.');
-  return response.data?.data || null;
+    // The server uses the last image sent as the work cover. Only the cover file itself (no title) is hidden:
+    // an image the user sent with a title stays in the list so it can be removed.
+    ...withKind(work?.images).filter(file => file.file_url !== cover || Boolean(String(file.part_title || '').trim())),
+  ];
+  return KIND_ORDER.flatMap(kind => all.filter(file => file.kind === kind).sort(compareByPosition));
 };
 
 export const deleteWorkFile = (fileId, token) => axios.delete(`${API.boongo_url}/file/${fileId}`, { headers: authHeaders(token) });
@@ -97,50 +58,83 @@ export const uploadWorkCover = (workId, cover, token) => axios.put(
   { headers: { ...authHeaders(token), 'Content-Type': 'application/x-www-form-urlencoded' } },
 );
 
+/** Audio tracks and video episodes are the ones that are ordered and can have their own cover. */
+export const isBatchKind = kind => kind === 'audio' || kind === 'video';
+
+const fileObject = file => ({ name: file.name || `fichier.${extensionOf(file.uri) || 'bin'}`, type: file.type || 'application/octet-stream', uri: file.uri });
+
 /**
- * Only the fields that were given: a PUT with part_cover_image64 changes the type and name of the file,
- * so the cover is deliberately never part of this payload.
+ * One request for several files of a work: the arrays are aligned by index.
+ * entries: [{ file: { name, type, uri }, title, position, mediaLength, cover: { name, type, uri } | null }]
  */
-export const buildFileMetaPayload = ({ fileId, title, position, mediaLength }) => {
-  const payload = { id: fileId };
-  if (title && title.trim()) payload.part_title = title.trim();
-  if (Number.isFinite(position)) payload.position = position;
-  if (Number.isFinite(mediaLength) && mediaLength > 0) payload.media_length = Math.round(mediaLength);
-  return payload;
+export const buildBatchForm = ({ workId, entries }) => {
+  const form = new FormData();
+  form.append('work_id', String(workId));
+  entries.forEach((entry, index) => {
+    const title = entry.title ? entry.title.trim() : '';
+    // Images and documents have no "Track N" fallback, and an untitled image could be mistaken for the work cover.
+    const storedTitle = title || (isBatchKind(getFileKind(entry.file)) ? '' : String(entry.file.name || '').replace(/\.[a-z0-9]{2,5}$/i, ''));
+    form.append('files_urls[]', fileObject(entry.file));
+    form.append('files_names[]', title || entry.file.name || '');
+    form.append('part_titles[]', storedTitle);
+    form.append('positions[]', String(Number.isFinite(entry.position) ? entry.position : index + 1));
+    form.append('media_lengths[]', String(Number.isFinite(entry.mediaLength) && entry.mediaLength > 0 ? Math.round(entry.mediaLength) : 0));
+    if (entry.cover?.uri) form.append(`part_covers[${index}]`, fileObject({ type: 'image/jpeg', ...entry.cover }));
+  });
+  return form;
 };
 
-export const updateFileMeta = (meta, token) => axios.put(
-  `${API.boongo_url}/file/${meta.fileId}`,
-  buildFileMetaPayload(meta),
-  { headers: authHeaders(token) },
-);
+const withProgress = (onProgress, extra = {}) => ({
+  headers: { ...extra.headers, 'Content-Type': 'multipart/form-data' },
+  maxBodyLength: Infinity,
+  onUploadProgress: event => {
+    if (onProgress && event.total) onProgress(Math.min(1, event.loaded / event.total));
+  },
+});
 
-const nextPosition = (files, kind) => {
-  const same = files.filter(file => file.kind === kind);
+/** Sends files of any type in one call (the server sets the type); the answer is the whole work, files included. */
+export const uploadWorkBatch = async ({ workId, entries, token, onProgress }) => {
+  const response = await axios.post(`${API.boongo_url}/work/upload_files`, buildBatchForm({ workId, entries }), withProgress(onProgress, { headers: authHeaders(token) }));
+  if (response.data?.success === false) throw new Error(response.data.message || 'Envoi impossible.');
+  return response.data?.data || null;
+};
+
+export const nextPosition = (files, kind) => {
+  const same = (files || []).filter(file => file.kind === kind);
   const highest = same.reduce((max, file) => Math.max(max, Number(file.position) || 0), 0);
   return Math.max(highest, same.length) + 1;
 };
 
 /**
- * Uploads a file, finds it again in the work, then sets its title, position and duration.
- * The upload answer does not give the new file id, so it is found by comparing the work before and after.
- * Resolves with { metaSaved, remoteFiles }: the file is uploaded even when the metadata step fails.
+ * Position changes needed to move a file one step up (-1) or down (+1) among the files of its kind.
+ * Returns [{ id, position }] for every file whose position changes, or [] when it cannot move.
  */
-export const uploadFileWithMeta = async ({ workId, file, title, mediaLength, typeIds, token, onProgress }) => {
-  const before = listWorkFiles(await fetchWork(workId, token));
-  await uploadWorkFile({ file, onProgress, title, token, typeIds, workId });
-  const after = listWorkFiles(await fetchWork(workId, token));
-  const known = new Set(before.map(item => item.id));
-  const added = after.find(item => !known.has(item.id));
-  const kind = getFileKind(file);
-  if (!added) return { metaSaved: false, remoteFiles: after };
+export const computeMove = (files, fileId, direction) => {
+  const target = (files || []).find(file => String(file.id) === String(fileId));
+  if (!target || !isBatchKind(target.kind)) return [];
 
-  // Only audio tracks and video episodes are ordered.
-  const position = kind === 'audio' || kind === 'video' ? nextPosition(before, kind) : undefined;
-  try {
-    await updateFileMeta({ fileId: added.id, mediaLength, position, title }, token);
-    return { metaSaved: true, remoteFiles: after };
-  } catch (error) {
-    return { metaSaved: false, remoteFiles: after };
-  }
+  const same = files.filter(file => file.kind === target.kind).sort(compareByPosition);
+  const from = same.findIndex(file => String(file.id) === String(fileId));
+  const to = from + direction;
+  if (from < 0 || to < 0 || to >= same.length) return [];
+
+  const reordered = [...same];
+  [reordered[from], reordered[to]] = [reordered[to], reordered[from]];
+  return reordered
+    .map((file, index) => ({ id: file.id, position: index + 1, current: Number(file.position) }))
+    .filter(change => change.position !== change.current)
+    .map(({ id, position }) => ({ id, position }));
 };
+
+export const updateFilePosition = (fileId, position, token) => axios.put(
+  `${API.boongo_url}/file/${fileId}`,
+  { id: fileId, position },
+  { headers: authHeaders(token) },
+);
+
+/** Changes the cover of one file (a data URI). The server leaves the type and name of the file untouched. */
+export const updateFileCover = (fileId, imageBase64, token) => axios.put(
+  `${API.boongo_url}/file/${fileId}`,
+  { id: fileId, part_cover_image64: imageBase64 },
+  { headers: authHeaders(token) },
+);

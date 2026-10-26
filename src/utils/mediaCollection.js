@@ -38,7 +38,7 @@ const fileNameTitle = fileName => {
 };
 
 // Explicit positions first (ascending), then the files without one by id.
-const compareByPosition = (first, second) => {
+export const compareByPosition = (first, second) => {
   const a = Number(first.position);
   const b = Number(second.position);
   const hasA = first.position !== null && first.position !== undefined && Number.isFinite(a);

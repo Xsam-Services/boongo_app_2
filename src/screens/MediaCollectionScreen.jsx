@@ -71,6 +71,8 @@ const MediaCollectionScreen = ({ navigation, route }) => {
   const canPlay = Boolean(route.params?.preview || (hasAccessPass && (!isPrivate || hasPaidConsultation)));
 
   const openDetails = () => navigation.navigate('WorkData', { itemId });
+  const isOwner = Boolean(work?.user_id) && Number(work.user_id) === Number(userInfo?.id);
+  const manageFiles = () => navigation.navigate('WorkFiles', { manage: true, workId: itemId });
 
   const playItem = (items, index) => {
     if (!canPlay || !items[index]) return;
@@ -153,6 +155,11 @@ const MediaCollectionScreen = ({ navigation, route }) => {
             <TouchableOpacity accessibilityRole="button" onPress={openDetails} style={[styles.detailsButton, { borderColor: COLORS.primary }]}>
               <Text style={[styles.detailsText, { color: COLORS.primary }]}>{t('media.details')}</Text>
             </TouchableOpacity>
+            {isOwner && !route.params?.preview ? (
+              <TouchableOpacity accessibilityRole="button" onPress={manageFiles} style={[styles.detailsButton, { backgroundColor: COLORS.primary, borderColor: COLORS.primary }]}>
+                <Text style={[styles.detailsText, { color: '#ffffff' }]}>{t('work_steps.manage_files')}</Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
           {!canPlay ? (
             <TouchableOpacity activeOpacity={0.8} onPress={openDetails} style={[styles.locked, { backgroundColor: COLORS.light_primary }]}>

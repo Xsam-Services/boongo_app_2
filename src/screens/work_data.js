@@ -393,6 +393,12 @@ const WorkDataScreen = ({ route, navigation }) => {
           </View>
         </View>
 
+        {work?.user_id && Number(work.user_id) === Number(userInfo?.id) ? (
+          <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('WorkFiles', { manage: true, workId: work.id })} style={[styles.partnerAction, { backgroundColor: COLORS.primary }]}>
+            <Icon name="folder-edit-outline" size={21} color="#ffffff" />
+            <Text style={[styles.partnerActionText, { color: '#ffffff' }]}>{t('work_steps.manage_files')}</Text>
+          </TouchableOpacity>
+        ) : null}
         {renderFiles()}
         {work ? renderAccessActions() : null}
         {!userInfo.is_partner ? <TouchableOpacity style={[styles.partnerAction, { backgroundColor: COLORS.warning }]} onPress={openWhatsApp}><Icon name="handshake-outline" size={21} color="#1a1a1a" /><Text style={styles.partnerActionText}>{t('auth.my_works.start_button')}</Text></TouchableOpacity> : null}
