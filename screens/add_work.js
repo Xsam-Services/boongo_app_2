@@ -55,7 +55,7 @@ const AddWorkScreen = () => {
 
   useEffect(() => {
     // Fetch Types (Radio Buttons)
-    axios.get(`${API.boongo_url}/type/find_by_group/Type d'œuvre`)
+    axios.get(`${API.boongo_url}/type/find_by_group/Type%20d'œuvre`)
       .then((response) => {
         const typeList = response.data.data.map(item => ({
           value: item.id,
@@ -83,18 +83,45 @@ const AddWorkScreen = () => {
       });
 
     // Fetch Categories (Checkboxes)
-    axios.get(`${API.boongo_url}/category/find_by_group/Catégorie pour œuvre`)
-      .then((response) => {
-        const categoryList = response.data.data.map(item => ({
+    const headers = {
+      'X-localization': 'fr',
+      Authorization: `Bearer ${userInfo.api_token}`,
+    };
+
+    Promise.all([
+      axios.get(
+        `${API.boongo_url}/category/find_by_group/Catégorie%20pour%20œuvre`,
+        { headers }
+      ),
+      axios.get(
+        `${API.boongo_url}/category/find_by_group/Catégorie%20pour%20programme%20national`,
+        { headers }
+      ),
+    ])
+      .then(([worksResponse, nationalProgramResponse]) => {
+        const worksCategories = worksResponse.data.data.map(item => ({
           value: item.id,
           label: item.category_name,
         }));
 
+        const nationalProgramCategories = nationalProgramResponse.data.data.map(item => ({
+          value: item.id,
+          label: item.category_name,
+        }));
+
+        // Combiner les deux listes
+        const categoryList = [
+          ...worksCategories,
+          ...nationalProgramCategories,
+        ];
+
+        console.log('categoryList:', categoryList);
+
         setDefaultCategories(categoryList);
-        setCategories(categoryList); // Initial value
+        setCategories(categoryList);
       })
       .catch((error) => {
-        console.log(error);
+        console.log('Erreur récupération catégories:', error);
       });
   }, []);
 
@@ -108,7 +135,7 @@ const AddWorkScreen = () => {
         setCategoriesLoading(true);
 
         try {
-          const response = await axios.get(`${API.boongo_url}/category/find_by_group/Catégorie pour carte`);
+          const response = await axios.get(`${API.boongo_url}/category/find_by_group/Catégorie%20pour%20carte`);
           const mapCategoryList = response.data.data.map(item => ({
             value: item.id,
             label: item.category_name,

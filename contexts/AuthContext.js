@@ -3,7 +3,7 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { createContext, useEffect, useState } from 'react'
-import { ToastAndroid } from 'react-native';
+import { Alert, ToastAndroid } from 'react-native';
 import * as RNLocalize from 'react-native-localize';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -50,45 +50,63 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const startRegister = (firstname, lastname, surname, gender, birthdate, city, address_1, address_2, p_o_box, email, phone, username, password, confirm_password, country_id, role_id, organization_id) => {
+    const startRegister = async (firstname, lastname, surname, gender, birthdate, city, address_1, address_2, p_o_box, email, phone, username, password, confirm_password, country_id, role_id, organization_id) => {
         setIsLoading(true);
         setRegisterError(null);
 
-        axios.post(`${API.boongo_url}/user`, {
-            firstname, lastname, surname, gender, birthdate, city, address_1, address_2, p_o_box, email, phone, username, password, confirm_password, country_id, role_id, organization_id
-        }).then(res => {
+        try {
+            const res = await axios.post(`${API.boongo_url}/user`, {
+                firstname, lastname, surname, gender, birthdate, city, address_1, address_2, p_o_box, email, phone, username, password, confirm_password, country_id, role_id, organization_id,
+            });
+
             const message = res.data.message;
             const userData = res.data.data.user;
 
             setStartRegisterInfo(userData);
+            await AsyncStorage.setItem('startRegisterInfo', JSON.stringify(userData));
 
-            AsyncStorage.setItem('startRegisterInfo', JSON.stringify(userData));
             ToastAndroid.show(`${message}`, ToastAndroid.LONG);
+
             console.log(`${message}`);
 
-            setIsLoading(false);
             setRegisterError(null);
 
-        }).catch(error => {
+            // IMPORTANT :
+            // L'inscription a réussi
+            return true;
+
+        } catch (error) {
             if (error.response) {
-                // The request was made and the server responded with a status code
-                ToastAndroid.show(`${error.response.data.message || error.response.data}`, ToastAndroid.LONG);
-                console.log(`${error.response.status} -> ${error.response.data.message || error.response.data}`);
-                setRegisterError(`${error.response.data.message || error.response.data}`);
+                const errorMessage = error.response.data?.message || error.response.data || t('error');
+
+                ToastAndroid.show(`${errorMessage}`, ToastAndroid.LONG);
+                console.log(`${error.response.status} -> ${errorMessage}`);
+
+                setRegisterError(`${errorMessage}`);
 
             } else if (error.request) {
-                // The request was made but no response was received
-                ToastAndroid.show(t('error') + ' ' + t('error_message.no_server_response'), ToastAndroid.LONG);
-                setRegisterError(t('error') + ' ' + t('error_message.no_server_response'));
+                const errorMessage = t('error') + ' ' + t('error_message.no_server_response');
+
+                ToastAndroid.show(errorMessage, ToastAndroid.LONG);
+                console.log(errorMessage);
+
+                setRegisterError(errorMessage);
 
             } else {
-                // An error occurred while configuring the query
-                ToastAndroid.show(`${error}`, ToastAndroid.LONG);
+                ToastAndroid.show(`${error}`,ToastAndroid.LONG);
+
+                console.log(`${error}`);
+
                 setRegisterError(`${error}`);
             }
 
+            // IMPORTANT :
+            // L'inscription a échoué
+            return false;
+
+        } finally {
             setIsLoading(false);
-        });
+        }
     };
 
     const checkPhoneOTP = async (isPasswordReset, phone, token) => {
@@ -174,7 +192,16 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const checkOTP = async (email, phone, token) => {
+    const checkOTP = async (isPasswordReset, email, phone, token) => {
+        if (typeof isPasswordReset !== 'boolean' || !phone || !token) {
+            ToastAndroid.show(t('error_message.missing_parameters'), ToastAndroid.LONG);
+
+            return {
+                success: false,
+                error: 'missing_parameters'
+            };
+        }
+
         setIsLoading(true);
 
         try {
@@ -223,11 +250,13 @@ export const AuthProvider = ({ children }) => {
                         // Phone is verified
                         if (phoneVerified) {
                             // Everything is good, we save "endRegisterInfo"
-                            await AsyncStorage.removeItem('startRegisterInfo');
-                            await AsyncStorage.setItem('endRegisterInfo', JSON.stringify(userData));
+                            if (!isPasswordReset) {
+                                await AsyncStorage.removeItem('startRegisterInfo');
+                                await AsyncStorage.setItem('endRegisterInfo', JSON.stringify(userData));
 
-                            setStartRegisterInfo({});
-                            setEndRegisterInfo(userData);
+                                setStartRegisterInfo({});
+                                setEndRegisterInfo(userData);
+                            }
 
                             return 'done';
 
@@ -240,11 +269,13 @@ export const AuthProvider = ({ children }) => {
                         // === User hasn't phone ===
                     } else {
                         // We can save "endRegisterInfo" directly
-                        await AsyncStorage.removeItem('startRegisterInfo');
-                        await AsyncStorage.setItem('endRegisterInfo', JSON.stringify(userData));
+                        if (!isPasswordReset) {
+                            await AsyncStorage.removeItem('startRegisterInfo');
+                            await AsyncStorage.setItem('endRegisterInfo', JSON.stringify(userData));
 
-                        setStartRegisterInfo({});
-                        setEndRegisterInfo(userData);
+                            setStartRegisterInfo({});
+                            setEndRegisterInfo(userData);
+                        }
 
                         return 'done';
                     }
@@ -257,11 +288,13 @@ export const AuthProvider = ({ children }) => {
                         // Email is verified
                         if (emailVerified) {
                             // Everything is good, we save "endRegisterInfo"
-                            await AsyncStorage.removeItem('startRegisterInfo');
-                            await AsyncStorage.setItem('endRegisterInfo', JSON.stringify(userData));
+                            if (!isPasswordReset) {
+                                await AsyncStorage.removeItem('startRegisterInfo');
+                                await AsyncStorage.setItem('endRegisterInfo', JSON.stringify(userData));
 
-                            setStartRegisterInfo({});
-                            setEndRegisterInfo(userData);
+                                setStartRegisterInfo({});
+                                setEndRegisterInfo(userData);
+                            }
 
                             return 'done';
 
@@ -274,11 +307,13 @@ export const AuthProvider = ({ children }) => {
                         // === User hasn't email ===
                     } else {
                         // We can save "endRegisterInfo" directly
-                        await AsyncStorage.removeItem('startRegisterInfo');
-                        await AsyncStorage.setItem('endRegisterInfo', JSON.stringify(userData));
+                        if (!isPasswordReset) {
+                            await AsyncStorage.removeItem('startRegisterInfo');
+                            await AsyncStorage.setItem('endRegisterInfo', JSON.stringify(userData));
 
-                        setStartRegisterInfo({});
-                        setEndRegisterInfo(userData);
+                            setStartRegisterInfo({});
+                            setEndRegisterInfo(userData);
+                        }
 
                         return 'done';
                     }

@@ -292,7 +292,9 @@
         "home": {
             "title": "Ebandeli",
             "news": "Ba sango",
-            "books": "Ba buku"
+            "books": "Ba buku",
+            "school_program_books": "Pona Programme scolaire",
+            "academic_program_books": "Pona Programme académique"
         },
         "chat": {
             "members": "Ba membres",
@@ -483,6 +485,7 @@
             "placeholder": "Koma code ...",
             "message_email": "Koma code oyo etindameli yo na boîte email oyo okomisaki.",
             "message_phone": "Koma lisusu code oyo ozwi na SMS na numéro ya téléfone oyo okomisaki.",
+            "check_later": "Nakotala sima",
             "send": "Tala",
             "warning": "Code ekosala lisusu te sima ya 15 minutes"
         },

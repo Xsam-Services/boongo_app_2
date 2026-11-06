@@ -292,7 +292,9 @@
         "home": {
             "title": "Home",
             "news": "News",
-            "books": "Works"
+            "books": "Works",
+            "school_program_books": "For School Program",
+            "academic_program_books": "For Academic Program"
         },
         "chat": {
             "members": "Members",
@@ -483,6 +485,7 @@
             "placeholder": "Write the code...",
             "message_email": "Please enter the code you received in your registered email.",
             "message_phone": "Please enter the code you received by SMS on the phone number you registered.",
+            "check_later": "Check later",
             "send": "Check",
             "warning": "The code will become invalid after 15 minutes"
         },

@@ -3,7 +3,7 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, ScrollView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { Button, Divider } from 'react-native-paper';
@@ -55,37 +55,89 @@ const RegisterScreen = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    axios({ method: 'GET', url: 'https://restcountries.com/v3.1/all?fields=cca2,idd,flags,name' })
-      .then((res) => {
-        // On garde une trace des codes téléphoniques uniques
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get(
+          'https://api.restcountries.com/countries/v5',
+          {
+            params: {
+              limit: 100,
+              response_fields:
+                'names.common,codes.alpha_2,flag.url_png,flag.emoji,calling_codes',
+            },
+            headers: {
+              Authorization: 'Bearer ' + API.restcountries_key,
+            },
+          }
+        );
+
+        console.log('Countries response:', response.data);
+
+        const countries = response.data?.data?.objects;
+
+        if (!Array.isArray(countries)) {
+          console.error(
+            'Les données des pays ne sont pas un tableau :',
+            response.data
+          );
+          return;
+        }
+
         const phoneCodes = new Set();
 
-        const countryArray = res.data.map((country) => {
-          const phoneCodeData = country.idd && country.idd.root ? `${country.idd.root}${country.idd.suffixes ? `${country.idd.suffixes[0]}` : ''}` : '';
+        const countryArray = countries
+          .map((country) => {
+            // Indicatif téléphonique
+            const phoneCode = country.calling_codes?.[0]
+              ? `+${country.calling_codes[0]}`
+              : '';
 
-          // Vérifier si le code téléphonique existe déjà dans le Set
-          if (phoneCodes.has(phoneCodeData)) {
-            return null; // Si le code existe déjà, ignorer cet élément
-          }
+            // URL du drapeau
+            const flagUrl = country.flag?.url_png || '';
 
-          // Ajouter le code téléphonique dans le Set pour éviter les doublons
-          phoneCodes.add(phoneCodeData);
+            // Vérifier que l'indicatif existe
+            if (!phoneCode) {
+              return null;
+            }
 
-          return {
-            value: phoneCodeData, // Le code téléphonique est unique
-            label: `${country.cca2} (${phoneCodeData})`, // Affichage "CD (+243)"
-            flag: country.flags.png
-          };
-        }).filter(item => item !== null); // Filtrer les éléments nulls
+            // Éviter les indicatifs en double
+            if (phoneCodes.has(phoneCode)) {
+              return null;
+            }
 
-        // Trie des pays par nom (A-Z)
-        countryArray.sort((a, b) => a.label.localeCompare(b.label));
+            phoneCodes.add(phoneCode);
+
+            return {
+              value: phoneCode,
+
+              label: `${country.codes?.alpha_2 || ''} (${phoneCode})`,
+
+              // URL du drapeau PNG
+              flag: flagUrl,
+
+              // Emoji du drapeau, utile comme fallback
+              flagEmoji: country.flag?.emoji || '',
+            };
+          })
+          .filter(Boolean);
+
+        // Tri par code pays
+        countryArray.sort((a, b) =>
+          a.label.localeCompare(b.label)
+        );
+
+        console.log('Countries data:', countryArray);
 
         setCountriesData(countryArray);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      } catch (error) {
+        console.error(
+          'Erreur lors de la récupération des pays :',
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    fetchCountries();
   }, []);
 
   const handleCountryChange = (item) => {
@@ -128,14 +180,14 @@ const RegisterScreen = () => {
           onChangeText={text => setUsername(text)} />
         <Text style={{ fontSize: 12, color: COLORS.dark_secondary, letterSpacing: 0.5, textAlign: 'right', marginBottom: PADDING.p02 }}>{t('auth.username.message')}</Text>
 
-        {/* E-mail
+        {/* E-mail */}
         <TextInput
           style={[homeStyles.authInput, { color: COLORS.black, borderColor: COLORS.light_secondary }]}
           value={email}
           placeholder={t('auth.email')}
           placeholderTextColor={COLORS.dark_secondary}
           onChangeText={text => setEmail(text.toLowerCase())}
-          autoCapitalize='none' /> */}
+          autoCapitalize='none' />
 
         <View style={{ flexDirection: 'row' }}>
           {/* Phone code  */}
@@ -203,24 +255,30 @@ const RegisterScreen = () => {
 
         {/* Submit / Cancel */}
         <Button style={[homeStyles.authButton, { backgroundColor: COLORS.success }]}
-          onPress={() => {
-            startRegister(firstname, lastname, null, null, null, city, null, null, null, email, (phoneCode && phone ? `${phoneCode}${phone}` : null), username, null, null, null, role.id, null);
+          onPress={async () => {
+            try {
+              const phoneNumber = phoneCode && phone ? `${phoneCode}${phone}` : null;
 
-            if (!registerError) {
-              navigation.navigate('CheckPhoneOTP', { isPasswordReset: false, phoneNumber: (phoneCode && phone ? `${phoneCode}${phone}` : null) });
+              // Attendre la réponse réelle du serveur
+              const success = await startRegister(firstname, lastname, null, null, null, city, null, null, null, email, phoneNumber, username, null, null, null, role?.id, null);
 
-              // if (email && phone) {
-              //   navigation.navigate('CheckEmailOTP', { emailAddress: email, phoneNumber: (phoneCode && phone ? `${phoneCode}${phone}` : null) });
+              // NE PAS naviguer si l'inscription a échoué
+              if (!success) { return; }
 
-              // } else {
-              //   if (email) {
-              //     navigation.navigate('CheckEmailOTP', { emailAddress: email, phoneNumber: (phoneCode && phone ? `${phoneCode}${phone}` : null) });
-              //   }
+              // L'inscription est réussie :
+              // on peut maintenant envoyer l'utilisateur vers la vérification
+              if (email && phone) {
+                navigation.navigate('CheckEmailOTP', { emailAddress: email, phoneNumber: phoneNumber, });
 
-              //   if (phone) {
-              //     navigation.navigate('CheckPhoneOTP', { emailAddress: email, phoneNumber: (phoneCode && phone ? `${phoneCode}${phone}` : null) });
-              //   }
-              // }
+              } else if (email) {
+                navigation.navigate('CheckEmailOTP', { emailAddress: email, phoneNumber: phoneNumber, });
+
+              } else if (phone) {
+                navigation.navigate('CheckPhoneOTP', { emailAddress: email, phoneNumber: phoneNumber, });
+              }
+
+            } catch (error) {
+              Alert.alert('Error', `${error}`, [{ text: 'OK' }]);
             }
           }}>
           <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('start')}</Text>

@@ -292,7 +292,9 @@
         "home": {
             "title": "Accueil",
             "news": "Actualité",
-            "books": "Ouvrages"
+            "books": "Ouvrages",
+            "school_program_books": "Pour Programme scolaire",
+            "academic_program_books": "Pour Programme académique"
         },
         "chat": {
             "members": "Membres",
@@ -483,6 +485,7 @@
             "placeholder": "Écrire le code ...",
             "message_email": "Veuillez saisir le code que vous avez reçu dans la boîte email que vous avez enregistrée.",
             "message_phone": "Veuillez saisir encore le code que vous avez reçu par SMS sur le n° de téléphone que vous avez enregistrée.",
+            "check_later": "Vérifier plus tard",
             "send": "Vérifier",
             "warning": "Le code deviendra invalide après 15 minutes"
         },

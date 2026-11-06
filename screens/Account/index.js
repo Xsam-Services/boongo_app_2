@@ -55,12 +55,43 @@ const MyWorks = ({ handleScroll, showBackToTop, listRef, headerHeight = 0 }) => 
     };
 
     try {
-      const res = await axios.get(`${API.boongo_url}/category/find_by_group/Catégorie%20pour%20œuvre`, { headers });
-      const data = res.data.data;
-      const itemAll = { id: 0, category_name: t('all_f'), category_name_fr: "Toutes", category_name_en: "All", category_name_ln: "Nioso", category_description: null, };
+      const [worksResponse, nationalProgramResponse] = await Promise.all([
+        axios.get(
+          `${API.boongo_url}/category/find_by_group/Catégorie%20pour%20œuvre`,
+          { headers }
+        ),
+        axios.get(
+          `${API.boongo_url}/category/find_by_group/Catégorie%20pour%20programme%20national`,
+          { headers }
+        ),
+      ]);
 
-      data.unshift(itemAll);
-      setCategories(data);
+      const worksCategories = worksResponse.data.data || [];
+      const nationalProgramCategories =
+        nationalProgramResponse.data.data || [];
+
+      // Combiner les deux listes
+      const data = [
+        ...worksCategories,
+        ...nationalProgramCategories,
+      ];
+
+      // Ajouter "Toutes" au début
+      const itemAll = {
+        id: 0,
+        category_name: t('all_f'),
+        category_name_fr: 'Toutes',
+        category_name_en: 'All',
+        category_name_ln: 'Nioso',
+        category_description: null,
+      };
+
+      const categoryList = [
+        itemAll,
+        ...data,
+      ];
+
+      setCategories(categoryList);
       setIdCat(itemAll.id);
 
     } catch (error) {

@@ -27,40 +27,37 @@ const CheckPhoneOTPScreen = ({ route }) => {
   // =============== Navigation ===============
   const navigation = useNavigation();
   // =============== Get contexts ===============
-  const { isLoading, checkPhoneOTP, registerError } = useContext(AuthContext);
+  const { isLoading, emailAddress, checkOTP, registerError } = useContext(AuthContext);
   // =============== Get data ===============
   const [code, setCode] = useState('');
 
   const handleCheckPhoneCode = async () => {
-    // const result = await checkOTP(emailAddress, phoneNumber, code);
+    const result = await checkOTP(isPasswordReset, emailAddress, phoneNumber, code);
 
-    // if (!registerError) {
-    //   if (result === 'email_not_validated') {
-    //     navigation.navigate('CheckEmailOTP', { emailAddress: emailAddress, phoneNumber: phoneNumber });
-
-    //   } else {
-    //     navigation.navigate('ContinueRegister');
-    //   }
-    // }
-    const result = await checkPhoneOTP(isPasswordReset, phoneNumber, code);
-
-    if (!result.success) {
-      console.log(result.error);
-      ToastAndroid.show(result.error, ToastAndroid.LONG);
-
-      return;
-    }
+    console.log(registerError);
 
     if (isPasswordReset) {
       console.log(`Former password CheckOTP: ${result.data.passwordReset.former_password}`);
       navigation.navigate('UpdatePassword', { userId: result.data.user.id, apiToken: result.data.user.api_token, formerPassword: result.data.passwordReset.former_password });
 
     } else {
-      console.log(registerError);
-
       if (!registerError) {
-        navigation.navigate('ContinueRegister');
+        if (result === 'email_not_validated') {
+          navigation.navigate('CheckEmailOTP', { emailAddress: emailAddress, phoneNumber: phoneNumber });
+
+        } else {
+          navigation.navigate('ContinueRegister');
+        }
       }
+    }
+  };
+
+  const handleCheckLater = async () => {
+    if (emailAddress) {
+      navigation.navigate('CheckEmailOTP', { emailAddress: emailAddress, phoneNumber: null });
+
+    } else {
+      navigation.navigate('ContinueRegister');
     }
   };
 
@@ -90,6 +87,12 @@ const CheckPhoneOTPScreen = ({ route }) => {
         <Button style={[homeStyles.authButton, { backgroundColor: COLORS.success }]} onPress={handleCheckPhoneCode}>
           <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('auth.otp_code.send')}</Text>
         </Button>
+
+        {!isPasswordReset &&
+          <Button style={[homeStyles.authButton, { backgroundColor: 'transparent', marginTop: PADDING.p01 }]} onPress={handleCheckLater}>
+            <Text style={[homeStyles.authButtonText, { color: COLORS.black, textDecorationLine: 'underline' }]}>{t('auth.otp_code.check_later')}</Text>
+          </Button>
+        }
 
         {/* Message */}
         <View style={homeStyles.messageContainer}>

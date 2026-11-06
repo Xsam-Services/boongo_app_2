@@ -3,7 +3,7 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 import React, { useContext, useState } from 'react';
-import { View, Text, TextInput, ScrollView } from 'react-native';
+import { View, Text, TextInput, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Button, Divider } from 'react-native-paper';
@@ -18,7 +18,7 @@ import homeStyles from '../style';
 
 const CheckEmailOTPScreen = ({ route }) => {
   // =============== Get parameters ===============
-  const { emailAddress, phoneNumber } = route.params;
+  const { isPasswordReset, emailAddress, phoneNumber } = route.params;
   // =============== Colors ===============
   const COLORS = useColors();
   // =============== Language ===============
@@ -31,17 +31,33 @@ const CheckEmailOTPScreen = ({ route }) => {
   const [code, setCode] = useState('');
 
   const handleCheckEmailCode = async () => {
-    const result = await checkOTP(emailAddress, null, code);
+    const result = await checkOTP(isPasswordReset, emailAddress, phoneNumber, code);
 
     console.log(registerError);
+    Alert.alert('Check Email OTP', `Result: ${JSON.stringify(result)}`, [{ text: 'OK' }]);
 
-    if (!registerError) {
-      if (result === 'phone_not_validated') {
-        navigation.navigate('CheckPhoneOTP', { emailAddress: emailAddress, phoneNumber: phoneNumber });
+    if (isPasswordReset) {
+      console.log(`Former password CheckOTP: ${result.data.passwordReset.former_password}`);
+      navigation.navigate('UpdatePassword', { userId: result.data.user.id, apiToken: result.data.user.api_token, formerPassword: result.data.passwordReset.former_password });
 
-      } else {
-        navigation.navigate('ContinueRegister');
+    } else {
+      if (!registerError) {
+        if (result === 'phone_not_validated') {
+          navigation.navigate('CheckPhoneOTP', { emailAddress: emailAddress, phoneNumber: phoneNumber });
+
+        } else {
+          navigation.navigate('ContinueRegister');
+        }
       }
+    }
+  };
+
+  const handleCheckLater = async () => {
+    if (phoneNumber) {
+      navigation.navigate('CheckPhoneOTP', { emailAddress: emailAddress, phoneNumber: phoneNumber });
+
+    } else {
+      navigation.navigate('ContinueRegister');
     }
   };
 
@@ -71,6 +87,12 @@ const CheckEmailOTPScreen = ({ route }) => {
         <Button style={[homeStyles.authButton, { backgroundColor: COLORS.danger }]} onPress={handleCheckEmailCode}>
           <Text style={[homeStyles.authButtonText, { color: 'white' }]}>{t('auth.otp_code.send')}</Text>
         </Button>
+
+        {!isPasswordReset &&
+          <Button style={[homeStyles.authButton, { backgroundColor: 'transparent', marginTop: PADDING.p01 }]} onPress={handleCheckLater}>
+            <Text style={[homeStyles.authButtonText, { color: COLORS.black, textDecorationLine: 'underline' }]}>{t('auth.otp_code.check_later')}</Text>
+          </Button>
+        }
 
         {/* Message */}
         <View style={homeStyles.messageContainer}>

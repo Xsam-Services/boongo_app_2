@@ -61,6 +61,7 @@ export const API = {
     dicolink_key: 'GjsKGqDnjXXwcqOEcuOjrbOx9MqQ6Ugo',
     open_emoji_key: 'c9e9a10792fc18040b51f71924c3f8e031711c95',
     baquiz_key: 'xJLIAuEnORjrAc0Cnr47yIrWEkEXCFIxLPIv4edPwL9YD2ro8zEuMyIKQQd4b1fG',
+    restcountries_key: 'rc_live_a78aec99c0e7452b9fef0e2b78b02dc1',
 };
 
 export const WEB = {
