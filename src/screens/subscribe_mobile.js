@@ -22,7 +22,7 @@ export default function MobileSubscribeScreen({ route }) {
   const colors = useColors();
   const navigation = useNavigation();
   const { userInfo, purchase, resetPaymentURL, isLoading } = useContext(AuthContext);
-  const { amount, currency } = route.params || {};
+  const { amount, currency, target } = route.params || {};
   const initialPhone = useMemo(() => {
     const code = userInfo?.country?.country_phone_code || '';
     const number = userInfo?.phone || '';
@@ -72,7 +72,7 @@ export default function MobileSubscribeScreen({ route }) {
     else {
       setError('');
       setSubmitting(true);
-      const result = await purchase(userInfo?.id, transactionTypeId, normalizedPhone, channel, WEB.boongo_url);
+      const result = await purchase(userInfo?.id, transactionTypeId, normalizedPhone, channel, WEB.boongo_url, target);
       setSubmitting(false);
       if (!result.success) setError(result.error || 'Le paiement n’a pas pu être initialisé.');
       else if (result.url) {
@@ -139,7 +139,7 @@ export default function MobileSubscribeScreen({ route }) {
             <TouchableOpacity disabled={submitting || isLoading || loadingType} onPress={submit} style={[styles.primaryButton, { backgroundColor: colors.primary, opacity: submitting || isLoading || loadingType ? 0.6 : 1 }]}>
               {submitting || isLoading ? <ActivityIndicator color="#fff" /> : <><Text style={styles.primaryButtonText}>Continuer</Text><Icon name="arrow-right" size={20} color="#fff" /></>}
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.replace('BankCardSubscribe', { amount, currency })} style={[styles.secondaryButton, { borderColor: colors.primary }]}><Icon name="credit-card-outline" size={20} color={colors.primary} /><Text style={[styles.secondaryButtonText, { color: colors.primary }]}>Payer autrement</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.replace('BankCardSubscribe', { amount, currency, target })} style={[styles.secondaryButton, { borderColor: colors.primary }]}><Icon name="credit-card-outline" size={20} color={colors.primary} /><Text style={[styles.secondaryButtonText, { color: colors.primary }]}>Payer autrement</Text></TouchableOpacity>
           </View>
         )}
       </ScrollView>
