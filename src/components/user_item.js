@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { IMAGE_SIZE, PADDING, TEXT_SIZE } from '../tools/constants';
+import { imageUri } from '../tools/imageUri';
 import useColors from '../hooks/useColors';
 import homeStyles from '../screens/style';
 
@@ -80,7 +81,7 @@ const UserItemComponent = ({ item }) => {
             backgroundColor: COLORS.white
         }}>
             <Image
-                source={{ uri: item.avatar_url }}
+                source={{ uri: imageUri(item.avatar_url) }}
                 style={{
                     width: IMAGE_SIZE.s13,
                     height: IMAGE_SIZE.s13,

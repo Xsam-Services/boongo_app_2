@@ -9,6 +9,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import ThemeContext from '../contexts/ThemeContext';
 import useColors from '../hooks/useColors';
 import LogoText from '../../assets/img/brand.svg';
+import { imageUri } from '../tools/imageUri';
 
 const drawerItems = [
   { icon: 'home-variant-outline', label: 'navigation.home.title', route: 'HomeStack' },
@@ -41,7 +42,7 @@ const DrawerContent = props => {
         </View>
 
         <TouchableOpacity style={[styles.profileCard, { backgroundColor: COLORS.light_primary }]} onPress={() => navigate('Account')} activeOpacity={0.8}>
-          {userInfo?.avatar_url ? <Image source={{ uri: userInfo.avatar_url }} style={styles.avatar} /> : (
+          {userInfo?.avatar_url ? <Image source={{ uri: imageUri(userInfo.avatar_url) }} style={styles.avatar} /> : (
             <View style={[styles.avatar, styles.avatarFallback, { backgroundColor: COLORS.primary }]}>
               <MaterialCommunityIcons name="account" size={28} color="#ffffff" />
             </View>

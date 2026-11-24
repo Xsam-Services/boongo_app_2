@@ -28,6 +28,7 @@ import UserItemComponent from '../../components/user_item';
 import HeaderComponent from '../header';
 import useColors from '../../hooks/useColors';
 import {API} from '../../tools/constants';
+import {imageUri} from '../../tools/imageUri';
 import {formatPaymentAmount} from '../../utils/payment';
 const T = [
   ['works', 'Mes œuvres', 'book-open-page-variant-outline'],
@@ -259,7 +260,7 @@ export default function AccountScreen() {
       edges={['top']}>
       <HeaderComponent title="Mon espace" hideSearch accountActions />
       <View style={[s.profile, {backgroundColor: C.light_primary}]}>
-        {u.avatar_url ? <Image source={{uri: u.avatar_url}} style={s.avatar} /> : <View style={[s.avatar, s.avatarFallback, {backgroundColor: C.primary}]}><Icon name="account" size={30} color="#fff" /></View>}
+        {u.avatar_url ? <Image source={{uri: imageUri(u.avatar_url)}} style={s.avatar} /> : <View style={[s.avatar, s.avatarFallback, {backgroundColor: C.primary}]}><Icon name="account" size={30} color="#fff" /></View>}
         <View style={s.profileCopy}><Text style={[s.profileName, {color: C.black}]} numberOfLines={1}>{[u.firstname, u.lastname].filter(Boolean).join(' ') || u.username}</Text><Text style={[s.profileMeta, {color: C.dark}]} numberOfLines={1}>{u.email || u.phone || `@${u.username}`}</Text></View>
       </View>
       <View style={[s.tabs, {borderBottomColor: C.light_secondary}]}>
