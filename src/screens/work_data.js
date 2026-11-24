@@ -276,6 +276,10 @@ const WorkDataScreen = ({ route, navigation }) => {
         <View style={[styles.actionCard, { backgroundColor: COLORS.white, borderColor: COLORS.light_secondary }]}>
           <Icon name="eye-lock-outline" size={27} color={COLORS.primary} />
           <Text style={[styles.actionText, { color: COLORS.black }]}>{t('consultation.info')}</Text>
+          <TouchableOpacity style={[styles.primaryAction, { backgroundColor: COLORS.primary }]} onPress={() => navigation.navigate('MobileSubscribe', { amount: work.consultation_price, currency: work.currency?.currency_acronym, target: { kind: 'consultation', id: work.id } })}>
+            <Icon name="flash-outline" size={18} color="#ffffff" />
+            <Text style={styles.primaryActionText}>{t('buy_now')}</Text>
+          </TouchableOpacity>
           {isInCart ? (
             <View style={[styles.alreadyOrdered, { backgroundColor: COLORS.light_secondary }]}>
               <Icon name="cart-check" size={18} color={COLORS.dark} />

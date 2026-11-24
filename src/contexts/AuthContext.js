@@ -1152,7 +1152,7 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
-    const purchase = async (user_id, transaction_type_id, other_phone, channel, app_url) => {
+    const purchase = async (user_id, transaction_type_id, other_phone, channel, app_url, target = null) => {
         if (!user_id || !transaction_type_id || !channel) {
             return { success: false, error: t('error_message.missing_parameters') };
         }
@@ -1163,7 +1163,7 @@ export const AuthProvider = ({ children }) => {
 
         try {
             const res = await axios.post(
-                purchaseUrl(API.boongo_url, user_id),
+                purchaseUrl(API.boongo_url, user_id, target),
                 { transaction_type_id, other_phone, channel, app_url },
                 {
                     headers: {

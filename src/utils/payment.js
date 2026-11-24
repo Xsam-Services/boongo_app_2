@@ -1,5 +1,10 @@
-export const purchaseUrl = (apiUrl, userId) =>
-  `${apiUrl.replace(/\/$/, '')}/cart/purchase/${encodeURIComponent(userId)}`;
+// Sans cible : paiement du panier. Avec { kind, id } : achat direct sans panier.
+export const purchaseUrl = (apiUrl, userId, target) => {
+  const base = apiUrl.replace(/\/$/, '');
+  if (target?.kind === 'consultation') return `${base}/work/purchase/${encodeURIComponent(target.id)}`;
+  if (target?.kind === 'subscription') return `${base}/subscription/purchase/${encodeURIComponent(target.id)}`;
+  return `${base}/cart/purchase/${encodeURIComponent(userId)}`;
+};
 
 export const safePaymentUrl = value => {
   if (typeof value !== 'string') return '';

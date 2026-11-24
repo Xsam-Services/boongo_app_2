@@ -16,7 +16,7 @@ const formatPrice = (amount, currency) => {
   return `${new Intl.NumberFormat('fr', { maximumFractionDigits: 0 }).format(numericAmount)} ${currency || ''}`.trim();
 };
 
-const SubscriptionCard = ({ item, displayPrice, inCart, busy, onToggle, colors }) => (
+const SubscriptionCard = ({ item, displayPrice, inCart, busy, onToggle, onBuy, colors }) => (
   <View style={[styles.offerCard, { backgroundColor: colors.white, borderColor: colors.light_secondary }]}>
     <View style={[styles.offerIcon, { backgroundColor: colors.light_primary }]}>
       <Icon name="calendar-check-outline" size={23} color={colors.primary} />
@@ -25,6 +25,9 @@ const SubscriptionCard = ({ item, displayPrice, inCart, busy, onToggle, colors }
       <Text style={[styles.offerName, { color: colors.black }]}>{item.type?.type_name_fr || item.type?.type_name || 'Abonnement'}</Text>
       <Text style={[styles.offerPrice, { color: colors.primary }]}>{displayPrice}</Text>
     </View>
+    <TouchableOpacity accessibilityRole="button" accessibilityLabel="Acheter maintenant" onPress={onBuy} style={[styles.buyAction, { backgroundColor: colors.primary }]}>
+      <Text style={styles.buyActionText}>Acheter</Text>
+    </TouchableOpacity>
     <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: busy }} disabled={busy} onPress={onToggle} style={[styles.offerAction, { backgroundColor: inCart ? colors.light_danger : colors.light_primary }]}>
       {busy ? <ActivityIndicator color={colors.primary} /> : <Icon name={inCart ? 'trash-can-outline' : 'cart-plus'} size={20} color={inCart ? colors.danger : colors.primary} />}
     </TouchableOpacity>
@@ -168,7 +171,7 @@ export default function SubscriptionScreen({ route }) {
                 <Text style={[styles.sectionTitle, { color: colors.black }]}>{category}</Text>
                 {(offers || []).map(offer => {
                   const inCart = Boolean(userInfo?.unpaid_subscriptions?.some(subscription => subscription.id === offer.id));
-                  return <SubscriptionCard key={offer.id} item={offer} displayPrice={prices[`${category}-${offer.id}`] || formatPrice(offer.price, offer.currency?.currency_acronym)} inCart={inCart} busy={isLoading} onToggle={() => toggleOffer(offer, inCart)} colors={colors} />;
+                  return <SubscriptionCard key={offer.id} item={offer} displayPrice={prices[`${category}-${offer.id}`] || formatPrice(offer.price, offer.currency?.currency_acronym)} inCart={inCart} busy={isLoading} onToggle={() => toggleOffer(offer, inCart)} onBuy={() => navigation.navigate('MobileSubscribe', { amount: offer.price, currency: offer.currency?.currency_acronym, target: { kind: 'subscription', id: offer.id } })} colors={colors} />;
                 })}
               </View>
             ))}
@@ -183,7 +186,7 @@ export default function SubscriptionScreen({ route }) {
 const styles = StyleSheet.create({
   screen: { flex: 1 }, content: { flexGrow: 1, padding: 18, paddingBottom: 32 }, hero: { alignItems: 'center', borderRadius: 22, flexDirection: 'row', padding: 18 }, heroIcon: { alignItems: 'center', borderRadius: 22, height: 44, justifyContent: 'center', width: 44 }, heroCopy: { flex: 1, marginLeft: 14 },
   title: { fontSize: 20, fontWeight: '800' }, subtitle: { fontSize: 14, lineHeight: 20, marginTop: 5 }, error: { borderRadius: 14, fontSize: 13, fontWeight: '600', lineHeight: 19, marginTop: 16, padding: 13 }, loading: { alignItems: 'center', gap: 10, paddingVertical: 60 }, section: { marginTop: 24 }, sectionTitle: { fontSize: 17, fontWeight: '800', marginBottom: 10 },
-  offerCard: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', marginBottom: 10, padding: 14 }, offerIcon: { alignItems: 'center', borderRadius: 18, height: 44, justifyContent: 'center', width: 44 }, offerCopy: { flex: 1, marginHorizontal: 12 }, offerName: { fontSize: 15, fontWeight: '700' }, offerPrice: { fontSize: 16, fontWeight: '900', marginTop: 5 }, offerAction: { alignItems: 'center', borderRadius: 17, height: 42, justifyContent: 'center', width: 42 },
+  offerCard: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', marginBottom: 10, padding: 14 }, offerIcon: { alignItems: 'center', borderRadius: 18, height: 44, justifyContent: 'center', width: 44 }, offerCopy: { flex: 1, marginHorizontal: 12 }, offerName: { fontSize: 15, fontWeight: '700' }, offerPrice: { fontSize: 16, fontWeight: '900', marginTop: 5 }, offerAction: { alignItems: 'center', borderRadius: 17, height: 42, justifyContent: 'center', width: 42 }, buyAction: { alignItems: 'center', borderRadius: 17, height: 42, justifyContent: 'center', marginRight: 8, paddingHorizontal: 14 }, buyActionText: { color: '#ffffff', fontSize: 14, fontWeight: '800' },
   formCard: { borderRadius: 22, borderWidth: 1, marginTop: 20, padding: 16 }, label: { fontSize: 14, fontWeight: '700', marginBottom: 9, marginTop: 8 }, partnerRow: { gap: 8, paddingBottom: 12 }, partnerChip: { borderRadius: 18, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 10 }, input: { borderRadius: 14, borderWidth: 1, fontSize: 16, marginBottom: 16, paddingHorizontal: 14, paddingVertical: 14 }, primaryButton: { alignItems: 'center', borderRadius: 18, flexDirection: 'row', gap: 8, justifyContent: 'center', minHeight: 54 }, primaryButtonText: { color: '#fff', fontSize: 16, fontWeight: '800' },
   secondaryButton: { alignItems: 'center', borderRadius: 18, borderWidth: 1, flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 18, minHeight: 52 }, secondaryButtonText: { fontSize: 15, fontWeight: '800' }, textButton: { alignItems: 'center', padding: 16 }, textButtonLabel: { fontWeight: '800' },
 });

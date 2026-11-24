@@ -1,6 +1,15 @@
 import {formatPaymentAmount, purchaseUrl, safePaymentUrl} from '../src/utils/payment';
 
 describe('payment helpers', () => {
+  test('targets the direct purchase routes when an item is given', () => {
+    expect(purchaseUrl('https://boongo7.com/api/', 123, {kind: 'consultation', id: 700})).toBe(
+      'https://boongo7.com/api/work/purchase/700',
+    );
+    expect(purchaseUrl('https://boongo7.com/api', 123, {kind: 'subscription', id: 3})).toBe(
+      'https://boongo7.com/api/subscription/purchase/3',
+    );
+  });
+
   test('uses the purchase route documented in Postman', () => {
     expect(purchaseUrl('https://boongo7.com/api', 123)).toBe(
       'https://boongo7.com/api/cart/purchase/123',
