@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { imageUri } from '../tools/imageUri';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
@@ -133,7 +134,7 @@ const ProfileScreen = () => {
             <View style={[styles.profileAccent, { backgroundColor: COLORS.primary }]} />
             <View style={styles.profileTopline}><Icon name="account-circle-outline" size={14} color={COLORS.primary} /><Text style={[styles.profileEyebrow, { color: COLORS.primary }]}>PROFIL PUBLIC</Text></View>
             <View style={styles.profileIdentity}>
-              {profile?.avatar_url ? <Image source={{ uri: profile.avatar_url }} style={[styles.avatar, { borderColor: COLORS.light_secondary }]} /> : <View style={[styles.avatar, styles.avatarFallback, { backgroundColor: COLORS.light_primary, borderColor: COLORS.light_secondary }]}><Icon name="account" size={34} color={COLORS.primary} /></View>}
+              {imageUri(profile?.avatar_url) ? <Image source={{ uri: imageUri(profile.avatar_url) }} style={[styles.avatar, { borderColor: COLORS.light_secondary }]} /> : <View style={[styles.avatar, styles.avatarFallback, { backgroundColor: COLORS.light_primary, borderColor: COLORS.light_secondary }]}><Icon name="account" size={34} color={COLORS.primary} /></View>}
               <View style={styles.profileCopy}><Text style={[styles.name, { color: COLORS.black }]} numberOfLines={2}>{[profile?.firstname, profile?.lastname].filter(Boolean).join(' ') || profile?.username || 'Profil'}</Text><Text style={[styles.handle, { color: COLORS.primary }]} numberOfLines={1}>@{profile?.username || '...'}</Text>{profile?.address_1 ? <View style={styles.location}><Icon name="map-marker-outline" size={14} color={COLORS.dark} /><Text style={[styles.meta, { color: COLORS.dark }]} numberOfLines={1}>{profile.address_1}</Text></View> : null}</View>
             </View>
           </View>
